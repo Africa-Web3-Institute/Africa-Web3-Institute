@@ -7,6 +7,7 @@ import CountryDeepDive from "../components/awpii/CountryDeepDive";
 import awpiiData from "../data/awpiiData";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
+import CountryFlag from "../components/CountryFlag";
 
 //const PILLAR_ICONS = [Building2, BarChart3, Users, Globe];
 
@@ -189,7 +190,7 @@ export default function AWPII() {
                         <span className={`text-xs font-bold w-5 shrink-0 ${selectedCountryKey === country.key ? "text-accent" : "text-muted-foreground"}`}>
                           #{country.rank}
                         </span>
-                        <span className="text-base shrink-0">{country.flag}</span>
+                       <CountryFlag emoji={country.flag} size={20} />
                         <span className="text-sm truncate max-w-[120px]">{country.content[language].name}</span>
                       </div>
                       <div className="flex items-center gap-2">

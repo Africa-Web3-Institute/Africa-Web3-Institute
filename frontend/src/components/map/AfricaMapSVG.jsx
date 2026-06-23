@@ -4,6 +4,29 @@ import { MapContainer, GeoJSON, ZoomControl,CircleMarker,Tooltip } from "react-l
 import "leaflet/dist/leaflet.css";
 import awpiiData from "../../data/awpiiData";
 
+const EMOJI_TO_ISO = {
+  "🇳🇬": "ng", "🇿🇦": "za", "🇰🇪": "ke", "🇷🇼": "rw",
+  "🇬🇭": "gh", "🇪🇬": "eg", "🇪🇹": "et", "🇸🇳": "sn",
+  "🇹🇿": "tz", "🇲🇦": "ma", "🇨🇲": "cm", "🇨🇮": "ci",
+  "🇿🇼": "zw", "🇿🇲": "zm", "🇩🇿": "dz", "🇺🇬": "ug",
+  "🇹🇳": "tn", "🇧🇼": "bw", "🇲🇺": "mu", "🇸🇨": "sc",
+  "🇳🇦": "na", "🇸🇱": "sl", "🇸🇸": "ss", "🇸🇩": "sd",
+  "🇸🇴": "so", "🇨🇻": "cv", "🇰🇲": "km", "🇸🇹": "st",
+  "🇲🇬": "mg",
+};
+
+function flagImg(emoji) {
+  const iso = EMOJI_TO_ISO[emoji];
+  if (!iso) return "";
+  return `<img 
+    src="https://flagcdn.com/20x15/${iso}.png"
+    srcset="https://flagcdn.com/40x30/${iso}.png 2x"
+    width="20" height="15"
+    style="border-radius:2px;vertical-align:middle;margin-right:6px;display:inline-block;"
+    alt="${iso.toUpperCase()}"
+  />`;
+}
+
 
 const AFRICA_GEOJSON_URL =
   //"https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/africa.geojson";
@@ -92,6 +115,8 @@ export default function AfricaMapSVG({ onCountryClick = null, interactive = fals
     const [islandMarkers, setIslandMarkers] = useState([]);
 
 
+
+
   useEffect(() => {
     fetch(AFRICA_GEOJSON_URL)
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
@@ -112,6 +137,8 @@ export default function AfricaMapSVG({ onCountryClick = null, interactive = fals
     continent === "Africa" ||
     AFRICAN_ISLAND_FALLBACKS.has(name)
   );
+
+  
 }),
         };
  
@@ -145,21 +172,29 @@ export default function AfricaMapSVG({ onCountryClick = null, interactive = fals
     });
     if (interactive) {
       const country = awpiiData.find(c => c.key === key);
+      
       let tooltipContent = `<div style="font-size:12px; padding:6px 10px; line-height:1.4;">`;
-      if (country) {
-        const c = country.content[language] || country.content.en;
-        tooltipContent += `
-          <div style="font-weight:700; font-size:13px; margin-bottom:2px; display:flex; align-items:center; gap:6px;">
-            <span>${country.flag}</span> <span>${c.name}</span>
-          </div>
-          <div style="color:rgba(255,255,255,0.85); font-weight:600;">
-            ${language === "fr" ? "Score" : "Score"}: <span style="color:#ca8a04;">${country.overall_score}</span> | ${language === "fr" ? "Note" : "Grade"}: <span style="color:#ca8a04;">${country.grade}</span>
-          </div>
-          <div style="color:rgba(255,255,255,0.6); font-size:11px; margin-top:3px; max-width:180px; font-style:italic;">
-            ${c.key_update}
-          </div>
-        `;
-      } else {
+     if (country) {
+  const c = country.content[language] || country.content.en;
+  console.log("flag:", country?.flag, "c.flag:", c?.flag);
+
+  // ✅ use country.flag (top-level) not c.flag (inside content)
+  tooltipContent += `
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;display:flex;align-items:center;">
+      ${flagImg(country.flag)}
+      <span>${c.name}</span>
+    </div>
+    <div style="color:rgba(255,255,255,0.85);font-weight:600;">
+      ${language === "fr" ? "Score" : "Score"}: <span style="color:#ca8a04;">${country.overall_score}</span>
+      &nbsp;|&nbsp;
+      ${language === "fr" ? "Note" : "Grade"}: <span style="color:#ca8a04;">${country.grade}</span>
+    </div>
+    <div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:3px;max-width:180px;font-style:italic;">
+      ${c.key_update}
+    </div>
+  `;
+}
+      else {
         const name = feature.properties?.name || feature.properties?.NAME || key;
         tooltipContent += `
           <div style="font-weight:700;">${name}</div>

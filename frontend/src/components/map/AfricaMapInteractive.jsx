@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import AfricaMapSVG from "./AfricaMapSVG";
 import { COUNTRY_DATA, STATUS_COLORS, STATUS, STATUS_LABELS, getAllCountries } from "../../data/countryData";
 import { useLanguage } from "../../lib/LanguageContext";
+import CountryFlag from "../CountryFlag";
 
 function ScoreBar({ label, value }) {
   return (
@@ -141,7 +142,7 @@ function CountryModal({ name, onClose, language }) {
         <div className="px-7 py-5 flex items-start justify-between" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
           <div>
             <div className="flex items-center gap-2.5 mb-2">
-              {data?.flag && <span className="text-[1.5rem]">{data.flag}</span>}
+              {data?.flag && <CountryFlag emoji={data.flag} size={20} />}
               <h3 className="text-[1.25rem] font-bold" style={{ color: "#0B1437" }}>{displayName}</h3>
             </div>
             <StatusBadge status={data ? data.status : STATUS.UNDEFINED} language={language} />

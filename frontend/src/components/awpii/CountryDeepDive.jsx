@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import {
@@ -6,6 +5,7 @@ import {
   PolarAngleAxis, PolarRadiusAxis, Radar
 } from "recharts";
 import { COUNTRY_DATA } from "../../data/countryData";
+import CountryFlag from "../CountryFlag";
 
 const getGradeBadgeClass = (grade) => {
   if (grade.includes("AA")) return "bg-[#14532d] text-white";
@@ -38,7 +38,7 @@ export default function CountryDeepDive({ selectedCountry, language }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 dark:border-slate-800 pb-5 mb-5 gap-4">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{selectedCountry.flag}</span>
+          <CountryFlag emoji={selectedCountry.flag} size={20} />
           <div>
             <h3 className="font-bold text-secondary text-2xl tracking-tight leading-none mb-1.5">{selectedCountry.content[language].name}</h3>
             <div className="flex items-center gap-2">
