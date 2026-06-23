@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Playfair Display', serif;
+
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(220 20% 12%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(220 20% 12%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(220 20% 12%);
+  --color-primary: hsl(42 85% 45%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(226 67% 14%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+  --color-muted: hsl(220 14% 96%);
+  --color-muted-foreground: hsl(220 10% 46%);
+  --color-accent: hsl(40 78% 44%);
+  --color-accent-foreground: hsl(0 0% 100%);
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  --color-border: hsl(220 13% 91%);
+  --color-input: hsl(220 13% 91%);
+  --color-ring: hsl(224 82% 27%);
+
+  --color-chart-1: hsl(224 82% 27%);
+  --color-chart-2: hsl(147 59% 30%);
+  --color-chart-3: hsl(40 78% 44%);
+  --color-chart-4: hsl(220 14% 46%);
+  --color-chart-5: hsl(220 20% 12%);
+
+  --color-sidebar-background: hsl(0 0% 98%);
+  --color-sidebar-foreground: hsl(240 5.3% 26.1%);
+  --color-sidebar-primary: hsl(224 82% 27%);
+  --color-sidebar-primary-foreground: hsl(0 0% 98%);
+  --color-sidebar-accent: hsl(240 4.8% 95.9%);
+  --color-sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --color-sidebar-border: hsl(220 13% 91%);
+  --color-sidebar-ring: hsl(224 82% 27%);
+
+  --radius: 0.5rem;
+}
+
+.dark {
+  --color-background: hsl(220 20% 6%);
+  --color-foreground: hsl(0 0% 95%);
+  --color-card: hsl(220 20% 8%);
+  --color-card-foreground: hsl(0 0% 95%);
+  --color-popover: hsl(220 20% 8%);
+  --color-popover-foreground: hsl(0 0% 95%);
+  --color-primary: hsl(147 59% 35%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(224 70% 40%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+  --color-muted: hsl(220 14% 14%);
+  --color-muted-foreground: hsl(220 10% 60%);
+  --color-accent: hsl(40 78% 50%);
+  --color-accent-foreground: hsl(0 0% 100%);
+  --color-destructive: hsl(0 62.8% 30.6%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  --color-border: hsl(220 14% 18%);
+  --color-input: hsl(220 14% 18%);
+  --color-ring: hsl(224 70% 40%);
+
+  --color-chart-1: hsl(224 70% 50%);
+  --color-chart-2: hsl(147 59% 40%);
+  --color-chart-3: hsl(40 78% 55%);
+  --color-chart-4: hsl(220 14% 55%);
+  --color-chart-5: hsl(0 0% 80%);
+
+  --color-sidebar-background: hsl(220 20% 8%);
+  --color-sidebar-foreground: hsl(0 0% 95%);
+  --color-sidebar-primary: hsl(224 70% 45%);
+  --color-sidebar-primary-foreground: hsl(0 0% 100%);
+  --color-sidebar-accent: hsl(220 14% 14%);
+  --color-sidebar-accent-foreground: hsl(0 0% 95%);
+  --color-sidebar-border: hsl(220 14% 18%);
+  --color-sidebar-ring: hsl(224 70% 45%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+  {/* Add custom animation keyframes in your global CSS */}
+  
+   @keyframes shine {
+      0% {
+        transform: translateX(-100%) skewX(-12deg);
+      }
+      100% {
+        transform: translateX(200%) skewX(-12deg);
+      }
+    }
+    
+    .group-hover\:animate-shine {
+      animation: shine 0.8s ease-out forwards;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+    
+    .transition-all {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .duration-400 {
+      transition-duration: 400ms;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+        ::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+          background: rgba(31, 41, 55, 0.5);
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(59, 130, 246, 0.5);
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgba(59, 130, 246, 0.8);
+        }
+  
