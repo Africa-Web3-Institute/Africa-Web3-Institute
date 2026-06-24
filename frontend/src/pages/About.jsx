@@ -95,6 +95,12 @@ const ADVISORY_BOARD = [
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/23e1e2951_image_20260608_165401b9457012-8de9-4030-bb7d-ce54f57f0f0b-7.jpg",
     linkedin: "https://linkedin.com/in/prof-dr-h-c-joerg-m-268882132",
   },
+  {
+    name: "Daniil Kozin",
+    country: "🇧🇷 Brazil",
+    photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/d3c29c585_WhatsAppImage2026-06-24at102503AM.jpeg",
+    linkedin: "https://www.linkedin.com/in/daniilkozin",
+  },
 ];
 
 const PARTNERS = [
