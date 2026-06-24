@@ -34,7 +34,7 @@ import Articles from "./admin/pages/Articles";
 import Reports from "./admin/pages/Reports";
 import Events from "./admin/pages/Events";
 import Analytics from "./admin/pages/Analytics"
-import AdminLayout from "./admin/layouts/AdminLayout";
+// import AdminLayout from "./admin/layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
