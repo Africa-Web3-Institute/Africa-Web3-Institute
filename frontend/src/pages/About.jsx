@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import {Globe, BookOpen, GraduationCap, Mail } from "lucide-react";
 import {FaLinkedin as Linkedin,FaTwitter as Twitter} from "react-icons/fa"
 import AdvisoryBoardCard from "../components/about/AdvisoryBoardCard";
+import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg"
+import KateAcH from "../assets/Kate_operations-lead.png"
+
 
 const CORE_TEAM = [
   {
@@ -43,7 +46,7 @@ const CORE_TEAM = [
     name: "Kate Acheampong",
     role: "Operations Lead",
     country: "🇬🇭 Ghana",
-    photo: "/Kate_operations-lead.png",
+    photo: KateAcH,
     linkedin: "https://linkedin.com/in/kate-acheampong-b289a8419",
     twitter: "",
   },
@@ -112,7 +115,7 @@ const ADVISORY_BOARD = [
  {
   name: "Dr Raj Kapoor",
   country: "🇮🇳 India",
-  photo: "../assets/Dr_Raj_Kapoor.jpeg",
+  photo: drRajKapoor,
   linkedin: "https://www.linkedin.com/in/indieblock",
 },
 ];
