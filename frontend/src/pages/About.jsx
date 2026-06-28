@@ -39,9 +39,17 @@ const CORE_TEAM = [
     linkedin: "https://linkedin.com/in/osseyjc",
     twitter: "https://x.com/osseyjc",
   },
+    {
+    name: "Kate Acheampong",
+    role: "Operations Lead",
+    country: "🇬🇭 Ghana",
+    photo: "/Kate_operations-lead.png",
+    linkedin: "https://linkedin.com/in/kate-acheampong-b289a8419",
+    twitter: "",
+  },
   {
     name: "Gloria Achieng",
-    role: "Operations Lead",
+    role: "Head of Education",
     country: "🇺🇬 Uganda",
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/fbf4dc09c_ChatGPTImageMay25202611_07_17AM.png",
     linkedin: "https://linkedin.com/in/gloria-achieng-74388b108",
@@ -101,6 +109,12 @@ const ADVISORY_BOARD = [
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/d3c29c585_WhatsAppImage2026-06-24at102503AM.jpeg",
     linkedin: "https://www.linkedin.com/in/daniilkozin",
   },
+ {
+  name: "Dr Raj Kapoor",
+  country: "🇮🇳 India",
+  photo: "../assets/Dr_Raj_Kapoor.jpeg",
+  linkedin: "https://www.linkedin.com/in/indieblock",
+},
 ];
 
 const PARTNERS = [
