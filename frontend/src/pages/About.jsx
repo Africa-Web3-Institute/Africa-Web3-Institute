@@ -372,7 +372,7 @@ export default function About() {
           <div className="mb-20">
             <h3 className="text-xl font-bold text-secondary mb-3 text-center">{T.advisoryTitle}</h3>
             <p className="text-muted-foreground max-w-xl mx-auto text-center mb-10">{T.advisoryText}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
               {ADVISORY_BOARD.map((member) => (
                 <AdvisoryBoardCard key={member.name} member={member} />
               ))}
