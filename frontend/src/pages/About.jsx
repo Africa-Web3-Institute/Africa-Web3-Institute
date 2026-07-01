@@ -7,6 +7,7 @@ import {FaLinkedin as Linkedin,FaTwitter as Twitter} from "react-icons/fa"
 import AdvisoryBoardCard from "../components/about/AdvisoryBoardCard";
 import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg"
 import KateAcH from "../assets/Kate_operations-lead.png"
+import DrTammy from "../assets/Dr_Tammy_Francis.jpeg"
 
 
 const CORE_TEAM = [
@@ -118,6 +119,12 @@ const ADVISORY_BOARD = [
   photo: drRajKapoor,
   linkedin: "https://www.linkedin.com/in/indieblock",
 },
+ {
+    name: "Dr Tammy Francis",
+    country: "",
+    photo: DrTammy,
+    linkedin: "https://linkedin.com/in/drtammyfrancis",
+  },
 ];
 
 const PARTNERS = [
@@ -159,7 +166,7 @@ function TeamCard({ member }) {
         boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.08)" : "none",
       }}
     >
-      <div className="w-20 h-20 rounded-full overflow-hidden mb-4 flex-shrink-0 flex items-center justify-center"
+      <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0 flex items-center justify-center"
         style={{ border: "2px solid #D4A017", backgroundColor: member.photo ? "transparent" : "#0B1437" }}>
         {member.photo ? (
           <img src={member.photo} alt={`${member.name} — ${member.role} at Africa Web3 Institute`}
@@ -264,7 +271,7 @@ export default function About() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] overflow-hidden" style={{ border: "1px solid hsl(var(--border))" }}>
+              <div className="aspect-4/3 overflow-hidden" style={{ border: "1px solid hsl(var(--border))" }}>
                 <img
                   src="https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png"
                   alt="Africa Web3 Institute team working on policy research"
@@ -402,15 +409,15 @@ export default function About() {
                 href={partner.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="aspect-[3/2] flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
+                className="aspect-3/2 flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
                 onMouseEnter={e => e.currentTarget.style.borderColor = "#D4A017"}
                 onMouseLeave={e => e.currentTarget.style.borderColor = ""}
               >
                 <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
               </a>
             ))}
-            {Array(6 - PARTNERS.length).fill(null).map((_, i) => (
-              <div key={`empty-${i}`} className="aspect-[3/2] flex items-center justify-center bg-white border border-border">
+            {new Array(6 - PARTNERS.length).fill(null).map((_, i) => (
+              <div key={`empty-${i}`} className="aspect-3/2 flex items-center justify-center bg-white border border-border">
                 <p className="text-[0.75rem] text-muted-foreground/50 text-center px-2">Partner Logo</p>
               </div>
             ))}
