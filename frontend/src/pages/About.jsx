@@ -25,7 +25,7 @@ const CORE_TEAM = [
   },
   {
     name: "Carlos Juan",
-    role: "CFO",
+    role: "CTO",
     country: "🇦🇷 Argentina",
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/d9d834cfa_CarlosJuan.png",
     linkedin: "linkedin.com/in/carlosjuana",
