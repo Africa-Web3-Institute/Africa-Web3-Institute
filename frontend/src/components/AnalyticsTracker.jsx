@@ -1,7 +1,7 @@
 // src/components/Analytics.jsx
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { trackPageView, startHeartbeat } from "../lib/analytics";
+import { trackPageView, startHeartbeat } from "../lib/telemetry";
 
 export default function AnalyticsTracker() {
   const location = useLocation();
