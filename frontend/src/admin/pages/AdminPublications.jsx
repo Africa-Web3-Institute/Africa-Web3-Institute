@@ -1,11 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Plus, Search, Edit2, Trash2,
   Download, Eye, X, ChevronDown, FileText,
   BookOpen, BarChart2, TrendingUp, Calendar,
 } from "lucide-react";
 
-// Removed mock data array
+// ─── Mock data — replace with API calls later ──────────────────────────────
+const MOCK_PUBLICATIONS = [
+  { id: 1, title: "State of Web3 Africa 2026 — Q1 Report", category: "State of Web3 Africa", status: "Published", date: "March 2026", author: "AWI Research Team", available: true, downloads: 487 },
+  { id: 2, title: "State of Web3 Africa 2025 — Annual Report", category: "State of Web3 Africa", status: "Published", date: "December 2025", author: "AWI Research Team", available: true, downloads: 1240 },
+  { id: 3, title: "State of Web3 Africa 2026 — Q2 Report", category: "State of Web3 Africa", status: "Draft", date: "June 2026", author: "AWI Research Team", available: false, downloads: 0 },
+  { id: 4, title: "African Stablecoin Adoption Report — May 2026", category: "Monthly Stablecoin Report", status: "Draft", date: "May 2026", author: "AWI Research Team", available: false, downloads: 0 },
+  { id: 5, title: "African Stablecoin Adoption Report — March 2026", category: "Monthly Stablecoin Report", status: "Published", date: "March 2026", author: "AWI Research Team", available: true, downloads: 312 },
+  { id: 6, title: "VASP Licensing Frameworks in Anglophone Africa", category: "Policy Brief", status: "Review", date: "April 2026", author: "AWI Policy Team", available: false, downloads: 0 },
+  { id: 7, title: "Stablecoin Regulation in Francophone Africa", category: "Policy Brief", status: "Review", date: "March 2026", author: "AWI Policy Team", available: false, downloads: 0 },
+  { id: 8, title: "CBDCs and Financial Inclusion in Sub-Saharan Africa", category: "Policy Brief", status: "Published", date: "February 2026", author: "AWI Policy Team", available: true, downloads: 198 },
+  { id: 9, title: "Why Africa Needs Its Own Web3 Policy Framework", category: "Published Articles", status: "Published", date: "April 2026", author: "AWI Executive Director", available: true, downloads: 0 },
+  { id: 10, title: "Africa Web3 Policy & Innovation Index (AWPII) 2025", category: "Published Research", status: "Published", date: "December 2025", author: "AWI Research Team", available: true, downloads: 876 },
+];
 
 const CATEGORIES = [
   "All Categories",
@@ -265,34 +277,12 @@ function DeleteConfirm({ publication, onClose, onConfirm }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function AdminPublications() {
-  const [publications, setPublications] = useState([]);
+  const [publications, setPublications] = useState(MOCK_PUBLICATIONS);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [modal, setModal] = useState(null); // null | { mode: "add"|"edit", data?: pub }
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const API_URL = import.meta.env.VITE_ANALYTICS_URL || 'http://localhost:3001';
-  const token = localStorage.getItem("awi_admin_token");
-
-  useEffect(() => {
-    fetchPublications();
-  }, []);
-
-  const fetchPublications = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/publications`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const json = await res.json();
-      if (res.ok) setPublications(json.data || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Filter
   const filtered = publications.filter(p => {
@@ -310,46 +300,22 @@ export default function AdminPublications() {
   const inReview = publications.filter(p => p.status === "Review").length;
   const totalDownloads = publications.reduce((sum, p) => sum + p.downloads, 0);
 
-  const handleSave = async (pub) => {
-    try {
-      const isEdit = !!pub.id;
-      const method = isEdit ? "PUT" : "POST";
-      const url = isEdit ? `${API_URL}/api/publications/${pub.id}` : `${API_URL}/api/publications`;
-      
-      const res = await fetch(url, {
-        method,
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(pub)
-      });
-      
-      if (res.ok) {
-        fetchPublications();
-        setModal(null);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleSave = (pub) => {
+    // TODO: replace with API call
+    // await fetch("/api/publications", { method: pub.id ? "PUT" : "POST", body: JSON.stringify(pub) })
+    setPublications(prev =>
+      pub.id && prev.find(p => p.id === pub.id)
+        ? prev.map(p => p.id === pub.id ? pub : p)
+        : [...prev, { ...pub, id: Date.now(), downloads: 0 }]
+    );
+    setModal(null);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`${API_URL}/api/publications/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      if (res.ok) {
-        setPublications(prev => prev.filter(p => p.id !== id));
-        setDeleteTarget(null);
-      } else {
-        alert("Failed to delete publication. Only superadmins can delete.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDelete = (id) => {
+    // TODO: replace with API call
+    // await fetch(`/api/publications/${id}`, { method: "DELETE" })
+    setPublications(prev => prev.filter(p => p.id !== id));
+    setDeleteTarget(null);
   };
 
   return (

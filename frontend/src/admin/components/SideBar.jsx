@@ -27,7 +27,10 @@ const NAV_SECTIONS = [
   {
     label: "Content",
     items: [
-      { label: "Publications", href: "/admin/adminpublications", icon: BookOpen }
+      { label: "Publications", href: "/admin/adminpublications", icon: BookOpen },
+      { label: "Articles", href: "/admin/articles", icon: FileText },
+      { label: "Reports", href: "/admin/reports", icon: BarChart2 },
+      { label: "Events", href: "/admin/events", icon: Calendar },
     ],
   },
   {
