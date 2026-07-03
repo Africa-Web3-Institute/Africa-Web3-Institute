@@ -10,7 +10,7 @@ const PAGE_TITLES = {
   "/admin/reports": "Reports",
   "/admin/events": "Events",
   "/admin/awpii": "AWPII Data",
-  "/admin/tracker": "Regulatory Tracker",
+  "/admin/analytics": "Regulatory Tracker",
   "/admin/enforcement": "Enforcement Watch",
   "/admin/users": "User Management",
   "/admin/settings": "Settings",
@@ -23,7 +23,7 @@ const PAGE_ICONS = {
   "/admin/reports": "📈",
   "/admin/events": "📅",
   "/admin/awpii": "📊",
-  "/admin/tracker": "📍",
+  "/admin/analytics": "📍",
   "/admin/enforcement": "⚖️",
   "/admin/users": "👥",
   "/admin/settings": "⚙️",
@@ -62,7 +62,7 @@ export default function AdminApp() {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-900">
       {/* Animated background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 opacity-50 -z-10"></div>
+      <div className="fixed inset-0 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 opacity-50 -z-10"></div>
       
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       

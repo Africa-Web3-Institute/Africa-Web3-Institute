@@ -5,6 +5,11 @@ import { Link } from "react-router-dom";
 import {Globe, BookOpen, GraduationCap, Mail } from "lucide-react";
 import {FaLinkedin as Linkedin,FaTwitter as Twitter} from "react-icons/fa"
 import AdvisoryBoardCard from "../components/about/AdvisoryBoardCard";
+import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg"
+import KateAcH from "../assets/Kate_operations-lead.png"
+import DrTammy from "../assets/Dr_Tammy_Francis.jpeg"
+import Aerochain from "../assets/aerochain_logo.png"
+
 
 const CORE_TEAM = [
   {
@@ -39,9 +44,17 @@ const CORE_TEAM = [
     linkedin: "https://linkedin.com/in/osseyjc",
     twitter: "https://x.com/osseyjc",
   },
+    {
+    name: "Kate Acheampong",
+    role: "Operations Lead",
+    country: "🇬🇭 Ghana",
+    photo: KateAcH,
+    linkedin: "https://linkedin.com/in/kate-acheampong-b289a8419",
+    twitter: "",
+  },
   {
     name: "Gloria Achieng",
-    role: "Operations Lead",
+    role: "Head of Education",
     country: "🇺🇬 Uganda",
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/fbf4dc09c_ChatGPTImageMay25202611_07_17AM.png",
     linkedin: "https://linkedin.com/in/gloria-achieng-74388b108",
@@ -101,6 +114,18 @@ const ADVISORY_BOARD = [
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/d3c29c585_WhatsAppImage2026-06-24at102503AM.jpeg",
     linkedin: "https://www.linkedin.com/in/daniilkozin",
   },
+ {
+  name: "Dr Raj Kapoor",
+  country: "🇮🇳 India",
+  photo: drRajKapoor,
+  linkedin: "https://www.linkedin.com/in/indieblock",
+},
+ {
+    name: "Dr Tammy Francis",
+    country: "USA United States of America",
+    photo: DrTammy,
+    linkedin: "https://linkedin.com/in/drtammyfrancis",
+  },
 ];
 
 const PARTNERS = [
@@ -118,6 +143,11 @@ const PARTNERS = [
     name: "Almstins",
     logo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/0e14ec7cc_IMG_20260610_145916_072.jpg",
     url: "https://almstins.com/login"
+  },
+    {
+    name: "aerochainafrica",
+    logo: Aerochain,
+    url: "https://aerochainafrica.com"
   }
 ];
 
@@ -142,7 +172,7 @@ function TeamCard({ member }) {
         boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.08)" : "none",
       }}
     >
-      <div className="w-20 h-20 rounded-full overflow-hidden mb-4 flex-shrink-0 flex items-center justify-center"
+      <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0 flex items-center justify-center"
         style={{ border: "2px solid #D4A017", backgroundColor: member.photo ? "transparent" : "#0B1437" }}>
         {member.photo ? (
           <img src={member.photo} alt={`${member.name} — ${member.role} at Africa Web3 Institute`}
@@ -247,7 +277,7 @@ export default function About() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] overflow-hidden" style={{ border: "1px solid hsl(var(--border))" }}>
+              <div className="aspect-4/3 overflow-hidden" style={{ border: "1px solid hsl(var(--border))" }}>
                 <img
                   src="https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png"
                   alt="Africa Web3 Institute team working on policy research"
@@ -348,7 +378,7 @@ export default function About() {
           <div className="mb-20">
             <h3 className="text-xl font-bold text-secondary mb-3 text-center">{T.advisoryTitle}</h3>
             <p className="text-muted-foreground max-w-xl mx-auto text-center mb-10">{T.advisoryText}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
               {ADVISORY_BOARD.map((member) => (
                 <AdvisoryBoardCard key={member.name} member={member} />
               ))}
@@ -385,15 +415,15 @@ export default function About() {
                 href={partner.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="aspect-[3/2] flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
+                className="aspect-3/2 flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
                 onMouseEnter={e => e.currentTarget.style.borderColor = "#D4A017"}
                 onMouseLeave={e => e.currentTarget.style.borderColor = ""}
               >
                 <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
               </a>
             ))}
-            {Array(6 - PARTNERS.length).fill(null).map((_, i) => (
-              <div key={`empty-${i}`} className="aspect-[3/2] flex items-center justify-center bg-white border border-border">
+            {new Array(6 - PARTNERS.length).fill(null).map((_, i) => (
+              <div key={`empty-${i}`} className="aspect-3/2 flex items-center justify-center bg-white border border-border">
                 <p className="text-[0.75rem] text-muted-foreground/50 text-center px-2">Partner Logo</p>
               </div>
             ))}

@@ -13,7 +13,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
+
 } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
 
@@ -37,7 +37,7 @@ const NAV_SECTIONS = [
     label: "Intelligence",
     items: [
       { label: "AWPII Data", href: "/admin/awpii", icon: Map },
-      { label: "Regulatory Tracker", href: "/admin/tracker", icon: BarChart2 },
+      { label: "Regulatory Tracker", href: "/admin/analytics", icon: BarChart2 },
       { label: "Enforcement Watch", href: "/admin/enforcement", icon: ShieldAlert },
     ],
   },
@@ -73,7 +73,7 @@ function NavItem({ item, collapsed }) {
               isActive ? "bg-yellow-400 opacity-100" : "opacity-0"
             }`}
           />
-          <Icon className="w-[18px] h-[18px] flex-shrink-0" strokeWidth={2} />
+          <Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={2} />
           {!collapsed && <span className="truncate">{item.label}</span>}
 
           {/* Tooltip when collapsed */}
@@ -105,7 +105,7 @@ export default function SideBar({ collapsed, setCollapsed }) {
       }`}
     >
       {/* Logo / Brand */}
-      <div className={`flex items-center gap-2.5 h-16 px-4 border-b border-gray-800 flex-shrink-0 ${collapsed ? "justify-center px-0" : ""}`}>
+      <div className={`flex items-center gap-2.5 h-16 px-4 border-b border-gray-800 shrink-0 ${collapsed ? "justify-center px-0" : ""}`}>
         <div className="w-8 h-8 rounded-lg bg-yellow-500 flex items-center justify-center text-gray-900 font-extrabold text-xs flex-shrink-0">
           AW
         </div>
