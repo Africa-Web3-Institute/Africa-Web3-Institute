@@ -8,6 +8,7 @@ import AdvisoryBoardCard from "../components/about/AdvisoryBoardCard";
 import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg"
 import KateAcH from "../assets/Kate_operations-lead.png"
 import DrTammy from "../assets/Dr_Tammy_Francis.jpeg"
+import Aerochain from "../assets/aerochainafrica.png"
 
 
 const CORE_TEAM = [
@@ -121,7 +122,7 @@ const ADVISORY_BOARD = [
 },
  {
     name: "Dr Tammy Francis",
-    country: "",
+    country: "USA United States of America",
     photo: DrTammy,
     linkedin: "https://linkedin.com/in/drtammyfrancis",
   },
@@ -142,6 +143,11 @@ const PARTNERS = [
     name: "Almstins",
     logo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/0e14ec7cc_IMG_20260610_145916_072.jpg",
     url: "https://almstins.com/login"
+  },
+    {
+    name: "aerochainafrica",
+    logo: Aerochain,
+    url: "https://aerochainafrica.com"
   }
 ];
 
