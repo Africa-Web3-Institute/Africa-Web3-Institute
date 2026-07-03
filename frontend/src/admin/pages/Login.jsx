@@ -21,35 +21,24 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // TODO: replace with real API call
-      // const res = await fetch("/api/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, password }),
-      //   credentials: "include",
-      // });
-      // if (!res.ok) throw new Error("Invalid credentials");
-      // const data = await res.json();
-      // login(data.user);
-
-      // Mock login — remove when backend is ready
-      await new Promise(r => setTimeout(r, 800));
-
-      if (
-        email === "admin@africaweb3institute.org" &&
-        password === "admin123"
-      ) {
-        login({
-          id: 1,
-          name: "Admin User",
-          email,
-          role: "admin",
-          avatar: null,
-        });
-        navigate("/admin");
-      } else {
-        setError("Invalid email or password. Please try again.");
+      const BASE_URL = import.meta.env.VITE_ANALYTICS_URL || 'http://localhost:3001';
+      const res = await fetch(`${BASE_URL}/api/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid credentials");
       }
+      
+      // Store token and user in local storage
+      localStorage.setItem("awi_admin_token", data.token);
+      login(data.user);
+      navigate("/admin");
+
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {

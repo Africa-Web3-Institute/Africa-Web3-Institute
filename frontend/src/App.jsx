@@ -30,10 +30,12 @@ import StablecoinTracker from './pages/StablecoinTracker';
 import Login from "./admin/pages/Login";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminPublications from "./admin/pages/AdminPublications";
-import Articles from "./admin/pages/Articles";
-import Reports from "./admin/pages/Reports";
-import Events from "./admin/pages/Events";
-import Analytics from "./admin/pages/Analytics"
+import AdminAWPII from "./admin/pages/AdminAWPII";
+import AdminTracker from "./admin/pages/AdminTracker";
+import AdminEnforcement from "./admin/pages/AdminEnforcement";
+import Users from "./admin/pages/Users";
+import Settings from "./admin/pages/Settings";
+import Analytics from "./admin/pages/Analytics";
 import AdminLayout from "./admin/Layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -106,10 +108,12 @@ return (
   <Route element={<AdminLayout />}>
     <Route index element={<AdminDashboard />} />
     <Route path="adminpublications" element={<AdminPublications />} />
-    <Route path="articles" element={<Articles/>}/>
-    <Route path="reports" element={<Reports/>}/>
-    <Route path="events" element={<Events/>}/>
-     <Route path="analytics" element={<Analytics />} />
+    <Route path="awpii" element={<AdminAWPII />} />
+    <Route path="tracker" element={<AdminTracker />} />
+    <Route path="enforcement" element={<AdminEnforcement />} />
+    <Route path="users" element={<Users />} />
+    <Route path="settings" element={<Settings />} />
+    <Route path="analytics" element={<Analytics />} />
   </Route>
 </Route>
 </Routes>
