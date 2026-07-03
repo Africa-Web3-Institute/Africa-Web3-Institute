@@ -8,7 +8,7 @@ import AdvisoryBoardCard from "../components/about/AdvisoryBoardCard";
 import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg"
 import KateAcH from "../assets/Kate_operations-lead.png"
 import DrTammy from "../assets/Dr_Tammy_Francis.jpeg"
-import Aerochain from "../assets/aerochainafrica.png"
+import Aerochain from "../assets/aerochain_logo.png"
 
 
 const CORE_TEAM = [
