@@ -37,7 +37,7 @@ export default function Login() {
 
       if (
         email === "admin@africaweb3institute.org" &&
-        password === "admin123"
+        password === "admin"
       ) {
         login({
           id: 1,
