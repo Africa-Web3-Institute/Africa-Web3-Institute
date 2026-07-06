@@ -143,7 +143,7 @@ export default function AdminDashboard() {
           </p>
 
           <h2 className="text-white text-xl font-bold">
-            Welcome back 👋
+            Welcome back!
           </h2>
 
           <p className="text-gray-400 text-sm mt-1">
