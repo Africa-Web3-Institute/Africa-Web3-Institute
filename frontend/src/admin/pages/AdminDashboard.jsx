@@ -276,13 +276,6 @@ export default function AdminDashboard() {
             <h3 className="text-white text-sm font-semibold">
               Recent Activity
             </h3>
-
-            <button
-              className="text-xs"
-              style={{ color: "#D4A017" }}
-            >
-              View all
-            </button>
           </div>
 
           <div className="space-y-3">

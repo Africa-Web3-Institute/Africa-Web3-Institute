@@ -24,6 +24,10 @@ import ScrollToHash from './components/ScrollToHash';
 import IndabaSeries from './pages/IndabaSeries';
 import { useTracker } from './hooks/useTracker';
 import StablecoinTracker from './pages/StablecoinTracker';
+import Intelligence from './pages/Intelligence';
+import ProgramsEvents from './pages/ProgramsEvents';
+import Contact from './pages/Contact';
+import EventsPage from './pages/EventsPage';
 
 
 // Admin
@@ -86,9 +90,13 @@ return (
       <Route path="/enforcement-watch" element={<EnforcementWatch />} />
       <Route path="/capacity-building" element={<CapacityBuilding />} />
       <Route path="/stablecoin-tracker" element={<StablecoinTracker />} />
-     
+
       <Route path="/indaba-series" element={<IndabaSeries />} />
-    
+      <Route path="/intelligence" element={<Intelligence />} />
+      <Route path="/programs-events" element={<ProgramsEvents />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/events" element={<EventsPage />} />
+
     </Route>
 
     {/* =========================

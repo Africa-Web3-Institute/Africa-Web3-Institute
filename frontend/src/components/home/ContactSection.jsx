@@ -2,6 +2,7 @@ import { useState } from "react";
 import { base44 } from "../../api/base44Client";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
+import Reveal from "../common/Reveal";
 
 export default function ContactSection() {
   const { language } = useLanguage();
@@ -40,7 +41,7 @@ const handleSubmit = async (e) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
 
           {/* Left */}
-          <div>
+          <Reveal as="div">
             <p className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase mb-4" style={{ color: "#D4A017" }}>{T.eyebrow}</p>
             <h2 className="font-display text-[2rem] lg:text-[2.5rem] font-bold text-secondary leading-snug mb-6">{T.heading}</h2>
             <p className="text-[1rem] text-muted-foreground leading-[1.85]">{T.body}</p>
@@ -55,10 +56,10 @@ const handleSubmit = async (e) => {
                 info@africaweb3institute.org
               </a>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right */}
-          <div>
+          <Reveal as="div" delay={0.1}>
             {submitted ? (
               <div className="border border-border p-10 flex flex-col items-start justify-center h-full">
                 <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-3">
@@ -125,7 +126,7 @@ const handleSubmit = async (e) => {
                 </div>
               </form>
             )}
-          </div>
+          </Reveal>
 
         </div>
       </div>

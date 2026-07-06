@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "../../lib/LanguageContext";
+import { useReveal } from "../../hooks/useReveal";
 
 function useCountUp(target, duration = 1800, start = false) {
   const [count, setCount] = useState(0);
@@ -30,10 +31,18 @@ const STATS_FR = [
   { value: 12, label: "Gouvernements partenaires", suffix: "" },
 ];
 
-function StatCard({ value, label, suffix, started }) {
+function StatCard({ value, label, suffix, started, visible, delay }) {
   const num = useCountUp(value, 1800, started);
   return (
-    <div className="rounded-xl text-center py-4 px-3" style={{ backgroundColor: "#F7F8FA" }}>
+    <div
+      className="rounded-xl text-center py-4 px-3"
+      style={{
+        backgroundColor: "#F7F8FA",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
+      }}
+    >
       <p className="text-[1.625rem] font-semibold leading-none mb-1" style={{ color: "#D4A017" }}>
         {num}{suffix}
       </p>
@@ -45,23 +54,13 @@ function StatCard({ value, label, suffix, started }) {
 export default function StatsBar() {
   const { language } = useLanguage();
   const stats = language === "fr" ? STATS_FR : STATS_EN;
-  const [started, setStarted] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStarted(true); },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, visible] = useReveal(0.3);
 
   return (
     <div ref={ref} className="py-6 px-6 lg:px-8 border-b border-border bg-white">
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {stats.map((s) => (
-          <StatCard key={s.label} {...s} started={started} />
+        {stats.map((s, i) => (
+          <StatCard key={s.label} {...s} started={visible} visible={visible} delay={i * 0.08} />
         ))}
       </div>
     </div>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   FaFacebook as Facebook,
   FaLinkedin as Linkedin,
-  FaTwitter as Twitter,
+  FaXTwitter as XTwitter,
 } from "react-icons/fa6";
 
 import { useLanguage } from "../../lib/LanguageContext";
@@ -12,96 +12,81 @@ export default function Footer() {
   const { language } = useLanguage();
   const T = t[language].footer;
 
-  // detect hash links safely
+  const renderLinks = (section) => (
+    <div>
+      <h4 className="text-xs font-bold tracking-[0.2em] uppercase mb-5" style={{ color: "#D4A017" }}>
+        {section.title}
+      </h4>
 
+      <ul className="space-y-3">
+        {section.links.map((link) => (
+          <li key={link.to}>
+            <Link
+              to={link.to}
+              className="text-sm transition-colors"
+              style={{ color: "#111827" }}
+              onMouseEnter={e => e.currentTarget.style.color = "#D4A017"}
+              onMouseLeave={e => e.currentTarget.style.color = "#111827"}
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
- const renderLinks = (section) => (
-  <div>
-    <h4 className="text-xs font-bold tracking-widest uppercase text-[#D4A017] mb-5">
-      {section.title}
-    </h4>
+  const socialLink = (href, label, Icon) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="w-9 h-9 flex items-center justify-center transition-colors"
+      style={{ border: "1px solid #E5E7EB", color: "#6B7280", borderRadius: 4 }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = "#E5E7EB"; e.currentTarget.style.color = "#6B7280"; }}
+    >
+      <Icon className="w-4 h-4" />
+    </a>
+  );
 
-    <ul className="space-y-3">
-      {section.links.map((link) => (
-        <li key={link.to}>
-          <Link
-            to={link.to}
-            className="text-sm text-white/40 hover:text-white transition-colors"
-          >
-            {link.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
   return (
-    <footer className="bg-[#0B1437] border-t border-[#D4A017]/20">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-10">
+    <footer style={{ backgroundColor: "#fff", borderTop: "1px solid #E5E7EB" }}>
+      <div className="max-w-[1600px] mx-auto px-6 lg:px-12 pt-16 pb-10">
 
         {/* TOP GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b" style={{ borderColor: "#E5E7EB" }}>
 
           {/* BRAND */}
-          <div>
+          <div className="lg:col-span-1">
             <Link to="/">
               <img
-                src="https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/23d3c088d_80f640b57_Logo1.png"
+                src="/awi-logo.png"
                 alt="Africa Web3 Institute logo"
-                className="h-9 mb-5"
+                className="h-20 mb-5"
               />
             </Link>
 
-            <p className="text-sm text-white/50 leading-relaxed mb-6 max-w-sm">
+            <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: "#111827" }}>
               {T.description}
             </p>
 
             <a
               href="mailto:info@africaweb3institute.org"
-              className="text-sm text-white/40 hover:text-[#D4A017] transition-colors block mb-6"
+              className="text-sm transition-colors block mb-6"
+              style={{ color: "#111827" }}
+              onMouseEnter={e => e.currentTarget.style.color = "#D4A017"}
+              onMouseLeave={e => e.currentTarget.style.color = "#111827"}
             >
               info@africaweb3institute.org
             </a>
 
             {/* SOCIALS */}
             <div className="flex gap-3">
-              <a
-                href="https://x.com/AfricaWeb3_Inst"
-                target="_blank"
-                rel="noopener noreferrer"
-                   aria-label="Africa Web3 Institute on X (Twitter)"
-                className="w-9 h-9 flex items-center justify-center rounded transition-colors"
-                style={{ border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.4)" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}>"
-              
-                <Twitter className="w-4 h-4" />
-              </a>
-
-              <a
-                href="https://www.linkedin.com/company/africa-web3-institute/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Africa Web3 Institute on LinkedIn"
-                className="w-9 h-9 flex items-center justify-center rounded transition-colors"
-                style={{ border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.4)" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}>
-              
-                <Linkedin className="w-4 h-4" />
-              </a>
-
-              <a
-                href="https://www.facebook.com/share/1GPDn5xK8G/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Africa Web3 Institute on Facebook"
-                 className="w-9 h-9 flex items-center justify-center rounded transition-colors"
-                style={{ border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.4)" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}>
-                <Facebook className="w-4 h-4" />
-              </a>
+              {socialLink("https://x.com/AfricaWeb3_Inst", "Africa Web3 Institute on X (Twitter)", XTwitter)}
+              {socialLink("https://www.linkedin.com/company/africa-web3-institute/", "Africa Web3 Institute on LinkedIn", Linkedin)}
+              {socialLink("https://www.facebook.com/share/1GPDn5xK8G/", "Africa Web3 Institute on Facebook", Facebook)}
             </div>
           </div>
 
@@ -119,11 +104,14 @@ export default function Footer() {
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
 
           <div className="text-center md:text-left">
-            <p className="text-xs text-white/30">
+            <p className="text-xs" style={{ color: "#111827" }}>
               {T.copyright}
             </p>
 
-            <span className="inline-block mt-2 text-[10px] tracking-widest uppercase px-3 py-1 border border-[#D4A017]/30 text-[#D4A017]">
+            <span
+              className="inline-block mt-2 text-[10px] font-semibold tracking-[0.2em] uppercase px-3 py-1"
+              style={{ border: "1px solid rgba(212,160,23,0.3)", color: "#D4A017" }}
+            >
               {T.badge}
             </span>
           </div>
@@ -131,14 +119,20 @@ export default function Footer() {
           <div className="flex gap-6 text-xs">
             <Link
               to="/privacy-policy"
-              className="text-white/30 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: "#111827" }}
+              onMouseEnter={e => e.currentTarget.style.color = "#D4A017"}
+              onMouseLeave={e => e.currentTarget.style.color = "#111827"}
             >
               {T.privacy}
             </Link>
 
             <Link
               to="/terms-of-use"
-              className="text-white/30 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: "#111827" }}
+              onMouseEnter={e => e.currentTarget.style.color = "#D4A017"}
+              onMouseLeave={e => e.currentTarget.style.color = "#111827"}
             >
               {T.terms}
             </Link>

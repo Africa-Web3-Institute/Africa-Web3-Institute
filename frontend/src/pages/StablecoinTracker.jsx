@@ -154,11 +154,6 @@ export default function StablecoinTracker() {
           </a>{" "}
           data. For informational purposes only — not legal or financial advice.
         </span>
-        <div className="flex gap-4">
-          {["Updates", "Contact", "Disclaimer"].map((l) => (
-            <a key={l} href="#" className="hover:text-slate-300 transition-colors">{l}</a>
-          ))}
-        </div>
       </footer>
     </div>
   );

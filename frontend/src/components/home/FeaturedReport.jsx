@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Download, BarChart2 } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
+import Reveal from "../common/Reveal";
 
 const COPY = {
   en: {
@@ -21,7 +22,7 @@ export default function FeaturedReport() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 border-b border-border bg-white">
-      <div className="rounded-xl border-2 p-6 flex items-center justify-between gap-5 flex-wrap"
+      <Reveal className="rounded-xl border-2 p-6 flex items-center justify-between gap-5 flex-wrap"
         style={{ borderColor: "#D4A017" }}>
         <div className="flex items-center gap-4">
           <div className="w-12 h-[60px] rounded-md flex flex-col items-center justify-center gap-1 shrink-0"
@@ -44,7 +45,7 @@ export default function FeaturedReport() {
         >
           <Download className="w-3.5 h-3.5" /> {C.cta}
         </Link>
-      </div>
+      </Reveal>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 import AfricaMapSVG from "./AfricaMapSVG";
 import { COUNTRY_DATA, STATUS_COLORS, STATUS, STATUS_LABELS, getAllCountries } from "../../data/countryData";
@@ -86,8 +87,8 @@ function CountryModal({ name, onClose, language }) {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <a
-          href="#"
+        <Link
+          to={`/country-tracker/${encodeURIComponent(name)}`}
           onClick={onClose}
           className="flex-1 text-center text-[0.8125rem] font-semibold px-5 py-2.5 transition-colors"
           style={{ backgroundColor: "#D4A017", color: "#fff" }}
@@ -95,7 +96,7 @@ function CountryModal({ name, onClose, language }) {
           onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
         >
           {reportButtonLabel}
-        </a>
+        </Link>
         <button
           onClick={() => scrollToSection("#rankings")}
           className="flex-1 text-[0.8125rem] font-semibold px-5 py-2.5 border transition-colors"
