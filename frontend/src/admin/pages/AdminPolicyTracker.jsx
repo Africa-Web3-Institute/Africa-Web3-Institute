@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Save, AlertCircle, RefreshCw } from "lucide-react";
-import AdminLayout from "../Layouts/AdminLayout";
 import awpiiDataFallback from "../../data/awpiiData";
 import { COUNTRIES as trackerCountriesFallback } from "../../data/trackerCountries";
 
