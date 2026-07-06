@@ -56,7 +56,7 @@ export default function Footer() {
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12 pt-16 pb-10">
 
         {/* TOP GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b" style={{ borderColor: "#E5E7EB" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12" style={{ borderBottom: "2px solid #D4A017" }}>
 
           {/* BRAND */}
           <div className="lg:col-span-1">

@@ -113,7 +113,7 @@ export default function Navbar() {
 
   const MegaMenu = ({ sections }) => (
     <div
-      className="absolute top-full right-0 mt-1.5 rounded-lg overflow-hidden"
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 rounded-lg overflow-hidden"
       style={{
         backgroundColor: "#fff",
         border: "1px solid #E5E7EB",

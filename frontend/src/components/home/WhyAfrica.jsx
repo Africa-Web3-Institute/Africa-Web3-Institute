@@ -33,22 +33,25 @@ export default function WhyAfrica() {
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
+            {/* Outer "mat" frame — creates the nested double-border look */}
             <div
-              className="relative w-full aspect-[4/3] overflow-hidden rounded-[28px] shadow-sm"
-              style={{ border: "1px solid hsl(var(--border))" }}
+              className="relative w-full aspect-[4/3] rounded-[32px] p-4"
+              style={{ backgroundColor: "#fff", border: "1px solid rgba(11,20,55,0.08)", boxShadow: "0 8px 28px rgba(11,20,55,0.08)" }}
             >
-              <motion.img
-                src="/images/moments/classroom-training.jpg"
-                alt="Africa Web3 Institute training session"
-                className="w-full h-full object-cover"
-                initial={{ scale: 1.12 }}
-                animate={inView ? { scale: 1 } : {}}
-                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(to top, rgba(11,20,55,0.32) 0%, transparent 50%)" }}
-              />
+              <div className="relative w-full h-full overflow-hidden rounded-[20px]">
+                <motion.img
+                  src="/images/hero/slide-3.jpg"
+                  alt="Africa Web3 Institute"
+                  className="w-full h-full object-cover"
+                  initial={{ scale: 1.12 }}
+                  animate={inView ? { scale: 1 } : {}}
+                  transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(11,20,55,0.32) 0%, transparent 50%)" }}
+                />
+              </div>
             </div>
 
             {/* Floating "promise" card — animates in after the image settles */}
