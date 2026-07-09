@@ -17,13 +17,11 @@ const STATS_EN = [
   { value: "18+", label: "Countries" },
   { value: "10+", label: "Policy Reports" },
   { value: "3,000+", label: "Members" },
-  { value: "12", label: "Partner Govts" },
 ];
 const STATS_FR = [
   { value: "18+", label: "Pays" },
   { value: "10+", label: "Rapports" },
   { value: "3 000+", label: "Membres" },
-  { value: "12", label: "Gouvernements" },
 ];
 
 /* ─── stagger container ──────────────────────────────────── */
@@ -245,7 +243,7 @@ export default function HeroSection() {
           }}
         >
           <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-x divide-white/10">
               {stats.map((s, i) => (
                 <motion.div
                   key={s.label}
