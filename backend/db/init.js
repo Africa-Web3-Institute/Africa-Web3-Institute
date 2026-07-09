@@ -3,6 +3,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import bcrypt from 'bcryptjs';
+import { seedDatabaseData } from './seedData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -99,6 +100,7 @@ export const initDB = async () => {
     const SQL = await initSqlJs();
     dbInstance = new SqlJsDatabase(SQL, DB_PATH);
     await initializeTables();
+    await seedDatabaseData(dbInstance);
     return dbInstance;
   } catch (err) {
     console.error("Failed to initialize WebAssembly SQLite driver:", err);

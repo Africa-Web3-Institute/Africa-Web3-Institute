@@ -104,7 +104,8 @@ export const deleteEnforcement = async (req, res) => {
 export const getAwpiiScores = async (req, res) => {
   try {
     const scores = await dbAll('SELECT * FROM awpii_scores ORDER BY country ASC');
-    res.status(200).json({ data: scores });
+    const data = scores.map(s => ({ ...s, details: s.details ? JSON.parse(s.details) : {} }));
+    res.status(200).json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -139,7 +140,8 @@ export const updateAwpiiScore = async (req, res) => {
 export const getTrackerStatus = async (req, res) => {
   try {
     const statusList = await dbAll('SELECT * FROM tracker_status ORDER BY country ASC');
-    res.status(200).json({ data: statusList });
+    const data = statusList.map(s => ({ ...s, details: s.details ? JSON.parse(s.details) : {} }));
+    res.status(200).json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

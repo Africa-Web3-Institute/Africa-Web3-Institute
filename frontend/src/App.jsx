@@ -38,6 +38,12 @@ import Articles from "./admin/pages/Articles";
 import Reports from "./admin/pages/Reports";
 import Events from "./admin/pages/Events";
 import Analytics from "./admin/pages/Analytics"
+import AdminPolicyTracker from "./admin/pages/AdminPolicyTracker";
+import AWPIIData from "./admin/pages/AWPIIData";
+import RegulatoryTracker from "./admin/pages/RegulatoryTracker";
+import AdminEnforcementWatch from "./admin/pages/EnforcementWatch";
+import Users from "./admin/pages/Users";
+import Settings from "./admin/pages/Settings";
 import AdminLayout from "./admin/Layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -117,7 +123,13 @@ return (
     <Route path="articles" element={<Articles/>}/>
     <Route path="reports" element={<Reports/>}/>
     <Route path="events" element={<Events/>}/>
-     <Route path="analytics" element={<Analytics />} />
+    <Route path="analytics" element={<Analytics />} />
+    <Route path="awpii" element={<AWPIIData />} />
+    <Route path="policy-tracker" element={<AdminPolicyTracker />} />
+    <Route path="tracker" element={<RegulatoryTracker />} />
+    <Route path="enforcement" element={<AdminEnforcementWatch />} />
+    <Route path="users" element={<Users />} />
+    <Route path="settings" element={<Settings />} />
   </Route>
 </Route>
 </Routes>

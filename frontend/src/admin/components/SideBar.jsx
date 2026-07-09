@@ -37,7 +37,8 @@ const NAV_SECTIONS = [
     label: "Intelligence",
     items: [
       { label: "AWPII Data", href: "/admin/awpii", icon: Map },
-      { label: "Regulatory Tracker", href: "/admin/analytics", icon: BarChart2 },
+      { label: "Policy Tracker", href: "/admin/policy-tracker", icon: Map },
+      { label: "Regulatory Tracker", href: "/admin/tracker", icon: BarChart2 },
       { label: "Enforcement Watch", href: "/admin/enforcement", icon: ShieldAlert },
     ],
   },
