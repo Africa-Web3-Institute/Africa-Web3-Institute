@@ -14,6 +14,7 @@ const PAGE_TITLES = {
   "/admin/enforcement": "Enforcement Watch",
   "/admin/users": "User Management",
   "/admin/settings": "Settings",
+  "/admin/policy-tracker": "Policy Tracker",
 };
 
 export default function AdminLayout() {

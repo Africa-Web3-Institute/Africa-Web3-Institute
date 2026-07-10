@@ -140,7 +140,7 @@ export default function AdminPolicyTracker() {
   };
 
   return (
-    <AdminLayout>
+   
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-secondary">Policy Tracker Management</h1>
@@ -309,6 +309,6 @@ export default function AdminPolicyTracker() {
           </section>
         </div>
       </div>
-    </AdminLayout>
+   
   );
 }
