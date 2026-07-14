@@ -86,12 +86,12 @@ function getShadingColor(key) {
   const country = awpiiData.find(c => c.key === key);
   if (!country) return "#9CA3AF"; // Undefined grey
   
-  const grade = country.grade;
-  if (grade === "AA+") return "#14532d"; // Dark Green (emerald-900)
-  if (["AA-", "A+", "A"].includes(grade)) return "#166534"; // Medium Green (emerald-800)
-  if (grade === "A-") return "#22c55e"; // Light Green (emerald-500)
-  if (["BBB+", "BBB-", "BB+", "BB"].includes(grade)) return "#eab308"; // Yellow (yellow-500)
-  return "#dc2626"; // Red (red-600)
+   const grade = country.grade;
+  if (grade === "AA+") return "#1F7A3A";
+  if (["AA-", "A+", "A", "A-"].includes(grade)) return "#1F7A3A";
+
+  if (["BBB+", "BBB-", "BB+", "BB"].includes(grade)) return "#D4A017";
+  return "#dc2626";
 }
 
 function countryStyle(feature, hoveredKey) {

@@ -9,7 +9,7 @@ import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import CountryFlag from "../components/CountryFlag";
 
-//const PILLAR_ICONS = [Building2, BarChart3, Users, Globe];
+
 
 function CTAButton({ children, primary = false, href = null, onClick = null }) {
    const base = "inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 cursor-pointer";

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   FaFacebook as Facebook,
   FaLinkedin as Linkedin,
-  FaXTwitter as XTwitter,
+  FaXTwitter as Twitter,
 } from "react-icons/fa6";
 
 import { useLanguage } from "../../lib/LanguageContext";
@@ -36,20 +36,27 @@ export default function Footer() {
     </div>
   );
 
-  const socialLink = (href, label, Icon) => (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="w-9 h-9 flex items-center justify-center transition-colors"
-      style={{ border: "1px solid #E5E7EB", color: "#6B7280", borderRadius: 4 }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = "#E5E7EB"; e.currentTarget.style.color = "#6B7280"; }}
-    >
-      <Icon className="w-4 h-4" />
-    </a>
-  );
+   const socialLinks = [
+    {
+      icon: Twitter,
+      href: "https://x.com/AfricaWeb3_Inst",
+      label: "X (Twitter)",
+      color: "#D4A017"
+    },
+    {
+      icon: Linkedin,
+      href: "https://www.linkedin.com/company/africa-web3-institute/",
+      label: "LinkedIn",
+      color: "#0A66C2"
+    },
+    {
+      icon: Facebook,
+      href: "https://www.facebook.com/share/1GPDn5xK8G/",
+      label: "Facebook",
+      color: "#1877F2"
+    },
+  
+  ];
 
   return (
     <footer style={{ backgroundColor: "#fff", borderTop: "1px solid #E5E7EB" }}>
@@ -82,12 +89,38 @@ export default function Footer() {
               info@africaweb3institute.org
             </a>
 
-            {/* SOCIALS */}
-            <div className="flex gap-3">
-              {socialLink("https://x.com/AfricaWeb3_Inst", "Africa Web3 Institute on X (Twitter)", XTwitter)}
-              {socialLink("https://www.linkedin.com/company/africa-web3-institute/", "Africa Web3 Institute on LinkedIn", Linkedin)}
-              {socialLink("https://www.facebook.com/share/1GPDn5xK8G/", "Africa Web3 Institute on Facebook", Facebook)}
-            </div>
+          {/* SOCIALS */}
+           <div className="flex flex-wrap gap-2 pt-2">
+  {socialLinks.map((social, index) => (
+    <a
+      key={index}
+      href={social.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={social.label}
+      className="w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 group relative bg-white"
+      style={{ 
+        border: "1px solid rgba(0,0,0,0.1)",
+        color: "rgba(0,0,0,0.7)"
+      }}
+      onMouseEnter={e => { 
+        e.currentTarget.style.borderColor = social.color;
+        e.currentTarget.style.color = social.color;
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.boxShadow = `0 4px 12px ${social.color}30`;
+      }}
+      onMouseLeave={e => { 
+        // Reset to the default dark color, not white
+        e.currentTarget.style.borderColor = "rgba(0,0,0,0.1)";
+        e.currentTarget.style.color = "rgba(0,0,0,0.7)";
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
+    >
+      <social.icon className="w-4 h-4" />
+    </a>
+  ))}
+</div>
           </div>
 
           {/* EXPLORE */}
