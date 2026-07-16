@@ -1,7 +1,8 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const TELEMETRY_ENDPOINT = 'http://localhost:3001/api/event';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const TELEMETRY_ENDPOINT = `${API_URL}/api/event`;
 const HEARTBEAT_INTERVAL_MS = 10000;
 
 export function useTracker() {

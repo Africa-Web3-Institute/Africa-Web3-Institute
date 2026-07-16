@@ -3,6 +3,8 @@ import { Save, AlertCircle, RefreshCw } from "lucide-react";
 import awpiiDataFallback from "../../data/awpiiData";
 import { COUNTRIES as trackerCountriesFallback } from "../../data/trackerCountries";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
 export default function AdminPolicyTracker() {
   const [awpiiData, setAwpiiData] = useState([]);
   const [trackerData, setTrackerData] = useState([]);
@@ -18,7 +20,7 @@ export default function AdminPolicyTracker() {
     setLoading(true);
     try {
       // Fetch AWPII
-      const awpiiRes = await fetch("http://localhost:3001/api/awpii", {
+      const awpiiRes = await fetch(`${API_URL}/api/awpii`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -40,7 +42,7 @@ export default function AdminPolicyTracker() {
       }
 
       // Fetch Tracker
-      const trackerRes = await fetch("http://localhost:3001/api/tracker", {
+      const trackerRes = await fetch(`${API_URL}/api/tracker`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -94,7 +96,7 @@ export default function AdminPolicyTracker() {
     setMessage({ text: "", type: "" });
     try {
       const { countryKey, score, ...details } = item;
-      const res = await fetch(`http://localhost:3001/api/awpii/${countryKey}`, {
+      const res = await fetch(`${API_URL}/api/awpii/${countryKey}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +121,7 @@ export default function AdminPolicyTracker() {
     setMessage({ text: "", type: "" });
     try {
       const { countryName, status, ...details } = item;
-      const res = await fetch(`http://localhost:3001/api/tracker/${countryName}`, {
+      const res = await fetch(`${API_URL}/api/tracker/${countryName}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
