@@ -125,7 +125,8 @@ export const processIncomingTelemetry = async (rawEvent, ip, userAgentHeader) =>
   if (simulatedGeo) {
     geo = AFRICAN_COUNTRIES.find(c => c.code === simulatedGeo) || AFRICAN_COUNTRIES[0];
   } else {
-    const geoData = geoip.lookup(ip);
+    const clientIp = typeof ip === 'string' ? ip.split(',')[0].trim() : ip;
+    const geoData = geoip.lookup(clientIp);
     if (geoData && geoData.country) {
       try {
         const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
