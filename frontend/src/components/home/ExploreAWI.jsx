@@ -14,6 +14,7 @@ import { BookOpen, CalendarDays, Users, Mail, ArrowRight } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
 import Reveal from "../common/Reveal";
+import { useNavDropdown } from "../../lib/NavDropdownContext";
 
 const CARD_META = [
   {
@@ -21,6 +22,7 @@ const CARD_META = [
     accent: "#D4A017",
     iconBg: "rgba(212,160,23,0.12)",
     href: "/intelligence",
+    dropdownKey: "intelligence",   
     image: "/images/moments/speaker-session.jpg",
   },
   {
@@ -28,6 +30,7 @@ const CARD_META = [
     accent: "#D4A017",
     iconBg: "rgba(212,160,23,0.12)",
     href: "/programs-events",
+     dropdownKey: "programmes",   
     image: "/images/moments/policy-convening.jpg",
   },
   {
@@ -63,9 +66,17 @@ function ExploreCard({ card, meta, index }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px 0px" });
   const navigate = useNavigate();
+  const { setActiveDropdown } = useNavDropdown();
   const Icon = meta.icon;
 
-  const handleClick = () => navigate(meta.href);
+   const handleClick = () => {
+    if (meta.dropdownKey) {
+      setActiveDropdown(meta.dropdownKey);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // so the navbar dropdown is visible
+    } else {
+      navigate(meta.href);
+    }
+  };
 
   return (
     <motion.div

@@ -9,24 +9,20 @@ import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import CountryFlag from "../components/CountryFlag";
 
-
-
 function CTAButton({ children, primary = false, href = null, onClick = null }) {
-   const base = "inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 cursor-pointer";
+  const base = "inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 cursor-pointer";
   const style = primary
     ? `${base} bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm hover:shadow-md`
     : `${base} border border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground`;
-  
+
   if (href) return <a href={href} className={style}>{children}</a>;
   return <button onClick={onClick} className={style}>{children}</button>;
-
 }
 
 export default function AWPII() {
   const { language } = useLanguage();
   const T = t[language].awpii;
-  
-  // State for the selected country in the dashboard
+
   const [selectedCountryKey, setSelectedCountryKey] = useState("southafrica");
 
   const scrollToDashboard = () => {
@@ -36,10 +32,8 @@ export default function AWPII() {
     document.querySelector("#awpii-contact")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Find currently selected country data
   const selectedCountry = awpiiData.find(c => c.key === selectedCountryKey) || awpiiData[0];
 
-  // Momentum bar chart data (Top 10)
   const momentumData = awpiiData.slice(0, 10).map(c => ({
     name: c.content[language].name,
     score: c.overall_score,
@@ -57,49 +51,56 @@ export default function AWPII() {
   return (
     <div className="bg-background text-foreground">
 
-      {/* Hero */}
-     <section className="relative bg-secondary overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+      {/* Hero – fixed structure */}
+      <section className="relative bg-secondary overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "32px 32px"
+          }}
+        />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-        
-            <h1 className="text-[2.5rem] lg:text-[2.5rem] font-bold text-white leading-[1.1] tracking-tight mb-6">
-              {T.heroTitle}
-            </h1>
-            <p className="text-[1.25rem] lg:text-[1.0rem] font-medium mb-8 leading-snug" style={{ color: "hsl(40 78% 50%)" }}>
-              {T.heroSubtitle}
-            </p>
-              <p className="text-[1.25rem] lg:text-[1.0rem] font-medium mb-8 leading-snug" style={{ color: "hsl(40 78% 50%)" }}>
-              {T.heroSubtitle1}
-            </p>
-              <div className="w-16 h-px bg-accent mb-8" />
-            <p className="text-[1rem] text-white/80 leading-[1.85] mb-4 max-w-2xl">
-              {T.heroPara1}
-            </p>
-            <p className="text-[1rem] text-white/80 leading-[1.85] mb-4 max-w-2xl font-semibold">
-              {T.heroPara2}
-            </p>
-            <p className="text-[1rem] text-white/70 leading-[1.85] mb-10 max-w-2xl">
-              {T.heroPara3}
-            </p>
-            
-          
-            <div className="flex flex-wrap gap-4">
-              <CTAButton primary onClick={scrollToDashboard}>
-                {T.heroCtaPrimary} <ArrowRight className="w-4 h-4" />
-              </CTAButton>
-              <a
-                href="https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf"
-                target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 border border-white/80 text-white/80 hover:bg-white/10 hover:text-white"
-              >
-                <Download className="w-4 h-4" /> {T.heroCtaSecondary}
-              </a>
-            </div>
+          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
+            Africa Web3 Institute
+          </p>
+          <h1 className="text-[1.625rem] sm:text-[2rem] lg:text-[2.75rem] font-bold text-white leading-tight mb-3">
+            {T.pageTitle}
+          </h1>
+          <h1 className="text-[2.5rem] lg:text-[1.5rem] font-bold text-white leading-[1.1] tracking-tight mb-6">
+            {T.heroTitle}
+          </h1>
+          <p className="text-[1.25rem] lg:text-[1.0rem] font-medium mb-8 leading-snug" style={{ color: "hsl(40 78% 50%)" }}>
+            {T.heroSubtitle}
+          </p>
+          <p className="text-[1.25rem] lg:text-[1.0rem] font-medium mb-8 leading-snug" style={{ color: "hsl(40 78% 50%)" }}>
+            {T.heroSubtitle1}
+          </p>
+          <div className="w-16 h-px bg-accent mb-8" />
+          <p className="text-[1rem] text-white/80 leading-[1.85] mb-4 max-w-2xl">
+            {T.heroPara1}
+          </p>
+          <p className="text-[1rem] text-white/80 leading-[1.85] mb-4 max-w-2xl font-semibold">
+            {T.heroPara2}
+          </p>
+          <p className="text-[1rem] text-white/70 leading-[1.85] mb-10 max-w-2xl">
+            {T.heroPara3}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <CTAButton primary onClick={scrollToDashboard}>
+              {T.heroCtaPrimary} <ArrowRight className="w-4 h-4" />
+            </CTAButton>
+            <a
+              href="https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 border border-white/80 text-white/80 hover:bg-white/10 hover:text-white"
+            >
+              <Download className="w-4 h-4" /> {T.heroCtaSecondary}
+            </a>
           </div>
-       
+        </div>
       </section>
-
 
       {/* Stats Strip */}
       <section className="border-b border-border bg-muted/40">
@@ -118,8 +119,6 @@ export default function AWPII() {
       {/* Unified May 2026 Interactive Dashboard */}
       <section id="dashboard" className="py-24 lg:py-32 border-b border-border bg-slate-50/50 dark:bg-slate-900/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          
-          {/* Section Header */}
           <div className="max-w-3xl mb-16">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">
               {language === "fr" ? "Tableau de Bord Interactif" : "Interactive Dashboard"}
@@ -135,11 +134,7 @@ export default function AWPII() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
-            {/* Left/Middle Column (Map + Deep Dive) */}
             <div className="lg:col-span-2 space-y-8">
-              
-              {/* Map Card */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-secondary text-lg">
@@ -150,21 +145,16 @@ export default function AWPII() {
                     <span>{language === "fr" ? "Cliquez sur un pays" : "Click a country to select"}</span>
                   </div>
                 </div>
-                <AfricaMapInteractive 
+                <AfricaMapInteractive
                   onCountrySelect={setSelectedCountryKey}
                   language={language}
                 />
               </div>
 
-              {/* Country Deep Dive */}
               <CountryDeepDive selectedCountry={selectedCountry} language={language} />
-
             </div>
 
-            {/* Right Column (Rankings List + Momentum Tracker) */}
             <div className="space-y-8">
-              
-              {/* Rankings List Card */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm flex flex-col">
                 <div className="mb-4">
                   <h3 className="font-bold text-secondary text-lg mb-1">
@@ -174,7 +164,6 @@ export default function AWPII() {
                     {language === "fr" ? "Cliquez sur un pays pour voir les détails" : "Click a country to view details"}
                   </p>
                 </div>
-                
                 <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
                   {awpiiData.map((country) => (
                     <button
@@ -190,7 +179,7 @@ export default function AWPII() {
                         <span className={`text-xs font-bold w-5 shrink-0 ${selectedCountryKey === country.key ? "text-accent" : "text-muted-foreground"}`}>
                           #{country.rank}
                         </span>
-                       <CountryFlag emoji={country.flag} size={20} />
+                        <CountryFlag emoji={country.flag} size={20} />
                         <span className="text-sm truncate max-w-[120px]">{country.content[language].name}</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -204,34 +193,30 @@ export default function AWPII() {
                 </div>
               </div>
 
-              {/* Momentum Tracker Card */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm">
                 <div className="mb-3">
                   <h3 className="font-bold text-secondary text-lg mb-1 flex items-center gap-1.5">
                     <TrendingUp className="w-4 h-4 text-accent" />
                     {T.momentumTitle}
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {T.momentumDesc}
-                  </p>
+                  <p className="text-xs text-muted-foreground mb-2">{T.momentumDesc}</p>
                   <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
                     <span className="font-semibold text-foreground">{T.momentumHelper}</span>
                   </div>
                 </div>
-
                 <div className="w-full h-[280px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                    layout="vertical"
-                    data={momentumData}
-                    margin={{ top: 0, right: 10, left: -25, bottom: 0 }}
-                    style={{ cursor: 'pointer' }}
-                    onClick={(d) => {
-                      if (d?.activePayload?.length) {
-                        const found = awpiiData.find(c => c.name === d.activePayload[0].payload.name);
-                        if (found) setSelectedCountryKey(found.key);
-                      }
-                    }}
+                      layout="vertical"
+                      data={momentumData}
+                      margin={{ top: 0, right: 10, left: -25, bottom: 0 }}
+                      style={{ cursor: 'pointer' }}
+                      onClick={(d) => {
+                        if (d?.activePayload?.length) {
+                          const found = awpiiData.find(c => c.content[language].name === d.activePayload[0].payload.name);
+                          if (found) setSelectedCountryKey(found.key);
+                        }
+                      }}
                     >
                       <XAxis type="number" domain={[50, 100]} hide />
                       <YAxis
@@ -270,9 +255,7 @@ export default function AWPII() {
                   </ResponsiveContainer>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
       </section>
@@ -320,8 +303,13 @@ export default function AWPII() {
 
       {/* Why It Matters */}
       <section className="py-24 lg:py-32 bg-secondary border-b border-border relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "40px 40px"
+          }}
+        />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.whyEyebrow}</p>
@@ -389,7 +377,7 @@ export default function AWPII() {
             <div className="space-y-px bg-border">
               {T.deliverables.map((d) => (
                 <div key={d.title} className="bg-background p-7 flex items-start gap-4">
-                  <Zap className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
+                  <Zap className="w-4 h-4 text-accent mt-1 shrink-0" />
                   <div>
                     <p className="text-[0.9375rem] font-semibold text-secondary mb-1.5">{d.title}</p>
                     <p className="text-[0.875rem] text-muted-foreground leading-snug">{d.description}</p>
@@ -423,8 +411,13 @@ export default function AWPII() {
 
       {/* Institutional Collaboration */}
       <section id="awpii-contact" className="py-24 lg:py-32 bg-secondary relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "40px 40px"
+          }}
+        />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.contactEyebrow}</p>

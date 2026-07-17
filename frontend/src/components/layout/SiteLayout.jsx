@@ -6,7 +6,7 @@ export default function SiteLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 pt-[5.5rem] sm:pt-[6rem]">
         <Outlet />
       </main>
       <Footer />

@@ -118,10 +118,10 @@ export default function CountryTracker() {
       <section style={{ backgroundColor: "#0B1437" }} className="py-10 lg:py-14">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>Africa Web3 Institute</p>
-          <h1 className="text-[2rem] lg:text-[2.75rem] font-bold text-white leading-tight mb-3">
+          <h1 className="text-[1.625rem] sm:text-[2rem] lg:text-[2.75rem] font-bold text-white leading-tight mb-3">
             {T.pageTitle}
           </h1>
-          <p className="text-[1rem] max-w-2xl mb-5 leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
+        <p className="text-[0.875rem] sm:text-[1rem] max-w-2xl mb-5 leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
             {T.pageSubtitle}
           </p>
           <div className="flex flex-wrap gap-3">
@@ -138,26 +138,26 @@ export default function CountryTracker() {
       {/* Sticky Filter Bar */}
       <div className="sticky top-[3.75rem] z-40 bg-white border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap gap-2 items-center">
-            <div className="relative flex-1 min-w-[180px] max-w-[240px]">
+         <div className="flex flex-nowrap sm:flex-wrap overflow-x-auto sm:overflow-visible gap-2 items-center pb-1 sm:pb-0 -mx-6 px-6 sm:mx-0 sm:px-0">
+           <div className="relative shrink-0 w-[160px] sm:flex-1 sm:min-w-[180px] sm:max-w-[240px]">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder={T.filterSearch}
                 className="w-full pl-8 pr-3 py-2 text-[0.8125rem] border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-accent" />
             </div>
             <select value={region} onChange={e => setRegion(e.target.value)}
-              className="text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
+              className="shrink-0 text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
               {REGIONS.map(r => <option key={r} value={r}>{T.regions?.[r] || r}</option>)}
             </select>
             <select value={category} onChange={e => setCategory(e.target.value)}
-              className="text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
+              className="shrink-0 text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
               {CATEGORIES.map(c => <option key={c} value={c}>{T.categories?.[c] || c}</option>)}
             </select>
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              className="text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
+              className="shrink-0 text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
               {STATUSES_LIST.map(s => <option key={s} value={s}>{T.statuses?.[s] || s}</option>)}
             </select>
             <button onClick={resetFilters}
-              className="text-[0.8125rem] font-semibold ml-auto transition-colors"
+              className="shrink-0 text-[0.8125rem] font-semibold ml-auto transition-colors"
               style={{ color: "#D4A017" }}
               onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
               onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}>
@@ -172,9 +172,10 @@ export default function CountryTracker() {
 
       {/* Table */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
-        <div className="border border-border rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm" style={{ minWidth: "960px" }}>
+     <div className="border border-border rounded-lg overflow-hidden">
+  {/* Table — tablet and up */}
+  <div className="hidden sm:block overflow-x-auto">
+    <table className="w-full text-sm" style={{ minWidth: "960px" }}>
               <thead>
                 <tr className="border-b border-border" style={{ backgroundColor: "#F9FAFB" }}>
                   <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap" style={{ position: "sticky", left: 0, backgroundColor: "#F9FAFB", zIndex: 10 }}>{T.colCountry}</th>
@@ -242,7 +243,55 @@ export default function CountryTracker() {
               </tbody>
             </table>
           </div>
+           {/* Card list — mobile only */}
+  <div className="sm:hidden divide-y divide-border">
+    {filtered.length === 0 ? (
+      <div className="px-6 py-16 text-center text-muted-foreground text-[0.9375rem]">
+        {T.noResults}
+      </div>
+    ) : (
+      filtered.map((u) => (
+        <div key={u.id} className="p-4 flex flex-col gap-2.5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[1.125rem] shrink-0">{u.flag}</span>
+              <div>
+                <p className="font-semibold text-secondary text-[0.875rem]">{u.country}</p>
+                <p className="text-[0.6875rem] text-muted-foreground">{T.regions?.[u.region] || u.region}</p>
+              </div>
+            </div>
+            <span className="text-[0.75rem] text-muted-foreground whitespace-nowrap shrink-0">{u.date}</span>
+          </div>
+
+          <p className="text-[0.9375rem] font-semibold text-secondary leading-snug">
+            {language === "fr" ? (u.titleFr || u.title) : u.title}
+          </p>
+
+          <div className="flex flex-wrap gap-1.5">
+            <CategoryBadge category={u.category} label={T.categories?.[u.category] || u.category} />
+            <StatusPill status={u.status} label={T.statuses?.[u.status] || u.status} />
+          </div>
+
+          <p className="text-[0.8125rem] text-muted-foreground leading-relaxed">
+            {language === "fr" ? (u.summaryFr || u.summary) : u.summary}
+          </p>
+
+          <div className="flex items-center justify-between pt-1.5 mt-1 border-t border-border/60">
+            <p className="text-[0.75rem] text-muted-foreground/70 leading-snug pr-2">{u.source}</p>
+            <Link
+              to={`/country-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+              className="text-[0.8125rem] font-semibold shrink-0"
+              style={{ color: "#D4A017" }}
+            >
+              {T.viewProfile}
+            </Link>
+          </div>
         </div>
+      ))
+    )}
+  </div>
+</div>
+        
 
         {/* Methodology Note */}
         <div className="mt-8 border border-border rounded-lg overflow-hidden">

@@ -337,6 +337,7 @@ export const t = {
       noResults: "No publications match your search.",
     },
     awpii: {
+      pageTitle:"Africa Web3 Policy & Innovation Index",
       heroEyebrow: "Africa Web3 Policy & Innovation Index",
       heroTitle: "Benchmarking Regulatory Clarity and Market Readiness Across Africa",
       heroSubtitle: "Africa is redefining the future of exchange, identity and commerce. The regulatory choices made today will determine which markets thrive and which fall behind.",
