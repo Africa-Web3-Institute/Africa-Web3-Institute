@@ -1,4 +1,5 @@
-import useragent from 'useragent';
+import { UAParser } from 'ua-parser-js';
+import geoip from 'geoip-lite';
 import { dbGet, dbAll, dbRun } from '../db/init.js';
 
 // List of African countries for realistic local simulation
@@ -115,17 +116,27 @@ export const processIncomingTelemetry = async (rawEvent, ip, userAgentHeader) =>
     browser = simulatedAgent.browser || 'Chrome';
     os = simulatedAgent.os || 'Android';
   } else {
-    const agent = useragent.parse(userAgentHeader);
-    browser = agent.family;
-    os = agent.os.family;
+    const parser = new UAParser(userAgentHeader);
+    const agent = parser.getResult();
+    browser = agent.browser.name || 'Unknown';
+    os = agent.os.name || 'Unknown';
   }
 
   if (simulatedGeo) {
     geo = AFRICAN_COUNTRIES.find(c => c.code === simulatedGeo) || AFRICAN_COUNTRIES[0];
   } else {
-    let hash = 0;
-    for (let i = 0; i < sessionId.length; i++) hash = sessionId.charCodeAt(i) + ((hash << 5) - hash);
-    geo = AFRICAN_COUNTRIES[Math.abs(hash) % AFRICAN_COUNTRIES.length];
+    const clientIp = typeof ip === 'string' ? ip.split(',')[0].trim() : ip;
+    const geoData = geoip.lookup(clientIp);
+    if (geoData && geoData.country) {
+      try {
+        const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+        geo = { name: regionNames.of(geoData.country) || geoData.country, code: geoData.country };
+      } catch (e) {
+        geo = { name: geoData.country, code: geoData.country };
+      }
+    } else {
+      geo = { name: 'Unknown', code: 'UN' };
+    }
   }
 
   const now = new Date();
