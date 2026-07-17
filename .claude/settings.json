@@ -30,7 +30,10 @@
       "Bash(taskkill //F //PID 7500)",
       "Bash(taskkill //F //PID 18204)",
       "Bash(taskkill //F //PID 4608)",
-      "Bash(taskkill //F //PID 11088)"
+      "Bash(taskkill //F //PID 11088)",
+      "Bash(taskkill //F //PID 764)",
+      "Bash(node ./check_live.cjs)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{url_effective}\\\\n\" -L https://africa-web3-institute.vercel.app/)"
     ],
     "additionalDirectories": [
       "\\tmp"
