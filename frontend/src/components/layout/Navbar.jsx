@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Download, ChevronDown } from "lucide-react";
+import { Menu, X, Download, ChevronDown, ChevronRight } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
 import { useNavDropdown } from "../../lib/NavDropdownContext";
@@ -42,15 +42,6 @@ const getAboutItems = (language) => [
         href: "/about",
       },
       {
-        label: getLabel(language, "Meet the Team", "Rencontrer l'Équipe"),
-        desc: getLabel(
-          language,
-          "Our people driving the vision",
-          "Les personnes qui portent la vision"
-        ),
-        href: "/team",
-      },
-      {
         label: getLabel(language, "Board", "Conseil d'Administration"),
         desc: getLabel(
           language,
@@ -58,6 +49,15 @@ const getAboutItems = (language) => [
           "Notre conseil d'administration et conseillers"
         ),
         href: "/board",
+      },
+      {
+        label: getLabel(language, "Meet the Team", "Rencontrer l'Équipe"),
+        desc: getLabel(
+          language,
+          "Our people driving the vision",
+          "Les personnes qui portent la vision"
+        ),
+        href: "/team",
       },
     ],
   },
@@ -203,56 +203,83 @@ const getProgramsItems = (language) => [
 const isPartialPath = (pathname, paths, contains = false) =>
   paths.some((path) => (contains ? pathname.includes(path) : pathname === path));
 
-// ─── MegaMenu component (shared) ────────────────────────────────────────────
+// ─── Vertical dropdown (shared pattern) ─────────────────────────────────────
 
-const MegaMenu = ({ sections, navigateTo, isActive }) => (
-  <div
-    className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 rounded-lg overflow-hidden"
-    style={{
-      backgroundColor: "#fff",
-      border: "1px solid #E5E7EB",
-      boxShadow: "0 12px 32px rgba(0,0,0,0.12)",
-      width: "min(760px, 92vw)",
-      zIndex: 100,
-      animation: "dropdownFadeIn 0.15s ease",
-    }}
-  >
-    <style>{`
-      @keyframes dropdownFadeIn {
-        from { opacity: 0; transform: translateY(-6px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-    `}</style>
-    <div className="grid grid-cols-3" style={{ gap: "1px", backgroundColor: "#F3F4F6" }}>
-      {sections.flatMap((section) =>
-        section.items.map((item) => (
-          <button
-            key={item.href}
-            onClick={() => navigateTo(item.href)}
-            className="text-left bg-white p-4 flex flex-col gap-2 transition-colors"
-            style={{
-              backgroundColor: isActive(item.href) ? "rgba(212,160,23,0.06)" : "#fff",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(11,20,55,0.04)")}
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = isActive(item.href) ? "rgba(212,160,23,0.06)" : "#fff")
-            }
-          >
-            <p className="text-[0.6rem] font-bold tracking-[0.15em] uppercase" style={{ color: "#D4A017" }}>
-              {section.section}
-            </p>
-            <p className="text-[0.8125rem] font-semibold leading-snug" style={{ color: isActive(item.href) ? "#D4A017" : "#111827" }}>
-              {item.label}
-            </p>
-            <p className="text-[0.6875rem] leading-snug" style={{ color: "#9CA3AF" }}>
-              {item.desc}
-            </p>
-          </button>
-        ))
-      )}
+const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
+  const flatItems = sections.flatMap((section) => section.items);
+  return (
+    <div
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-3 rounded-2xl overflow-hidden"
+      style={{
+        backgroundColor: "#fff",
+        border: "1px solid #EEF0F3",
+        boxShadow: "0 20px 45px rgba(11,20,55,0.18), 0 4px 12px rgba(11,20,55,0.06)",
+        zIndex: 100,
+        minWidth: 220,
+        width: "max-content",
+        maxWidth: "min(360px, 92vw)",
+        transformOrigin: "top center",
+        animation: "vDropdownIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+      }}
+    >
+      <style>{`
+        @keyframes vDropdownIn {
+          from { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.96); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        }
+        @keyframes vItemIn {
+          from { opacity: 0; transform: translateX(-8px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
+
+      {/* Accent header strip */}
+      <div style={{ height: 3, background: "linear-gradient(90deg, #D4A017, #E8C266, #D4A017)" }} />
+
+      <div className="flex flex-col p-2.5">
+        {flatItems.map((item, i) => {
+          const active = isActive(item.href);
+          return (
+            <div key={item.href} style={{ animation: `vItemIn 0.22s ease ${i * 0.05}s both` }}>
+              {i > 0 && (
+                <div
+                  className="-mx-2.5"
+                  style={{
+                    height: 1,
+                    background:
+                      "linear-gradient(90deg, rgba(212,160,23,0) 0%, rgba(212,160,23,0.65) 14%, rgba(212,160,23,0.65) 86%, rgba(212,160,23,0) 100%)",
+                  }}
+                />
+              )}
+              <button
+                onClick={() => navigateTo(item.href)}
+                className="group flex items-center gap-3 w-full text-left rounded-xl px-3.5 py-2.5 text-[0.875rem] font-semibold whitespace-nowrap transition-all duration-150"
+                style={{
+                  color: active ? "#D4A017" : "#111827",
+                  backgroundColor: active ? "rgba(212,160,23,0.08)" : "transparent",
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) e.currentTarget.style.backgroundColor = "#F8F9FB";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = active ? "rgba(212,160,23,0.08)" : "transparent";
+                }}
+              >
+                <span className="flex-1">{item.label}</span>
+                <ChevronRight
+                  className={`w-3.5 h-3.5 shrink-0 transition-all duration-150 ${
+                    active ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"
+                  }`}
+                  style={{ color: active ? "#D4A017" : "#9CA3AF" }}
+                />
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Reusable UI pieces ──────────────────────────────────────────────────────
 
@@ -323,8 +350,29 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const navRef = useRef(null);
+  const dropdownCloseTimer = useRef(null);
+
+  const openDropdownOnHover = (name) => {
+    if (dropdownCloseTimer.current) {
+      clearTimeout(dropdownCloseTimer.current);
+      dropdownCloseTimer.current = null;
+    }
+    setActiveDropdown(name);
+  };
+
+  const closeDropdownOnHover = (name) => {
+    dropdownCloseTimer.current = setTimeout(() => {
+      setActiveDropdown((current) => (current === name ? null : current));
+    }, 150);
+  };
 
   // ─── Effects ────────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    return () => {
+      if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -415,28 +463,55 @@ export default function Navbar() {
             </Link>
 
             {/* About dropdown */}
-            <DesktopDropdownButton
-              active={aboutActive}
-              expanded={activeDropdown === "about"}
-              label={getLabel(language, "About", "À Propos")}
-              onClick={() => setActiveDropdown(activeDropdown === "about" ? null : "about")}
-            />
+            <div
+              className="relative h-full flex items-center"
+              onMouseEnter={() => openDropdownOnHover("about")}
+              onMouseLeave={() => closeDropdownOnHover("about")}
+            >
+              <DesktopDropdownButton
+                active={aboutActive}
+                expanded={activeDropdown === "about"}
+                label={getLabel(language, "About", "À Propos")}
+                onClick={() => setActiveDropdown(activeDropdown === "about" ? null : "about")}
+              />
+              {activeDropdown === "about" && (
+                <VerticalDropdownMenu sections={aboutItems} navigateTo={navigateTo} isActive={isActive} />
+              )}
+            </div>
 
             {/* Intelligence dropdown */}
-            <DesktopDropdownButton
-              active={intelligenceActive}
-              expanded={activeDropdown === "intelligence"}
-              label={getLabel(language, "Intelligence", "Intelligence")}
-              onClick={() => setActiveDropdown(activeDropdown === "intelligence" ? null : "intelligence")}
-            />
+            <div
+              className="relative h-full flex items-center"
+              onMouseEnter={() => openDropdownOnHover("intelligence")}
+              onMouseLeave={() => closeDropdownOnHover("intelligence")}
+            >
+              <DesktopDropdownButton
+                active={intelligenceActive}
+                expanded={activeDropdown === "intelligence"}
+                label={getLabel(language, "Intelligence", "Intelligence")}
+                onClick={() => setActiveDropdown(activeDropdown === "intelligence" ? null : "intelligence")}
+              />
+              {activeDropdown === "intelligence" && (
+                <VerticalDropdownMenu sections={intelligenceItems} navigateTo={navigateTo} isActive={isActive} />
+              )}
+            </div>
 
             {/* Programs dropdown */}
-            <DesktopDropdownButton
-              active={programsActive}
-              expanded={activeDropdown === "programmes"}
-              label={T.programs}
-              onClick={() => setActiveDropdown(activeDropdown === "programmes" ? null : "programmes")}
-            />
+            <div
+              className="relative h-full flex items-center"
+              onMouseEnter={() => openDropdownOnHover("programmes")}
+              onMouseLeave={() => closeDropdownOnHover("programmes")}
+            >
+              <DesktopDropdownButton
+                active={programsActive}
+                expanded={activeDropdown === "programmes"}
+                label={T.programs}
+                onClick={() => setActiveDropdown(activeDropdown === "programmes" ? null : "programmes")}
+              />
+              {activeDropdown === "programmes" && (
+                <VerticalDropdownMenu sections={programsItems} navigateTo={navigateTo} isActive={isActive} />
+              )}
+            </div>
 
             <button
               onClick={() => navigateTo("/contact")}
@@ -500,10 +575,6 @@ export default function Navbar() {
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          {/* Render dropdowns if active */}
-          {activeDropdown === "about" && <MegaMenu sections={aboutItems} navigateTo={navigateTo} isActive={isActive} />}
-          {activeDropdown === "intelligence" && <MegaMenu sections={intelligenceItems} navigateTo={navigateTo} isActive={isActive} />}
-          {activeDropdown === "programmes" && <MegaMenu sections={programsItems} navigateTo={navigateTo} isActive={isActive} />}
         </div>
       </div>
 

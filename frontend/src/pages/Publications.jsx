@@ -252,7 +252,6 @@ export default function Publications() {
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }`}</style>
-      <title>Publications | Africa Web3 Institute</title>
 
       {/* Hero */}
       <section style={{ backgroundColor: "#0B1437" }} className="py-12 lg:py-18">

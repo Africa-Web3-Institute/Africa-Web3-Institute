@@ -122,7 +122,6 @@ export default function EnforcementWatch() {
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <title>{T.pageTitle} | Africa Web3 Institute</title>
 
       {/* Hero */}
       <section style={{ backgroundColor: "#1A1F36" }} className="pt-12 pb-0">

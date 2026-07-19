@@ -2,7 +2,7 @@
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
-import { Globe, BookOpen, GraduationCap, Mail } from "lucide-react";
+import { Globe, BookOpen, GraduationCap } from "lucide-react";
 import Aerochain from "../assets/aerochain_logo.png"
  // not used here, but keep if needed elsewhere
 
@@ -36,12 +36,6 @@ const PARTNERS = [
   }
 ];
 
-const CONTACTS = [
-  { icon: "📧", labelKey: "generalEnquiries", email: "info@africaweb3institute.org" },
-  { icon: "🤝", labelKey: "partnerships", email: "partnerships@africaweb3institute.org" },
-  { icon: "📰", labelKey: "media", email: "media@africaweb3institute.org" },
-];
-
 export default function About() {
   const { language } = useLanguage();
   const T = t[language].about;
@@ -59,23 +53,6 @@ export default function About() {
 
   return (
     <div className="bg-background text-foreground">
-      {/* HERO */}
-      <section className="relative bg-secondary overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
-            Africa Web3 Institute
-          </p>
-          <h1 className="text-[2.25rem] lg:text-[3.25rem] font-bold text-white leading-snug mb-5">
-            {T.heroTitle}
-          </h1>
-          <p className="text-[1.1rem] leading-[1.85] max-w-2xl" style={{ color: "#D4A017" }}>
-            {T.heroSubtitle}
-          </p>
-        </div>
-      </section>
-
       {/* WHO WE ARE */}
       <section className="py-20 border-b border-border">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
@@ -166,8 +143,18 @@ export default function About() {
       </section>
 
       {/* WHY IT MATTERS */}
-      <section className="py-20 border-b border-border" style={{ backgroundColor: "#0B1437" }}>
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+      <section className="relative py-20 border-b border-border overflow-hidden" style={{ backgroundColor: "#0B1437" }}>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "url('https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(11,20,55,0.9)" }} />
+        <div className="relative max-w-6xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
               {T.whyMattersTag}
@@ -200,25 +187,40 @@ export default function About() {
             <h2 className="text-[1.75rem] font-bold text-secondary mb-3">{T.partnersTitle}</h2>
             <p className="text-muted-foreground">{T.partnersSubtitle}</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {PARTNERS.map((partner, i) => (
-              <a
-                key={i}
-                href={partner.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="aspect-3/2 flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
-                onMouseEnter={e => e.currentTarget.style.borderColor = "#D4A017"}
-                onMouseLeave={e => e.currentTarget.style.borderColor = ""}
-              >
-                <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
-              </a>
-            ))}
-            {new Array(6 - PARTNERS.length).fill(null).map((_, i) => (
-              <div key={`empty-${i}`} className="aspect-3/2 flex items-center justify-center bg-white border border-border">
-                <p className="text-[0.75rem] text-muted-foreground/50 text-center px-2">Partner Logo</p>
-              </div>
-            ))}
+          <div
+            className="relative overflow-hidden"
+            style={{
+              maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
+              WebkitMaskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
+            }}
+          >
+            <style>{`
+              @keyframes partnersMarquee {
+                from { transform: translateX(0); }
+                to { transform: translateX(-50%); }
+              }
+              .partners-track {
+                animation: partnersMarquee 22s linear infinite;
+              }
+              .partners-track:hover {
+                animation-play-state: paused;
+              }
+            `}</style>
+            <div className="partners-track flex items-stretch gap-4 w-max">
+              {[...PARTNERS, ...PARTNERS].map((partner, i) => (
+                <a
+                  key={i}
+                  href={partner.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 w-[160px] aspect-3/2 flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
+                  onMouseEnter={e => e.currentTarget.style.borderColor = "#D4A017"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = ""}
+                >
+                  <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -229,36 +231,6 @@ export default function About() {
           <p className="text-[2rem] mb-5">⚖️</p>
           <h2 className="text-[1.25rem] font-bold text-secondary mb-4">{T.independentTag}</h2>
           <p className="text-muted-foreground leading-[1.85] max-w-2xl mx-auto">{T.independentText}</p>
-        </div>
-      </section>
-
-      {/* CONTACT CTA */}
-      <section className="py-20 border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
-              {T.contactTag}
-            </p>
-            <h2 className="text-[1.75rem] font-bold text-secondary mb-3">{T.contactTitle}</h2>
-            <p className="text-muted-foreground">{T.contactSubtitle}</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {CONTACTS.map((c) => (
-              <div key={c.email} className="p-8 border border-border bg-white flex flex-col items-center text-center">
-                <p className="text-[1.75rem] mb-4">{c.icon}</p>
-                <p className="text-[0.875rem] font-bold text-secondary mb-2">{T[c.labelKey]}</p>
-                <p className="text-[0.8125rem] text-muted-foreground mb-5 break-all">{c.email}</p>
-                <a href={`mailto:${c.email}`}
-                  className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-5 py-2.5 transition-colors"
-                  style={{ backgroundColor: "#0B1437", color: "#fff" }}
-                  onMouseEnter={e => e.currentTarget.style.backgroundColor = "#D4A017"}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = "#0B1437"}
-                >
-                  <Mail className="w-3.5 h-3.5" /> {T.sendEmail}
-                </a>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

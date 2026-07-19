@@ -11,7 +11,6 @@ export default function Intelligence() {
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }`}</style>
-      <title>Intelligence | Africa Web3 Institute</title>
 
       <section style={{ backgroundColor: "#0B1437" }} className="py-14 lg:py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">

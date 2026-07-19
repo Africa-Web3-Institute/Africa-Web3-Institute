@@ -26,8 +26,7 @@ export default function StablecoinTracker() {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24 relative top-20 z-50">
-    
+    <div className="min-h-screen bg-background text-foreground pb-24">
 
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
           <TrackerHeader activeNav={activeNav} onNavChange={setActiveNav} />

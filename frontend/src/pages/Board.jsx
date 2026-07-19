@@ -46,23 +46,6 @@ export default function Board() {
 
   return (
     <div className="bg-background text-foreground">
-      {/* Hero for board */}
-      <section className="relative bg-secondary overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
-            {T.advisoryTitle}
-          </p>
-          <h1 className="text-[2.25rem] lg:text-[3.25rem] font-bold text-white leading-snug mb-5">
-            {T.advisoryTitle}
-          </h1>
-          <p className="text-[1.1rem] leading-[1.85] max-w-2xl" style={{ color: "#D4A017" }}>
-            {T.advisoryText}
-          </p>
-        </div>
-      </section>
-
       {/* Advisory Board Grid */}
       <section className="py-20 border-b border-border" style={{ background: "hsl(220 14% 97%)" }}>
         <div className="max-w-6xl mx-auto px-6 lg:px-8">

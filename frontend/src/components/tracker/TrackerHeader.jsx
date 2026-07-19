@@ -2,7 +2,7 @@ const NAV_LINKS = ["Countries", "Issuers", "Currencies", "Stablecoins", "Blockch
 
 export default function TrackerHeader({ activeNav, onNavChange }) {
   return (
-    <header className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-md border-b border-white/[0.07]">
+    <header className="sticky top-0 z-30 bg-[#0a1628]/95 backdrop-blur-md border-b border-white/[0.07]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14 gap-4">
           {/* Logo */}

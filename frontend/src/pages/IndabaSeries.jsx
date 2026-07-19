@@ -13,7 +13,6 @@ export default function IndabaSeries() {
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <title>The Indaba Series | Africa Web3 Institute</title>
 
       {/* ── Hero ── */}
       <section style={{ backgroundColor: "#0B1437" }} className="relative overflow-hidden py-16 lg:py-24">
