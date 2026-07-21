@@ -10,6 +10,19 @@ const scrollTo = (id) => {
   document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
+const slugify = (month) => month.toLowerCase().replace(/\s+/g, "-");
+
+const getUniqueMonths = (months) => {
+  const seen = [];
+  months.forEach((entry) => {
+    const groups = entry.section || [entry];
+    groups.forEach((g) => {
+      if (!seen.includes(g.month)) seen.push(g.month);
+    });
+  });
+  return seen;
+};
+
 /* ── Shared buttons ─────────────────────────────────────── */
 function PrimaryBtn({ children }) {
   return (
@@ -128,7 +141,7 @@ function EventCard({ event, T }) {
 }
 
 /* ── Month section ──────────────────────────────────────── */
-function MonthSection({ groups, T }) {
+function MonthSection({ groups, T, getMonthId }) {
   const labels = [];
   groups.forEach((g) => {
     const last = labels[labels.length - 1];
@@ -139,7 +152,7 @@ function MonthSection({ groups, T }) {
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
         {labels.map((l, i) => (
-          <div key={i} className="flex items-center gap-4" style={{ gridColumn: `span ${l.span} / span ${l.span}` }}>
+          <div key={i} id={getMonthId(l.month)} className="flex items-center gap-4 scroll-mt-24" style={{ gridColumn: `span ${l.span} / span ${l.span}` }}>
             <h3 className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase shrink-0" style={{ color: "#D4A017" }}>
               {l.month}
             </h3>
@@ -175,57 +188,72 @@ export default function Events() {
   const bannerRef = useRef(null);
   const bannerIn  = useInView(bannerRef, { once: true, margin: "-80px 0px" });
 
-  return (
-    <section id="events" className="py-24 lg:py-32 border-b border-border bg-background">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+  const uniqueMonths = getUniqueMonths(T.months);
+  const monthIdAssigned = new Set();
+  const getMonthId = (month) => {
+    if (monthIdAssigned.has(month)) return undefined;
+    monthIdAssigned.add(month);
+    return slugify(month);
+  };
 
-        {/* ── Intro: text + animated visual ────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+  const scrollToMonth = (month) => {
+    document.getElementById(slugify(month))?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <section id="events" className="border-b border-border bg-background">
+
+      {/* ── Hero: animated visual as background ──────────────── */}
+      <div ref={bannerRef} className="relative overflow-hidden py-20 lg:py-28">
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={bannerIn ? { opacity: 1 } : {}}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <EventsNetworkVisual />
+        </motion.div>
+        <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(11,20,55,0.9) 0%, rgba(11,20,55,0.75) 55%, rgba(11,20,55,0.4) 100%)" }} />
+
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <Reveal as="div" className="max-w-2xl">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-4" style={{ color: "#D4A017" }}>
-              {T.eyebrow}
-            </p>
             <h2
-              className="font-display font-bold leading-snug tracking-tight mb-5"
-              style={{ fontSize: "clamp(1.75rem, 3vw, 2.375rem)", color: "#0B1437" }}
+              className="font-display font-bold leading-snug tracking-tight mb-5 text-white"
+              style={{ fontSize: "clamp(1.75rem, 3vw, 2.375rem)" }}
             >
               {T.heading}
             </h2>
-            <p className="text-[1rem] text-muted-foreground leading-[1.82] mb-3">{T.intro1}</p>
-            <p className="text-[1rem] text-muted-foreground leading-[1.82]">{T.intro2}</p>
+            <p className="text-[1rem] leading-[1.82] mb-3" style={{ color: "rgba(255,255,255,0.75)" }}>{T.intro1}</p>
+            <p className="text-[1rem] leading-[1.82] mb-8" style={{ color: "rgba(255,255,255,0.75)" }}>{T.intro2}</p>
+
+            {/* Quick month nav */}
+            <div className="flex flex-wrap gap-2">
+              {uniqueMonths.map((month) => (
+                <button
+                  key={month}
+                  onClick={() => scrollToMonth(month)}
+                  className="text-[0.75rem] font-semibold px-3.5 py-2 rounded-full border transition-all"
+                  style={{ borderColor: "rgba(255,255,255,0.3)", color: "#fff", backgroundColor: "rgba(255,255,255,0.06)" }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.backgroundColor = "rgba(212,160,23,0.15)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)"; }}
+                >
+                  {month}
+                </button>
+              ))}
+            </div>
           </Reveal>
-
-          {/* Image panel with animated border accent */}
-          <div ref={bannerRef} className="relative">
-            <motion.div
-              className="relative w-full aspect-[4/3] overflow-hidden"
-              style={{ border: "1px solid hsl(var(--border))" }}
-              initial={{ opacity: 0, y: 32, scale: 0.96 }}
-              animate={bannerIn ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <EventsNetworkVisual />
-            </motion.div>
-
-            {/* Decorative gold border corner */}
-            <motion.div
-              className="absolute -bottom-4 -right-4 w-24 h-24 hidden lg:block"
-              style={{ border: "2px solid #D4A017" }}
-              initial={{ opacity: 0, x: 16, y: 16 }}
-              animate={bannerIn ? { opacity: 0.4, x: 0, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            />
-          </div>
         </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-20 lg:pt-24 pb-24 lg:pb-32">
         {/* ── Month-by-month event cards ────────────────────── */}
         <div className="space-y-16">
           {T.months.map((monthGroup, idx) =>
             monthGroup.section ? (
-              <MonthSection key={idx} groups={monthGroup.section} T={T} />
+              <MonthSection key={idx} groups={monthGroup.section} T={T} getMonthId={getMonthId} />
             ) : (
               <div key={monthGroup.month}>
-                <div className="flex items-center gap-4 mb-8">
+                <div id={getMonthId(monthGroup.month)} className="flex items-center gap-4 mb-8 scroll-mt-24">
                   <h3
                     className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase shrink-0"
                     style={{ color: "#D4A017" }}

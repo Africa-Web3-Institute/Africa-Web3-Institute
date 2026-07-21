@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import AdvisoryBoardCard from "../components/about/AdvisoryBoardCard";
 import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg";
 import DrTammy from "../assets/Dr_Tammy_Francis.jpeg";
+import CyndaJonesCarswell from "../assets/Cynda_Jones_Carswell.png";
 
 const ADVISORY_BOARD = [
   {
@@ -37,6 +38,12 @@ const ADVISORY_BOARD = [
     country: "USA United States of America",
     photo: DrTammy,
     linkedin: "https://linkedin.com/in/drtammyfrancis",
+  },
+  {
+    name: "Cynda Jones Carswell, MBA",
+    country: "🇺🇸 United States",
+    photo: CyndaJonesCarswell,
+    linkedin: "https://www.linkedin.com/in/cynda-jones/",
   },
 ];
 
