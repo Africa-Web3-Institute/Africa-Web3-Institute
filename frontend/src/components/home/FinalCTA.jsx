@@ -26,6 +26,8 @@ export default function FinalCTA() {
         alt=""
         className="absolute inset-0 w-full h-full object-cover animate-kb"
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
       />
       <div
         className="absolute inset-0"

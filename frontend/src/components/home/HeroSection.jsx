@@ -101,6 +101,8 @@ export default function HeroSection() {
                 alt=""
                 className="w-full h-full object-cover"
                 style={{ transform: "scale(1.06)", transition: "transform 10s ease-out" }}
+                fetchPriority={current === 0 ? "high" : "auto"}
+                decoding="async"
               />
             </motion.div>
           </AnimatePresence>

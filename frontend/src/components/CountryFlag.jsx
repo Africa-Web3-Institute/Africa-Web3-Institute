@@ -27,6 +27,8 @@ export default function CountryFlag({ emoji, size = 20, className = "" }) {
       height={size > 30 ? 30 : 15}
       className={`inline-block rounded-sm object-cover ${className}`}
       style={{ verticalAlign: "middle" }}
+      loading="lazy"
+      decoding="async"
     />
   );
 }

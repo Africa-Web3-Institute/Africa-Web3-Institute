@@ -86,6 +86,8 @@ export default function About() {
                   src="https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png"
                   alt="Africa Web3 Institute team working on policy research"
                   className="w-full h-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
               <div className="absolute -bottom-4 -right-4 w-24 h-24 hidden lg:block"
@@ -217,7 +219,7 @@ export default function About() {
                   onMouseEnter={e => e.currentTarget.style.borderColor = "#D4A017"}
                   onMouseLeave={e => e.currentTarget.style.borderColor = ""}
                 >
-                  <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
+                  <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" loading="lazy" decoding="async" />
                 </a>
               ))}
             </div>

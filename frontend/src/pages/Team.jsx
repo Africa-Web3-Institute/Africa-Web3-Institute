@@ -100,7 +100,7 @@ function TeamCard({ member }) {
       <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0 flex items-center justify-center"
         style={{ border: "2px solid #D4A017", backgroundColor: member.photo ? "transparent" : "#0B1437" }}>
         {member.photo ? (
-          <img src={member.photo} alt={`${member.name} — ${member.role}`} className="w-full h-full object-cover" />
+          <img src={member.photo} alt={`${member.name} — ${member.role}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
         ) : (
           <span className="text-[1.25rem] font-bold" style={{ color: "#D4A017" }}>{member.initials}</span>
         )}

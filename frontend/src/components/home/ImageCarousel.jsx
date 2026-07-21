@@ -121,6 +121,8 @@ export default function ImageCarousel() {
                   src={slide.image}
                   alt={slide.title}
                   className="w-full h-[400px] lg:h-[500px] object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
                 
                 {/* Gradient overlay */}

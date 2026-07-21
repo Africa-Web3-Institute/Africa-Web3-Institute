@@ -43,6 +43,8 @@ export default function Programs() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
           aria-hidden="true"
+          loading="lazy"
+          decoding="async"
         />
         {/* Dark overlay */}
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(11,20,55,0.84)" }} />

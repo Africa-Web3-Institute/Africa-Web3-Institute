@@ -18,10 +18,12 @@ const EMOJI_TO_ISO = {
 function flagImg(emoji) {
   const iso = EMOJI_TO_ISO[emoji];
   if (!iso) return "";
-  return `<img 
+  return `<img
     src="https://flagcdn.com/20x15/${iso}.png"
     srcset="https://flagcdn.com/40x30/${iso}.png 2x"
     width="20" height="15"
+    loading="lazy"
+    decoding="async"
     style="border-radius:2px;vertical-align:middle;margin-right:6px;display:inline-block;"
     alt="${iso.toUpperCase()}"
   />`;
