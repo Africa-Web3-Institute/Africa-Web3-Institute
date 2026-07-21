@@ -15,6 +15,12 @@ const ADVISORY_BOARD = [
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/aa3c6d347_FNNJRCEO.png",
     linkedin: "https://linkedin.com/in/fredrick-ndalamani-nonde-jr-mba-web3-ecosystem-builder-730b16105",
   },
+    {
+    name: "Dr Tammy Francis",
+    country: "🇺🇸 United States of America",
+    photo: DrTammy,
+    linkedin: "https://linkedin.com/in/drtammyfrancis",
+  },
   {
     name: "Prof. (Dr) h.c. Joerg Molt",
     country: "🇩🇪 Germany",
@@ -27,24 +33,20 @@ const ADVISORY_BOARD = [
     photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/d3c29c585_WhatsAppImage2026-06-24at102503AM.jpeg",
     linkedin: "https://www.linkedin.com/in/daniilkozin",
   },
+    {
+    name: "Cynda Jones Carswell, MBA",
+    country: "🇺🇸 United States of America",
+    photo: CyndaJonesCarswell,
+    linkedin: "https://www.linkedin.com/in/cynda-jones/",
+  },
   {
     name: "Dr Raj Kapoor",
     country: "🇮🇳 India",
     photo: drRajKapoor,
     linkedin: "https://www.linkedin.com/in/indieblock",
   },
-  {
-    name: "Dr Tammy Francis",
-    country: "USA United States of America",
-    photo: DrTammy,
-    linkedin: "https://linkedin.com/in/drtammyfrancis",
-  },
-  {
-    name: "Cynda Jones Carswell, MBA",
-    country: "🇺🇸 United States",
-    photo: CyndaJonesCarswell,
-    linkedin: "https://www.linkedin.com/in/cynda-jones/",
-  },
+
+
 ];
 
 export default function Board() {
