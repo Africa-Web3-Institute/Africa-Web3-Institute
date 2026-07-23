@@ -525,16 +525,17 @@ export default function Navbar() {
           {/* Desktop right side */}
           <div className="hidden lg:flex items-center gap-3.5 mr-1.5">
             <a
-              href="https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/17d283477_MedaKit.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Africa Web3 Institute Media Kit"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
-              style={{ color: "#111827" }}
-            >
-              <Download className="w-3.5 h-3.5" />
-              {getLabel(language, "Media Kit", "Kit Média")}
-            </a>
+             href="/AWI_Media_Kit_2026.pdf"
+  target="_blank"
+  rel="noopener noreferrer"
+  title="Africa Web3 Institute Media Kit"
+  className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+  style={{ color: "#111827" }}
+>
+  <Download className="w-3.5 h-3.5" />
+  {getLabel(language, "Media Kit", "Kit Média")}
+</a>
+            
 
             <div className="flex items-center rounded-full overflow-hidden border" style={{ borderColor: "#E5E7EB" }}>
               <button

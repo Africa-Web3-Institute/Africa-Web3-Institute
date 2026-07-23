@@ -1,4 +1,5 @@
-import { Mail } from "lucide-react";
+import { Mail, Copy, Check } from "lucide-react";
+import { useState } from "react";
 import ContactSection from "../components/home/ContactSection";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
@@ -9,6 +10,50 @@ const CONTACTS = [
   { icon: "📰", labelKey: "media", email: "media@africaweb3institute.org" },
 ];
 
+function ContactCard({ c, T }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(c.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
+  return (
+    <div className="p-8 border border-border bg-white flex flex-col items-center text-center">
+      <p className="text-[1.75rem] mb-4">{c.icon}</p>
+      <p className="text-[0.875rem] font-bold text-secondary mb-2">{T[c.labelKey]}</p>
+      <p className="text-[0.8125rem] text-muted-foreground mb-5 break-all">{c.email}</p>
+
+      <div className="flex items-center gap-2">
+        <a
+          href={`mailto:${c.email}`}
+          className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-5 py-2.5 transition-colors"
+          style={{ backgroundColor: "#0B1437", color: "#fff" }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = "#D4A017"}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = "#0B1437"}
+        >
+          <Mail className="w-3.5 h-3.5" /> {c.sendEmail}
+        </a>
+
+        <button
+          onClick={handleCopy}
+          title="Copy email address"
+          className="inline-flex items-center justify-center w-9 h-9 border border-border transition-colors"
+          style={{ color: "#0B1437" }}
+        >
+          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+        </button>
+      </div>
+      {copied && <p className="text-[0.7rem] mt-2 text-muted-foreground">Copied to clipboard</p>}
+    </div>
+  );
+}
+
 export default function Contact() {
   const { language } = useLanguage();
   const T = t[language].about;
@@ -17,7 +62,6 @@ export default function Contact() {
     <div style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }`}</style>
 
-      {/* CONTACT CTA */}
       <section className="py-20 border-b border-border">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -28,21 +72,7 @@ export default function Contact() {
             <p className="text-muted-foreground">{T.contactSubtitle}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {CONTACTS.map((c) => (
-              <div key={c.email} className="p-8 border border-border bg-white flex flex-col items-center text-center">
-                <p className="text-[1.75rem] mb-4">{c.icon}</p>
-                <p className="text-[0.875rem] font-bold text-secondary mb-2">{T[c.labelKey]}</p>
-                <p className="text-[0.8125rem] text-muted-foreground mb-5 break-all">{c.email}</p>
-                <a href={`mailto:${c.email}`}
-                  className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-5 py-2.5 transition-colors"
-                  style={{ backgroundColor: "#0B1437", color: "#fff" }}
-                  onMouseEnter={e => e.currentTarget.style.backgroundColor = "#D4A017"}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = "#0B1437"}
-                >
-                  <Mail className="w-3.5 h-3.5" /> {T.sendEmail}
-                </a>
-              </div>
-            ))}
+            {CONTACTS.map((c) => <ContactCard key={c.email} c={c} T={T} />)}
           </div>
         </div>
       </section>

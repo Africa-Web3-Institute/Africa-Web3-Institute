@@ -281,25 +281,25 @@ export const t = {
         title: "Explore",
         links: [
           { label: "About Us", to: "/about" },
-          { label: "Our Team", to: "/about#team" },
-          { label: "Research", to: "/#publications" },
+          { label: "Our Team", to: "/team" },
+          { label: "Research", to: "/publications" },
           { label: "Programs", to: "/capacity-building" },
-          { label: "Contact", to: "/#contact" },
+          { label: "Contact", to: "/contact" },
         ],
       },
       resources: {
         title: "Resources",
         links: [
           { label: "Publications", to: "/publications" },
-          { label: "Events", to: "/#events" },
-          { label: "Media Kit", to: "/media" },
+          { label: "Events", to: "/events" },
+          { label: "Media Kit", to: "/AWI_Media_Kit_2026.pdf" },
           { label: "Annual Report", to: "/awpii" },
         ],
       },
       connect: {
         title: "Connect",
         links: [
-          { label: "Partnerships", to: "/partnerships" },
+          { label: "Partnerships", to: "/contact" },
           { label: "Careers", to: "/careers" },
         ],
       },

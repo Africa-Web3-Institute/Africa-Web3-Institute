@@ -35,6 +35,7 @@
   --color-chart-3: hsl(40 78% 44%);
   --color-chart-4: hsl(220 14% 46%);
   --color-chart-5: hsl(220 20% 12%);
+  --color-chart-label: hsl(220 20% 18%);
 
   --color-sidebar-background: hsl(0 0% 98%);
   --color-sidebar-foreground: hsl(240 5.3% 26.1%);
@@ -74,6 +75,7 @@
   --color-chart-3: hsl(40 78% 55%);
   --color-chart-4: hsl(220 14% 55%);
   --color-chart-5: hsl(0 0% 80%);
+  --color-chart-label: hsl(0 0% 92%);
 
   --color-sidebar-background: hsl(220 20% 8%);
   --color-sidebar-foreground: hsl(0 0% 95%);

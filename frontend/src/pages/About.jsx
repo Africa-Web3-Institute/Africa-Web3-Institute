@@ -4,6 +4,7 @@ import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
 import { Globe, BookOpen, GraduationCap } from "lucide-react";
 import Aerochain from "../assets/aerochain_logo.png"
+
  // not used here, but keep if needed elsewhere
 
 const PILLAR_ICONS = [Globe, BookOpen, GraduationCap];
@@ -33,7 +34,10 @@ const PARTNERS = [
     name: "aerochainafrica",
     logo: Aerochain,
     url: "https://aerochainafrica.com"
-  }
+  },
+  
+
+
 ];
 
 export default function About() {

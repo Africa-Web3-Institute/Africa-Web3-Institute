@@ -30,6 +30,7 @@ import StablecoinTracker from './pages/StablecoinTracker';
 import ProgramsEvents from './pages/ProgramsEvents';
 import Contact from './pages/Contact';
 import EventsPage from './pages/EventsPage';
+import Careers from './pages/Careers'
 
 
 // Admin
@@ -49,6 +50,7 @@ import Settings from "./admin/pages/Settings";
 import AdminLayout from "./admin/Layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { NavDropdownProvider } from "./lib/NavDropdownContext";
+
 
 
 const AuthenticatedApp = () => {
@@ -107,6 +109,7 @@ return (
       <Route path="/programs-events" element={<ProgramsEvents />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/events" element={<EventsPage />} />
+      <Route path="/careers" element={<Careers/>}/>
 
     </Route>
 

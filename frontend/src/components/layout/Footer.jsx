@@ -81,15 +81,15 @@ export default function Footer() {
               {T.description}
             </p>
 
-            <a
-              href="mailto:info@africaweb3institute.org"
+            <Link
+              to="/contact"
               className="text-sm transition-colors block mb-6"
               style={{ color: "#111827" }}
               onMouseEnter={e => e.currentTarget.style.color = "#D4A017"}
               onMouseLeave={e => e.currentTarget.style.color = "#111827"}
             >
               info@africaweb3institute.org
-            </a>
+            </Link>
 
           {/* SOCIALS */}
            <div className="flex flex-wrap gap-2 pt-2">
