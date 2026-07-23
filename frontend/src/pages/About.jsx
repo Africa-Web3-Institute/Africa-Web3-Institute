@@ -183,54 +183,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* PARTNERS */}
-      <section className="py-20 border-b border-border" style={{ background: "hsl(220 14% 97%)" }}>
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
-              {T.partnersTag}
-            </p>
-            <h2 className="text-[1.75rem] font-bold text-secondary mb-3">{T.partnersTitle}</h2>
-            <p className="text-muted-foreground">{T.partnersSubtitle}</p>
-          </div>
-          <div
-            className="relative overflow-hidden"
-            style={{
-              maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
-              WebkitMaskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
-            }}
-          >
-            <style>{`
-              @keyframes partnersMarquee {
-                from { transform: translateX(0); }
-                to { transform: translateX(-50%); }
-              }
-              .partners-track {
-                animation: partnersMarquee 22s linear infinite;
-              }
-              .partners-track:hover {
-                animation-play-state: paused;
-              }
-            `}</style>
-            <div className="partners-track flex items-stretch gap-4 w-max">
-              {[...PARTNERS, ...PARTNERS].map((partner, i) => (
-                <a
-                  key={i}
-                  href={partner.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 w-[160px] aspect-3/2 flex items-center justify-center bg-white border border-border p-3 transition-all hover:scale-105"
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "#D4A017"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = ""}
-                >
-                  <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" loading="lazy" decoding="async" />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* INDEPENDENT STATEMENT */}
       <section className="py-16 border-b border-border" style={{ background: "hsl(220 14% 96%)" }}>
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
