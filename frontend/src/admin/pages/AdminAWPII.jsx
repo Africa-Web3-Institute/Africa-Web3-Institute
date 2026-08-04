@@ -1,6 +1,6 @@
 // src/admin/pages/AdminAWPII.jsx
 import { useState, useEffect, useMemo } from "react";
-import { Search, Edit2, Save, X, ChevronDown, TrendingUp, TrendingDown, Minus, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { Search, Edit2, Save, X, ChevronDown, TrendingUp, TrendingDown, Minus, Loader2, AlertCircle, RefreshCw, Plus } from "lucide-react";
 import { awpiiApi } from "../../api/api";
 import { useAuth } from "../../lib/AuthContext";
 
@@ -57,6 +57,23 @@ function TrendIcon({ trend }) {
   return                       <Minus         className="w-3.5 h-3.5 text-slate-500" />;
 }
 
+// ─── Base Modal (shared) ──────────────────────────────────────────────────
+function BaseModal({ title, children, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor:"rgba(0,0,0,0.7)" }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="w-full max-w-lg rounded-2xl overflow-hidden" style={{ backgroundColor:"#1a1f2e", border:"1px solid #1f2937" }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor:"#1f2937" }}>
+          <h2 className="text-white font-semibold">{title}</h2>
+          <button onClick={onClose} className="text-slate-500 hover:text-white"><X size={18} /></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ─── Edit Modal ─────────────────────────────────────────────────────────────
 function EditModal({ country, onClose, onSave }) {
   const [form, setForm] = useState({
@@ -94,83 +111,200 @@ function EditModal({ country, onClose, onSave }) {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor:"rgba(0,0,0,0.7)" }}
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="w-full max-w-lg rounded-2xl overflow-hidden" style={{ backgroundColor:"#1a1f2e", border:"1px solid #1f2937" }}>
-        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor:"#1f2937" }}>
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{country.flag}</span>
-            <div>
-              <h2 className="text-white font-semibold">{country.name}</h2>
-              <p className="text-slate-500 text-xs">{country.region}</p>
-            </div>
+    <BaseModal title={`Edit ${country.name}`} onClose={onClose}>
+      <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        {error && (
+          <div className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+            <AlertCircle size={13} />{error}
           </div>
-          <button onClick={onClose} className="text-slate-500 hover:text-white"><X size={18} /></button>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Grade</label>
+            <select value={form.grade} onChange={e => set("grade", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              {GRADES.map(g => <option key={g}>{g}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Risk Level</label>
+            <select value={form.risk} onChange={e => set("risk", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              {["Low","Medium","High"].map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
         </div>
 
-        <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-          {error && (
-            <div className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
-              <AlertCircle size={13} />{error}
-            </div>
-          )}
+        <div className="grid grid-cols-2 gap-3">
+          <NumField label="Overall Score"    name="overall_score" />
+          <NumField label="Policy Score"     name="policy" />
+          <NumField label="Innovation Score" name="innovation" />
+          <NumField label="Adoption Score"   name="adoption" />
+        </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Grade</label>
-              <select value={form.grade} onChange={e => set("grade", e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
-                {GRADES.map(g => <option key={g}>{g}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Risk Level</label>
-              <select value={form.risk} onChange={e => set("risk", e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
-                {["Low","Medium","High"].map(r => <option key={r}>{r}</option>)}
-              </select>
-            </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Trend</label>
+            <select value={form.trend} onChange={e => set("trend", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              <option value="up">↑ Up</option>
+              <option value="stable">→ Stable</option>
+              <option value="down">↓ Down</option>
+            </select>
           </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Last Updated</label>
+            <input type="text" value={form.lastUpdated} onChange={e => set("lastUpdated", e.target.value)}
+              placeholder="e.g. April 2026"
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600" />
+          </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <NumField label="Overall Score"    name="overall_score" />
-            <NumField label="Policy Score"     name="policy" />
-            <NumField label="Innovation Score" name="innovation" />
-            <NumField label="Adoption Score"   name="adoption" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Trend</label>
-              <select value={form.trend} onChange={e => set("trend", e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
-                <option value="up">↑ Up</option>
-                <option value="stable">→ Stable</option>
-                <option value="down">↓ Down</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Last Updated</label>
-              <input type="text" value={form.lastUpdated} onChange={e => set("lastUpdated", e.target.value)}
-                placeholder="e.g. April 2026"
-                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600" />
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button onClick={onClose} className="flex-1 py-2.5 rounded-lg text-sm font-medium text-slate-400 border border-gray-700 hover:border-gray-500 transition-colors">Cancel</button>
-            <button onClick={handleSave} disabled={saving}
-              className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50"
-              style={{ backgroundColor:"#D4A017" }}
-              onMouseEnter={e => !saving && (e.currentTarget.style.backgroundColor="#b8891a")}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor="#D4A017")}>
-              {saving ? <><Loader2 size={13} className="animate-spin" />Saving…</> : <><Save size={13} />Save Changes</>}
-            </button>
-          </div>
+        <div className="flex gap-3 pt-2">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg text-sm font-medium text-slate-400 border border-gray-700 hover:border-gray-500 transition-colors">Cancel</button>
+          <button onClick={handleSave} disabled={saving}
+            className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{ backgroundColor:"#D4A017" }}
+            onMouseEnter={e => !saving && (e.currentTarget.style.backgroundColor="#b8891a")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor="#D4A017")}>
+            {saving ? <><Loader2 size={13} className="animate-spin" />Saving…</> : <><Save size={13} />Save Changes</>}
+          </button>
         </div>
       </div>
+    </BaseModal>
+  );
+}
+
+// ─── Add Modal ─────────────────────────────────────────────────────────────
+function AddModal({ onClose, onSave }) {
+  const [form, setForm] = useState({
+    name:          "",
+    region:        "West Africa",
+    flag:          "",
+    grade:         "BBB+",
+    overall_score: 0,
+    policy:        0,
+    innovation:    0,
+    adoption:      0,
+    risk:          "Medium",
+    trend:         "stable",
+    lastUpdated:   "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [error,  setError]  = useState("");
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleSave = async () => {
+    if (!form.name.trim()) {
+      setError("Country name is required.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      await onSave(form);
+    } catch (err) {
+      setError(err.message || "Creation failed.");
+      setSaving(false);
+    }
+  };
+
+  const NumField = ({ label, name }) => (
+    <div>
+      <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">{label}</label>
+      <input type="number" min={0} max={100} value={form[name]}
+        onChange={e => set(name, Number(e.target.value))}
+        className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600" />
     </div>
+  );
+
+  return (
+    <BaseModal title="Add New Country" onClose={onClose}>
+      <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        {error && (
+          <div className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+            <AlertCircle size={13} />{error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Country Name *</label>
+            <input type="text" value={form.name} onChange={e => set("name", e.target.value)}
+              placeholder="e.g. Nigeria"
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600" />
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Flag Emoji</label>
+            <input type="text" value={form.flag} onChange={e => set("flag", e.target.value)}
+              placeholder="🇳🇬"
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Region</label>
+            <select value={form.region} onChange={e => set("region", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              {REGIONS.filter(r => r !== "All Regions").map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Grade</label>
+            <select value={form.grade} onChange={e => set("grade", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              {GRADES.map(g => <option key={g}>{g}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Risk Level</label>
+            <select value={form.risk} onChange={e => set("risk", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              {["Low","Medium","High"].map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Trend</label>
+            <select value={form.trend} onChange={e => set("trend", e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600">
+              <option value="up">↑ Up</option>
+              <option value="stable">→ Stable</option>
+              <option value="down">↓ Down</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <NumField label="Overall Score"    name="overall_score" />
+          <NumField label="Policy Score"     name="policy" />
+          <NumField label="Innovation Score" name="innovation" />
+          <NumField label="Adoption Score"   name="adoption" />
+        </div>
+
+        <div>
+          <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Last Updated</label>
+          <input type="text" value={form.lastUpdated} onChange={e => set("lastUpdated", e.target.value)}
+            placeholder="e.g. June 2026"
+            className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-600" />
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg text-sm font-medium text-slate-400 border border-gray-700 hover:border-gray-500 transition-colors">Cancel</button>
+          <button onClick={handleSave} disabled={saving}
+            className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{ backgroundColor:"#D4A017" }}
+            onMouseEnter={e => !saving && (e.currentTarget.style.backgroundColor="#b8891a")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor="#D4A017")}>
+            {saving ? <><Loader2 size={13} className="animate-spin" />Creating…</> : <><Plus size={13} />Add Country</>}
+          </button>
+        </div>
+      </div>
+    </BaseModal>
   );
 }
 
@@ -184,6 +318,7 @@ export default function AdminAWPII() {
   const [regionFilter, setRegionFilter] = useState("All Regions");
   const [riskFilter,   setRiskFilter]   = useState("All Risks");
   const [editing,      setEditing]      = useState(null);
+  const [adding,       setAdding]       = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -213,13 +348,19 @@ export default function AdminAWPII() {
     : "—";
 
   const handleSave = async (updated) => {
-    // PUT /api/awpii/:country — use key or id
+    // Determine identifier: try key, then id, then fallback to name lowercased
     const identifier = updated.key || updated.id || updated.name?.toLowerCase().replace(/\s+/g, "");
     const saved = await awpiiApi.update(identifier, updated);
     setData(prev => prev.map(c =>
       (c.id === updated.id || c.key === updated.key) ? { ...c, ...saved } : c
     ));
     setEditing(null);
+  };
+
+  const handleCreate = async (newCountry) => {
+    const created = await awpiiApi.create(newCountry);
+    setData(prev => [...prev, created]);
+    setAdding(false);
   };
 
   const Select = ({ value, onChange, options }) => (
@@ -240,10 +381,16 @@ export default function AdminAWPII() {
           <h1 className="text-white text-xl font-bold">AWPII Data</h1>
           <p className="text-gray-400 text-sm mt-0.5">Africa Web3 Policy & Innovation Index — manage country scores and grades</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="text-xs text-slate-500 font-mono bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
             {data.length} countries · avg {avgScore}
           </span>
+          {isSuperAdmin && (
+            <button onClick={() => setAdding(true)}
+              className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors shadow-lg shadow-amber-600/20">
+              <Plus size={14} /> Add Country
+            </button>
+          )}
           <button onClick={fetchData} disabled={loading}
             className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-40">
             <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh
@@ -356,8 +503,12 @@ export default function AdminAWPII() {
         </div>
       </div>
 
+      {/* Modals */}
       {editing && (
         <EditModal country={editing} onClose={() => setEditing(null)} onSave={handleSave} />
+      )}
+      {adding && (
+        <AddModal onClose={() => setAdding(false)} onSave={handleCreate} />
       )}
     </div>
   );

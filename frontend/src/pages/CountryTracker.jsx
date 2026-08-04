@@ -134,178 +134,224 @@ export default function CountryTracker() {
         </div>
       </section>
 
-      {/* Sticky Filter Bar */}
-      <div className="sticky top-[3.75rem] z-40 bg-white border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-3">
-         <div className="flex flex-nowrap sm:flex-wrap overflow-x-auto sm:overflow-visible gap-2 items-center pb-1 sm:pb-0 -mx-6 px-6 sm:mx-0 sm:px-0">
-           <div className="relative shrink-0 w-[160px] sm:flex-1 sm:min-w-[180px] sm:max-w-[240px]">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder={T.filterSearch}
-                className="w-full pl-8 pr-3 py-2 text-[0.8125rem] border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-accent" />
-            </div>
-            <select value={region} onChange={e => setRegion(e.target.value)}
-              className="shrink-0 text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
-              {REGIONS.map(r => <option key={r} value={r}>{T.regions?.[r] || r}</option>)}
-            </select>
-            <select value={category} onChange={e => setCategory(e.target.value)}
-              className="shrink-0 text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
-              {CATEGORIES.map(c => <option key={c} value={c}>{T.categories?.[c] || c}</option>)}
-            </select>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              className="shrink-0 text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
-              {STATUSES_LIST.map(s => <option key={s} value={s}>{T.statuses?.[s] || s}</option>)}
-            </select>
-            <button onClick={resetFilters}
-              className="shrink-0 text-[0.8125rem] font-semibold ml-auto transition-colors"
-              style={{ color: "#D4A017" }}
-              onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
-              onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}>
-              {T.resetFilters}
-            </button>
-          </div>
-          <p className="text-[0.75rem] text-muted-foreground mt-2">
-            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {REGULATORY_UPDATES.length} {T.updates}
-          </p>
-        </div>
+    {/* Sticky Filter Bar */}
+<div className="sticky top-[3.75rem] z-40 bg-white border-b border-border shadow-sm">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    {/* Filter controls – grid layout */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+      {/* Search – full width on mobile, spans 2 cols on tablet+ */}
+      <div className="relative sm:col-span-2">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder={T.filterSearch}
+          className="w-full pl-8 pr-3 py-2 text-[0.8125rem] border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-accent"
+        />
       </div>
 
-      {/* Table */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
-     <div className="border border-border rounded-lg overflow-hidden">
-  {/* Table — tablet and up */}
-  <div className="hidden sm:block overflow-x-auto">
-    <table className="w-full text-sm" style={{ minWidth: "960px" }}>
-              <thead>
-                <tr className="border-b border-border" style={{ backgroundColor: "#F9FAFB" }}>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap" style={{ position: "sticky", left: 0, backgroundColor: "#F9FAFB", zIndex: 10 }}>{T.colCountry}</th>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground">{T.colTitle}</th>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">{T.colDate}</th>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">{T.colCategory}</th>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">{T.colStatus}</th>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground">{T.colSummary}</th>
-                  <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground">{T.colSource}</th>
-                  <th className="px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground text-right whitespace-nowrap">{T.colProfile}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="px-6 py-16 text-center text-muted-foreground text-[0.9375rem]">
-                      {T.noResults}
-                    </td>
-                  </tr>
-                ) : (
-                  filtered.map((u, i) => (
-                    <tr key={u.id}
-                      className="border-b border-border/50 transition-colors"
-                      style={{ backgroundColor: i % 2 === 0 ? "#fff" : "#F9FAFB" }}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(13,44,125,0.04)"}
-                      onMouseLeave={e => e.currentTarget.style.backgroundColor = i % 2 === 0 ? "#fff" : "#F9FAFB"}>
-                      <td className="px-4 py-4" style={{ position: "sticky", left: 0, backgroundColor: "inherit", zIndex: 1 }}>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[1.125rem] shrink-0">{u.flag}</span>
-                          <div>
-                            <p className="font-semibold text-secondary text-[0.875rem] whitespace-nowrap">{u.country}</p>
-                            <p className="text-[0.6875rem] text-muted-foreground">{T.regions?.[u.region] || u.region}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4" style={{ maxWidth: "200px" }}>
-                        <p className="text-[0.875rem] font-semibold text-secondary leading-snug">
-                          {language === "fr" ? (u.titleFr || u.title) : u.title}
-                        </p>
-                      </td>
-                      <td className="px-4 py-4 text-[0.8125rem] text-muted-foreground whitespace-nowrap">{u.date}</td>
-                      <td className="px-4 py-4"><CategoryBadge category={u.category} label={T.categories?.[u.category] || u.category} /></td>
-                      <td className="px-4 py-4"><StatusPill status={u.status} label={T.statuses?.[u.status] || u.status} /></td>
-                      <td className="px-4 py-4" style={{ maxWidth: "260px" }}>
-                        <p className="text-[0.8125rem] text-muted-foreground leading-relaxed">
-                          {language === "fr" ? (u.summaryFr || u.summary) : u.summary}
-                        </p>
-                      </td>
-                      <td className="px-4 py-4" style={{ maxWidth: "140px" }}>
-                        <p className="text-[0.75rem] text-muted-foreground/70 leading-snug">{u.source}</p>
-                      </td>
-                      <td className="px-4 py-4 text-right">
-                        <Link
-                          to={`/country-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                          className="text-[0.8125rem] font-semibold transition-colors whitespace-nowrap"
-                          style={{ color: "#D4A017" }}
-                          onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
-                          onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}>
-                          {T.viewProfile}
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-           {/* Card list — mobile only */}
-  <div className="sm:hidden divide-y divide-border">
-    {filtered.length === 0 ? (
-      <div className="px-6 py-16 text-center text-muted-foreground text-[0.9375rem]">
-        {T.noResults}
-      </div>
-    ) : (
-      filtered.map((u) => (
-        <div key={u.id} className="p-4 flex flex-col gap-2.5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[1.125rem] shrink-0">{u.flag}</span>
-              <div>
-                <p className="font-semibold text-secondary text-[0.875rem]">{u.country}</p>
-                <p className="text-[0.6875rem] text-muted-foreground">{T.regions?.[u.region] || u.region}</p>
-              </div>
-            </div>
-            <span className="text-[0.75rem] text-muted-foreground whitespace-nowrap shrink-0">{u.date}</span>
-          </div>
+      {/* Region select */}
+      <select
+        value={region}
+        onChange={e => setRegion(e.target.value)}
+        className="w-full text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent"
+      >
+        {REGIONS.map(r => <option key={r} value={r}>{T.regions?.[r] || r}</option>)}
+      </select>
 
-          <p className="text-[0.9375rem] font-semibold text-secondary leading-snug">
-            {language === "fr" ? (u.titleFr || u.title) : u.title}
-          </p>
+      {/* Category select */}
+      <select
+        value={category}
+        onChange={e => setCategory(e.target.value)}
+        className="w-full text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent"
+      >
+        {CATEGORIES.map(c => <option key={c} value={c}>{T.categories?.[c] || c}</option>)}
+      </select>
 
-          <div className="flex flex-wrap gap-1.5">
-            <CategoryBadge category={u.category} label={T.categories?.[u.category] || u.category} />
-            <StatusPill status={u.status} label={T.statuses?.[u.status] || u.status} />
-          </div>
+      {/* Status select – hidden on mobile if you want to save space, or include */}
+      <select
+        value={statusFilter}
+        onChange={e => setStatusFilter(e.target.value)}
+        className="w-full text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent"
+      >
+        {STATUSES_LIST.map(s => <option key={s} value={s}>{T.statuses?.[s] || s}</option>)}
+      </select>
 
-          <p className="text-[0.8125rem] text-muted-foreground leading-relaxed">
-            {language === "fr" ? (u.summaryFr || u.summary) : u.summary}
-          </p>
+      {/* Reset button – full width on mobile, aligned right on larger screens */}
+      <button
+        onClick={resetFilters}
+        className="w-full sm:w-auto text-[0.8125rem] font-semibold transition-colors text-accent hover:text-accent-dark justify-self-start sm:justify-self-end"
+        style={{ color: "#D4A017" }}
+        onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
+        onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}
+      >
+        {T.resetFilters}
+      </button>
+    </div>
 
-          <div className="flex items-center justify-between pt-1.5 mt-1 border-t border-border/60">
-            <p className="text-[0.75rem] text-muted-foreground/70 leading-snug pr-2">{u.source}</p>
-            <Link
-              to={`/country-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-              className="text-[0.8125rem] font-semibold shrink-0"
-              style={{ color: "#D4A017" }}
-            >
-              {T.viewProfile}
-            </Link>
-          </div>
-        </div>
-      ))
-    )}
+    {/* Result count */}
+    <p className="text-[0.75rem] text-muted-foreground mt-3">
+      {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {REGULATORY_UPDATES.length} {T.updates}
+    </p>
   </div>
 </div>
-        
+    {/* Table — tablet and up */}
+<div className="hidden sm:block overflow-x-auto">
+  <table className="w-full text-sm" style={{ minWidth: "700px" }}>
+    <thead>
+      <tr className="border-b border-border" style={{ backgroundColor: "#F9FAFB" }}>
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap sticky left-0 z-10" style={{ backgroundColor: "#F9FAFB" }}>
+          {T.colCountry}
+        </th>
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground">
+          {T.colTitle}
+        </th>
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">
+          {T.colDate}
+        </th>
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">
+          {T.colCategory}
+        </th>
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground whitespace-nowrap">
+          {T.colStatus}
+        </th>
+        {/* Hide summary and source on tablets, show on large screens */}
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground hidden lg:table-cell">
+          {T.colSummary}
+        </th>
+        <th className="text-left px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground hidden lg:table-cell">
+          {T.colSource}
+        </th>
+        <th className="px-4 py-3 text-[0.6875rem] font-bold tracking-wider uppercase text-muted-foreground text-right whitespace-nowrap">
+          {T.colProfile}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {filtered.length === 0 ? (
+        <tr>
+          <td colSpan={8} className="px-6 py-16 text-center text-muted-foreground text-[0.9375rem]">
+            {T.noResults}
+          </td>
+        </tr>
+      ) : (
+        filtered.map((u, i) => {
+          const rowBg = i % 2 === 0 ? "#fff" : "#F9FAFB";
+          return (
+            <tr
+              key={u.id}
+              className="border-b border-border/50 transition-colors"
+              style={{ backgroundColor: rowBg }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(13,44,125,0.04)"}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = rowBg}
+            >
+              {/* Country – sticky with proper background */}
+              <td
+                className="px-4 py-4 sticky left-0 z-10"
+                style={{ backgroundColor: rowBg }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-[1.125rem] shrink-0">{u.flag}</span>
+                  <div>
+                    <p className="font-semibold text-secondary text-[0.875rem] whitespace-nowrap">{u.country}</p>
+                    <p className="text-[0.6875rem] text-muted-foreground">{T.regions?.[u.region] || u.region}</p>
+                  </div>
+                </div>
+              </td>
 
-        {/* Methodology Note */}
-        <div className="mt-8 border border-border rounded-lg overflow-hidden">
-          <button onClick={() => setMethodOpen(o => !o)}
-            className="w-full flex items-center justify-between px-6 py-4 text-[0.875rem] font-semibold text-secondary hover:bg-muted/30 transition-colors">
-            <span>{T.methodologyToggle}</span>
-            <span className="text-muted-foreground text-[1rem]">{methodOpen ? "−" : "+"}</span>
-          </button>
-          {methodOpen && (
-            <div className="px-6 pb-5 text-[0.875rem] text-muted-foreground leading-[1.85] border-t border-border pt-4">
-              {T.methodologyText}
+              <td className="px-4 py-4" style={{ maxWidth: "200px" }}>
+                <p className="text-[0.875rem] font-semibold text-secondary leading-snug">
+                  {language === "fr" ? (u.titleFr || u.title) : u.title}
+                </p>
+              </td>
+
+              <td className="px-4 py-4 text-[0.8125rem] text-muted-foreground whitespace-nowrap">{u.date}</td>
+
+              <td className="px-4 py-4">
+                <CategoryBadge category={u.category} label={T.categories?.[u.category] || u.category} />
+              </td>
+
+              <td className="px-4 py-4">
+                <StatusPill status={u.status} label={T.statuses?.[u.status] || u.status} />
+              </td>
+
+              {/* Hide on tablet, show on desktop */}
+              <td className="px-4 py-4 hidden lg:table-cell" style={{ maxWidth: "260px" }}>
+                <p className="text-[0.8125rem] text-muted-foreground leading-relaxed">
+                  {language === "fr" ? (u.summaryFr || u.summary) : u.summary}
+                </p>
+              </td>
+
+              <td className="px-4 py-4 hidden lg:table-cell" style={{ maxWidth: "140px" }}>
+                <p className="text-[0.75rem] text-muted-foreground/70 leading-snug">{u.source}</p>
+              </td>
+
+              <td className="px-4 py-4 text-right">
+                <Link
+                  to={`/country-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  className="text-[0.8125rem] font-semibold transition-colors whitespace-nowrap"
+                  style={{ color: "#D4A017" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
+                  onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}
+                >
+                  {T.viewProfile}
+                </Link>
+              </td>
+            </tr>
+          );
+        })
+      )}
+    </tbody>
+  </table>
+</div>
+
+{/* Card list — mobile only */}
+<div className="sm:hidden divide-y divide-border">
+  {filtered.length === 0 ? (
+    <div className="px-6 py-16 text-center text-muted-foreground text-[0.9375rem]">
+      {T.noResults}
+    </div>
+  ) : (
+    filtered.map((u) => (
+      <div key={u.id} className="p-4 flex flex-col gap-2.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[1.125rem] shrink-0">{u.flag}</span>
+            <div>
+              <p className="font-semibold text-secondary text-[0.875rem]">{u.country}</p>
+              <p className="text-[0.6875rem] text-muted-foreground">{T.regions?.[u.region] || u.region}</p>
             </div>
-          )}
+          </div>
+          <span className="text-[0.75rem] text-muted-foreground whitespace-nowrap shrink-0">{u.date}</span>
+        </div>
+
+        <p className="text-[0.9375rem] font-semibold text-secondary leading-snug">
+          {language === "fr" ? (u.titleFr || u.title) : u.title}
+        </p>
+
+        <div className="flex flex-wrap gap-1.5">
+          <CategoryBadge category={u.category} label={T.categories?.[u.category] || u.category} />
+          <StatusPill status={u.status} label={T.statuses?.[u.status] || u.status} />
+        </div>
+
+        <p className="text-[0.8125rem] text-muted-foreground leading-relaxed">
+          {language === "fr" ? (u.summaryFr || u.summary) : u.summary}
+        </p>
+
+        <div className="flex items-center justify-between pt-1.5 mt-1 border-t border-border/60">
+          <p className="text-[0.75rem] text-muted-foreground/70 leading-snug pr-2">{u.source}</p>
+          <Link
+            to={`/country-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+            className="text-[0.8125rem] font-semibold shrink-0"
+            style={{ color: "#D4A017" }}
+          >
+            {T.viewProfile}
+          </Link>
         </div>
       </div>
+    ))
+  )}
+</div>
 
       {/* CTA Strip */}
       <section className="mt-8" style={{ backgroundColor: "#0B1437" }}>

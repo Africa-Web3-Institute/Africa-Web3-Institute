@@ -121,129 +121,101 @@ export const t = {
       partnerHeading: "Governments, institutions, builders, and capital partners shaping Africa's digital future.",
       partnerCta1: "Become a Partner →",
       partnerCta2: "Sponsor an Event",
-      months: [
+     months: [
+  {
+    month: "July 2026",
+    events: [
+      {
+        title: "Stablecoin Africa Campus Tour 2026",
+        date: "7–21 July 2026",
+        location: "12 Universities · 6 Cities · Ghana, Nigeria, Kenya",
+        description: "A multi-country university roadshow activating the next wave of African Web3 talent by connecting students to stablecoins, policy developments, and real career pathways.",
+        outcomes: ["Student onboarding into Web3 ecosystems", "Campus ambassador recruitment", "Talent pipeline creation"],
+        ctas: [{ label: "Partner With Us", variant: "primary" }],
+      },
+      {
+        title: "State of Web3 Africa 2026 — Q2 Launch",
+        date: "10 July 2026",
+        location: "",
+        description: "A data-driven convening of policymakers, investors, and builders to decode stablecoins, regulation, and capital flows.",
+        ctas: [
+          { label: "Download Previous Report", variant: "outline" },
+          { label: "Attend Launch Event", variant: "primary" },
+        ],
+      },
+    ],
+  },
+  {
+    month: "September 2026",
+    events: [
+    
+      {
+        title: "VASP Policy Workshop for Journalists",
+        country: "Ghana",
+        date: "17–18 September 2026",
+        location: "Alisa Hotel, Accra",
+        ctas: [{ label: "Request Invitation", variant: "primary" }],
+      },
+      {
+        title: "Blockchain, Cryptocurrency Financial Crime Enforcement Workshop",
+        country: "Zambia",
+        date: "24–25 September 2026",
+        location: "Radisson Blu, Lusaka",
+        description: "A specialised workshop focused on combating financial crimes in the blockchain and cryptocurrency ecosystem, from detection and investigation through to prosecution, adjudication, and judicial decision-making.",
+        // topics: [ ... ], // kept as originally commented
+        ctas: [{ label: "Register Interest", variant: "primary" }],
+      },
+    
+    ],
+  },
+  {
+    month: "October 2026",
+    events: [
         {
-          month: "July 2026",
-          events: [
-            {
-              title: "Stablecoin Africa Campus Tour 2026",
-              date: "7–21 July 2026",
-              location: "12 Universities · 6 Cities · Ghana, Nigeria, Kenya",
-              description: "A multi-country university roadshow activating the next wave of African Web3 talent by connecting students to stablecoins, policy developments, and real career pathways.",
-              outcomes: ["Student onboarding into Web3 ecosystems", "Campus ambassador recruitment", "Talent pipeline creation"],
-              ctas: [{ label: "Partner With Us", variant: "primary" }],
-            },
-            {
-              title: "State of Web3 Africa 2026 — Q2 Launch",
-              date: "10 July 2026",
-              location: "",
-              description: "A data-driven convening of policymakers, investors, and builders to decode stablecoins, regulation, and capital flows.",
-              ctas: [{ label: "Download Previous Report", variant: "outline" }, { label: "Attend Launch Event", variant: "primary" }],
-            },
-            {
-              title: "VASP Policy Workshop for Journalists",
-              country: "Ghana",
-              date: "29–30 July 2026",
-              location: "Alisa Hotel, Accra",
-              ctas: [{ label: "Request Invitation", variant: "primary" }],
-            },
-          ],
-        },
+        title: "State of Web3 Africa 2026 — Q3 Launch",
+        country: "Zambia",
+        date: "2 October 2026",
+        location: "Radisson Blu,Lusaka, Zambia",
+        description: "Tracking what is scaling, what is stalling, and where Africa captures value next.",
+        ctas: [{ label: "Get Early Access", variant: "primary" }],
+      },
         {
-          section: [
-            {
-              month: "August 2026",
-              events: [
-                {
-                  title: "VASP Strategy Workshop for Banks",
-                  country: "Ghana",
-                  date: "20 August 2026",
-                  location: "Kempinski, Accra",
-                  ctas: [{ label: "Institutional Participation", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "September 2026",
-              events: [
-                {
-                  title: "Web3 Policy Sensitization Workshop",
-                  country: "Congo DRC",
-                  date: "10 September 2026",
-                  location: "Hilton, Kinshasa",
-                  ctas: [{ label: "Join Policy Dialogue", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "September 2026",
-              events: [
-                {
-                  title: "Blockchain, Cryptocurrency Financial Crime Enforcement Workshop",
-                  country: "Zambia",
-                  date: "24–25 September 2026",
-                  location: "Radisson Blu, Lusaka",
-                  description: "A specialised workshop focused on combating financial crimes in the blockchain and cryptocurrency ecosystem, from detection and investigation through to prosecution, adjudication, and judicial decision-making.",
-                  // topics: [
-                  //   "AML/CFT frameworks for virtual assets",
-                  //   "Cross-border collaboration and mutual legal assistance",
-                  //   "Prosecution strategies and evidentiary challenges in blockchain matters",
-                  //   "Role of judges and prosecutors in crypto asset recovery and forfeiture",
-                  //   "Case studies from African and international jurisdictions",
-                  //   "Blockchain analytics and advanced transaction tracing",
-                  //   "Investigation-to-prosecution pipelines for crypto cases",
-                  //   "Adjudication of cryptocurrency cases",
-                  //   "Regulatory updates, policy development, and sentencing considerations",
-                  //   "Emerging threats including DeFi exploits, ransomware, NFT fraud, and mixing services",
-                  // ],
-                  ctas: [{ label: "Register Interest", variant: "primary" }],
-                },
-              ],
-            },
-          ],
-        },
+        title: "Web3 Policy Roundtable",
+        country: "Tanzania",
+        date: "4 October 2026",
+        location: "Hyatt, Dar es Salaam",
+        ctas: [{ label: "Request Seat at the Table", variant: "primary" }],
+      },
         {
-          section: [
-            {
-              month: "September 2026",
-              events: [
-                {
-                  title: "State of Web3 Africa 2026 — Q3 Launch",
-                  country: "South Africa",
-                  date: "25 September 2026",
-                  location: "Marriott Bonvoy, Johannesburg, South Africa",
-                  description: "Tracking what is scaling, what is stalling, and where Africa captures value next.",
-                  ctas: [{ label: "Get Early Access", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "October 2026",
-              events: [
-                {
-                  title: "Web3 Policy Roundtable",
-                  country: "Tanzania",
-                  date: "4 October 2026",
-                  location: "Hyatt, Dar es Salaam",
-                  ctas: [{ label: "Request Seat at the Table", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "December 2026",
-              events: [
-                {
-                  title: "Web3 Policy Breakfast",
-                  country: "South Sudan",
-                  date: "3 December 2026",
-                  location: "Radisson Blu, Juba",
-                  ctas: [{ label: "Engage as Stakeholder", variant: "primary" }],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+        title: "Web3 Policy Sensitization Workshop",
+        country: "Congo DRC",
+        date: "18 October 2026",
+        location: "Hilton, Kinshasa",
+        ctas: [{ label: "Join Policy Dialogue", variant: "primary" }],
+      },
+      {
+        title: "VASP Strategy Workshop for Banks",
+        country: "Ghana",
+        date: "22 October 2026",
+        location: "Kempinski, Accra",
+        ctas: [{ label: "Institutional Participation", variant: "primary" }],
+      },
+    
+    ],
+  },
+  {
+    month: "December 2026",
+    events: [
+      {
+        title: "Web3 Policy Breakfast",
+        country: "South Sudan",
+        date: "3 December 2026",
+        location: "Radisson Blu, Juba",
+        ctas: [{ label: "Engage as Stakeholder", variant: "primary" }],
+      },
+    ],
+  },
+]
     },
     community: {
       eyebrow: "Community",
@@ -274,7 +246,7 @@ export const t = {
       cta2: "Explore Intelligence",
     },
     footer: {
-      description: "A pan-African public policy and educational think tank advancing blockchain innovation through research, regulation, education, and ecosystem building.",
+      description: "A pan-African public policy think tank advancing blockchain innovation through policy advocacy, research, capacity, and ecosystem building.",
       copyright: `© ${new Date().getFullYear()} Africa Web3 Institute. All rights reserved.`,
       badge: "Independent & Non-Partisan",
       explore: {
@@ -285,6 +257,7 @@ export const t = {
           { label: "Research", to: "/publications" },
           { label: "Programs", to: "/capacity-building" },
           { label: "Contact", to: "/contact" },
+          
         ],
       },
       resources: {
@@ -294,6 +267,7 @@ export const t = {
           { label: "Events", to: "/events" },
           { label: "Media Kit", to: "/AWI_Media_Kit_2026.pdf" },
           { label: "Annual Report", to: "/awpii" },
+            { label: "Newsletter", to: "/newsletter" },
         ],
       },
       connect: {
@@ -564,9 +538,9 @@ export const t = {
       pillar1Title: "Policy & Governance",
       pillar1Desc: "Engaging African governments and regulators to build progressive, innovation-friendly Web3 frameworks that protect citizens while enabling economic growth.",
       pillar2Title: "Research & Publications",
-      pillar2Desc: "Producing the AWPII index, country reports, and data-driven insights on blockchain adoption and digital economy trends across the continent.",
+      pillar2Desc: "Producing the Africa Web3 Policy & Innovation Index(AWPII), country reports, and data-driven insights on Blockchain policy and digital economy trends across Africa.",
       pillar3Title: "Education & Capacity Building",
-      pillar3Desc: "Training developers, students, entrepreneurs, and policymakers to lead Africa's decentralised economy through workshops, programmes, and accessible resources.",
+      pillar3Desc: "Training developers, students, entrepreneurs, policymakers, public servants, judiciary, and law enforcement to lead Africa's decentralised economy.",
    whyMattersTag: "Context",
       whyMattersTitle: "Why It Matters",
       stat1Metric: "Fastest-Growing ",
@@ -767,6 +741,7 @@ export const t = {
       ctaButton: "Book a Training Session",
       ctaLearnMore: "Learn More About AWI",
       ctaEmailPrefix: "Or email us directly:",
+       backHome: "← Back to Africa Web3 Institute",
     },
     indabaSeries: {
       heroBadge: "AWI Flagship Programme",
@@ -857,7 +832,8 @@ export const t = {
       relatedTracker: "View Country Tracker →",
       relatedMap: "Explore the Policy Map →",
       relatedReport: "Download May 2026 Snapshot →",
-      noResults: "No enforcement actions match your filters. Try adjusting your search.",
+     noResultsTitle: "No enforcement actions found",
+  noResultsDesc: "Try adjusting your filters or search terms.",
       heatmapActions: "actions",
       intensityLabel: "Intensity",
       types: { ban: "Outright Ban", shutdown: "Exchange Shutdown", vasp: "VASP Compliance", licensing: "Licensing Action", tax: "Tax Enforcement", aml: "AML/CFT Action", warning: "Consumer Warning", positive: "Positive Development", court: "Court Order" },
@@ -875,6 +851,29 @@ export const t = {
       liveIntelligence: "Live Intelligence",
       subscribeEyebrow: "Intelligence Subscription",
     },
+    
+newsletterLanding: {
+  badge: "Monthly Newsletter",
+  headline: "Web3 Intelligence, Straight from Africa",
+  description:
+    "Dive into emerging markets, blockchain innovations, and the future of finance - curated for founders, developers, regulators, policymakers, and investors",
+  emailPlaceholder: "Your email address",
+  cta: "Get Started →",
+  subscribing: "Subscribing…",
+  successMessage: "You're in! Check your inbox.",
+  errorMessage: "Something went wrong. Please try again.",
+  socialProof: "Join 5000+ innovators discovering new markets every month",
+  archiveLink: "Browse the archive →",
+  feature1Title: "Market Intel",
+  feature1Desc: "10-minute reads on regulatory Insights, policy shifts, and Web3 trends across Africa",
+  feature2Title: "Founder Stories",
+  feature2Desc: "Interviews with builders shaping Africa's digital economy.",
+  feature3Title: "Opportunities",
+  feature3Desc: "Grants, jobs, and events curated for the community.",
+},newsletterArchive: {
+  title: "Newsletter Archive",
+  readMore: "Read More",
+},
   },
 
   fr: {
@@ -1152,7 +1151,7 @@ export const t = {
       cta2: "Explorer l'Intelligence",
     },
     footer: {
-      description: "Un laboratoire d'idées panafricain de politique publique et d'éducation qui fait avancer l'innovation blockchain par la recherche, la réglementation, l'éducation et le développement de l'écosystème.",
+      description: "Un groupe de réflexion panafricain sur les politiques publiques qui promeut l'innovation dans le domaine de la blockchain par le plaidoyer, la recherche, le renforcement des capacités et le développement de l'écosystème.",
       copyright: `© ${new Date().getFullYear()} Africa Web3 Institute. Tous droits réservés.`,
       badge: "Indépendant et non partisan",
       explore: {
@@ -1440,9 +1439,9 @@ export const t = {
       pillar1Title: "Politique & Gouvernance",
       pillar1Desc: "Engager les gouvernements et régulateurs africains pour construire des cadres Web3 progressifs et favorables à l'innovation qui protègent les citoyens tout en permettant la croissance économique.",
       pillar2Title: "Recherche & Publications",
-      pillar2Desc: "Produire l'indice AWPII, des rapports pays et des analyses basées sur les données sur l'adoption de la blockchain et les tendances de l'économie numérique à travers le continent.",
+      pillar2Desc: "Élaboration de l'Africa Web3 Policy & Innovation Index (AWPII), de rapports par pays et d'analyses fondées sur des données concernant les politiques liées à la blockchain et les tendances de l'économie numérique en Afrique.",
       pillar3Title: "Éducation & Renforcement des Capacités",
-      pillar3Desc: "Former les développeurs, étudiants, entrepreneurs et décideurs politiques pour diriger l'économie décentralisée de l'Afrique à travers des ateliers, programmes et ressources accessibles.",
+      pillar3Desc: "Former les développeurs, étudiants, entrepreneurs, décideurs politiques, agents de la fonction publique, membres du pouvoir judiciaire et forces de l'ordre à piloter l'économie décentralisée de l'Afrique.",
       whyMattersTag: "Contexte",
       whyMattersTitle: "Pourquoi C'est Important",
      stat1Metric: "Croissance la plus rapide au monde",
@@ -1643,6 +1642,7 @@ roles: {
       ctaButton: "Réserver une session de formation",
       ctaLearnMore: "En savoir plus sur AWI",
       ctaEmailPrefix: "Ou envoyez-nous un email directement :",
+      backHome: "← Retour à l'Africa Web3 Institute",
     },
     indabaSeries: {
       heroBadge: "Programme Phare de l'AWI",
@@ -1733,7 +1733,8 @@ roles: {
       relatedTracker: "Voir le suivi des pays →",
       relatedMap: "Explorer la carte des politiques →",
       relatedReport: "Télécharger le Snapshot de mai 2026 →",
-      noResults: "Aucune action ne correspond à vos filtres. Essayez d'ajuster votre recherche.",
+      noResultsTitle: "Aucune action ne correspond à vos filtres. ",
+     noResultsDesc: "Essayez d'ajuster votre recherche..",
       heatmapActions: "actions",
       intensityLabel: "Intensité",
       types: { ban: "Interdiction totale", shutdown: "Fermeture d'échange", vasp: "Conformité VASP", licensing: "Action de licence", tax: "Application fiscale", aml: "Action LBC/FT", warning: "Avertissement consommateur", positive: "Développement positif", court: "Ordonnance judiciaire" },
@@ -1751,5 +1752,28 @@ roles: {
       liveIntelligence: "Intelligence en Direct",
       subscribeEyebrow: "Abonnement Intelligence",
     },
+    newsletterLanding: {
+  badge: "Bulletin mensuel",
+  headline: "L'intelligence Web3, directement depuis l'Afrique",
+  description:
+    "Plongez au cœur des marchés émergents, des innovations liées à la blockchain et de l'avenir de la finance — une sélection conçue pour les fondateurs, les développeurs, les régulateurs, les décideurs politiques et les investisseurs.",
+  emailPlaceholder: "Votre adresse e-mail",
+  cta: "Commencer →",
+  subscribing: "Inscription en cours…",
+  successMessage: "C'est fait ! Consultez votre boîte de réception.",
+  errorMessage: "Une erreur s'est produite. Veuillez réessayer.",
+  socialProof: "Rejoignez plus de 5 000 innovateurs qui découvrent de nouveaux marchés chaque mois.",
+  archiveLink: "Parcourir les archives →",
+  feature1Title: "Veille du marché",
+  feature1Desc: "Des lectures de 10 minutes sur les perspectives réglementaires, les évolutions des politiques et les tendances du Web3 à travers l'Afrique.",
+  feature2Title: "Portraits de fondateurs",
+  feature2Desc: "Des entretiens avec les bâtisseurs qui façonnent l'économie numérique africaine.",
+  feature3Title: "Opportunités",
+  feature3Desc: "Bourses, offres d'emploi et événements sélectionnés pour la communauté.",
+},
+newsletterArchive: {
+  title: "Archives de la newsletter",
+  readMore: "Lire la suite",
+},
   },
 };

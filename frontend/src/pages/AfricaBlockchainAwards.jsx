@@ -1,6 +1,27 @@
-import { useState } from "react";
+// src/pages/AfricaBlockchainAwards.js
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Mail, Award, Star, Shield, Globe, Zap, Building2, Leaf, ChevronRight, Trophy, LayoutGrid, ClipboardList, Info, Newspaper, Send } from "lucide-react";
+import {
+  ArrowRight,
+  Mail,
+  Award,
+  Star,
+  Shield,
+  Globe,
+  Zap,
+  Building2,
+  Leaf,
+  ChevronRight,
+  Trophy,
+  LayoutGrid,
+  ClipboardList,
+  Info,
+  Newspaper,
+  Send,
+  Calendar,
+  Users,
+  MapPin,
+} from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 
@@ -14,18 +35,70 @@ const QUICK_NAV = [
   { id: "get-involved", icon: Send, label: { en: "Get Involved", fr: "Participer" } },
 ];
 
-function CTAButtonLight({ children, primary, onClick }) {
-  const base = "inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 transition-colors";
-  const style = primary
-    ? `${base} bg-secondary text-white hover:bg-secondary/90`
-    : `${base} border border-secondary text-secondary hover:bg-secondary hover:text-white`;
-  return <button onClick={onClick} className={style}>{children}</button>;
+// ─── Scroll reveal hook ──────────────────────────────────────────────────────
+function useScrollReveal() {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, isVisible };
 }
 
+// ─── Animated section wrapper ───────────────────────────────────────────────
+const AnimatedSection = ({ children, className = "", delay = 0 }) => {
+  const { ref, isVisible } = useScrollReveal();
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// ─── CTA Buttons ─────────────────────────────────────────────────────────────
+const CTAButtonLight = ({ children, primary, onClick }) => {
+  const base =
+    "inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300";
+  const style = primary
+    ? `${base} bg-[#D4A017] text-white hover:bg-[#b88a12] shadow-lg shadow-[#D4A017]/25`
+    : `${base} border border-[#D4A017] text-[#D4A017] hover:bg-[#D4A017] hover:text-white`;
+  return (
+    <button onClick={onClick} className={style}>
+      {children}
+    </button>
+  );
+};
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 export default function AfricaBlockchainAwards() {
   const { language } = useLanguage();
   const T = t[language].awards;
-  const [nomForm, setNomForm] = useState({ name: "", org: "", email: "", category: "", description: "" });
+
+  const [nomForm, setNomForm] = useState({
+    name: "",
+    org: "",
+    email: "",
+    category: "",
+    description: "",
+  });
   const [nomErrors, setNomErrors] = useState({});
   const [nomSubmitted, setNomSubmitted] = useState(false);
 
@@ -46,287 +119,489 @@ export default function AfricaBlockchainAwards() {
   const handleNomSubmit = (e) => {
     e.preventDefault();
     const errs = validateNom();
-    if (Object.keys(errs).length) { setNomErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setNomErrors(errs);
+      return;
+    }
     setNomSubmitted(true);
     setNomForm({ name: "", org: "", email: "", category: "", description: "" });
   };
 
-  const inputCls = (field) => `w-full text-[0.875rem] px-3 py-2.5 border outline-none transition-colors bg-white ${nomErrors[field] ? "border-red-400" : "border-border focus:border-accent"}`;
+  const inputCls = (field) =>
+    `w-full text-sm px-4 py-2.5 rounded-lg border outline-none transition-all bg-white ${
+      nomErrors[field]
+        ? "border-red-400 focus:ring-red-400/30"
+        : "border-border focus:border-[#D4A017] focus:ring-2 focus:ring-[#D4A017]/30"
+    }`;
+
+ 
 
   return (
-    <div className="bg-background text-foreground">
-
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden">
+    <div className="bg-white text-foreground overflow-hidden">
+      {/* ─── HERO SECTION ───────────────────────────────────────────────────── */}
+      <section className="relative min-h-[70vh] flex items-center overflow-hidden">
         <div
           className="absolute inset-0"
-          style={{ backgroundImage: "url('/Awi_Website_pics.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
+          style={{
+            backgroundImage: "url('/Awi_Website_pics.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+ 
+          }}
         />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(255,255,255,0.93)" }} />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-4" style={{ color: "#D4A017" }}>
-            {T.heroBadge}
-          </p>
-          <h1 className="text-[2.25rem] lg:text-[3.25rem] font-bold text-secondary leading-[1.1] tracking-tight mb-5">
-            {T.heroTitle}<br />
-            <span style={{ color: "#D4A017" }}>{T.heroTitleAccent}</span>
-          </h1>
-          <p className="text-[1.0625rem] lg:text-[1.1875rem] font-semibold leading-snug mb-8 max-w-xl" style={{ color: "#D4A017" }}>
-            {T.heroSubtitle}
-          </p>
-          <p className="text-[1rem] text-muted-foreground leading-[1.9] mb-10 max-w-2xl font-medium">{T.heroPara1}</p>
+        <div className="absolute inset-0 bg-linear-to-r from-[#0B1437] via-[#0B1437]/90 to-[#0B1437]/70" />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 w-full">
+          <AnimatedSection className="max-w-3xl">
+            <p className="inline-block text-xs font-semibold tracking-[0.18em] uppercase mb-4 px-4 py-1.5 border border-[#D4A017]/30 rounded-full text-[#D4A017] bg-[#D4A017]/10">
+              {T.heroBadge}
+            </p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.1] mb-4">
+              {T.heroTitle}
+              <br />
+              <span className="text-[#D4A017]">{T.heroTitleAccent}</span>
+            </h1>
+            <p className="text-lg font-semibold text-[#D4A017] mb-6">
+              {T.heroSubtitle}
+            </p>
+            <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-xl">
+              {T.heroPara1}
+            </p>
 
-          <div className="flex flex-wrap gap-4 mb-10">
-            <CTAButtonLight primary onClick={() => window.open("mailto:info@africaweb3institute.org?subject=Sponsorship Enquiry — Africa Blockchain Awards 2025", "_blank")}>
-              {T.heroCta1} <ArrowRight className="w-4 h-4" />
-            </CTAButtonLight>
-            <CTAButtonLight onClick={() => scrollToSection("nomination-form")}>{T.heroCta2}</CTAButtonLight>
-          </div>
 
-          {/* Quick explore nav */}
-          <div className="flex flex-wrap gap-2.5">
-            {QUICK_NAV.map(({ id, icon: Icon, label }) => (
-              <button
-                key={id}
-                onClick={() => scrollToSection(id)}
-                className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-4 py-2.5 rounded-full border transition-all bg-white"
-                style={{ borderColor: "#E5E7EB", color: "#0B1437" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.backgroundColor = "rgba(212,160,23,0.06)"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#E5E7EB"; e.currentTarget.style.backgroundColor = "#fff"; }}
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-4 mb-10">
+              <CTAButtonLight
+                primary
+                onClick={() =>
+                  window.open(
+                    "mailto:info@africaweb3institute.org?subject=Sponsorship Enquiry — Africa Blockchain Awards 2025",
+                    "_blank"
+                  )
+                }
               >
-                <Icon className="w-3.5 h-3.5" style={{ color: "#D4A017" }} />
-                {label[language] || label.en}
-              </button>
-            ))}
-          </div>
+                {T.heroCta1} <ArrowRight className="w-4 h-4" />
+              </CTAButtonLight>
+              <CTAButtonLight onClick={() => scrollToSection("nomination-form")}>
+                {T.heroCta2}
+              </CTAButtonLight>
+            </div>
+
+            {/* Quick navigation pills */}
+            <div className="flex flex-wrap gap-2.5">
+              {QUICK_NAV.map(({ id, icon: Icon, label }) => (
+                <button
+                  key={id}
+                  onClick={() => scrollToSection(id)}
+                  className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-4 py-2.5 rounded-full border transition-all bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 hover:border-[#D4A017]"
+                >
+                  <Icon className="w-3.5 h-3.5 text-[#D4A017]" />
+                  {label[language] || label.en}
+                </button>
+              ))}
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
-      {/* ── Award Categories ── */}
-      <section id="categories" className="py-24 lg:py-32 border-b border-border scroll-mt-24">
+      {/* ─── AWARD CATEGORIES ────────────────────────────────────────────────── */}
+      <section
+        id="categories"
+        className="py-20 border-b border-border scroll-mt-24 bg-[#F8F9FB]"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.categoriesEyebrow}</p>
-            <h2 className="text-[1.75rem] lg:text-[2rem] font-bold text-secondary leading-snug mb-4">{T.categoriesHeading}</h2>
-            <p className="text-[1rem] text-muted-foreground max-w-xl mx-auto">{T.categoriesPara}</p>
-          </div>
-          <div className="space-y-px bg-border">
+          <AnimatedSection className="text-center mb-14">
+            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+              {T.categoriesEyebrow}
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary">
+              {T.categoriesHeading}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mt-3 text-[0.9375rem]">
+              {T.categoriesPara}
+            </p>
+          </AnimatedSection>
+
+          <div className="space-y-6">
             {T.categories.map((cat, ci) => {
               const Icon = CATEGORY_ICONS[ci];
               return (
-                <div key={cat.number} className="bg-background">
-                  <div className="flex items-center gap-5 px-8 py-5 border-b border-border bg-muted/30">
-                    <span className="text-[0.6875rem] font-bold tracking-widest text-accent/60">{cat.number}</span>
-                    <div className="w-7 h-7 rounded bg-secondary/8 flex items-center justify-center border border-secondary/10 flex-shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-secondary" />
-                    </div>
-                    <h3 className="text-[0.9375rem] font-bold text-secondary">{cat.title}</h3>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {cat.awards.map((award) => (
-                      <div key={award.name} className="px-8 py-5 flex items-start gap-4 pl-[4.5rem]">
-                        <Award className="w-3.5 h-3.5 text-accent mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-[0.9375rem] font-semibold text-secondary mb-1">{award.name}</p>
-                          <p className="text-[0.875rem] text-muted-foreground leading-snug">{award.desc}</p>
-                        </div>
+                <AnimatedSection key={cat.number} delay={ci * 80}>
+                  <div className="bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    {/* Category header */}
+                    <div className="flex items-center gap-4 px-6 py-4 bg-[#0B1437]">
+                      <span className="text-xs font-bold tracking-widest text-[#D4A017]/60">
+                        {cat.number}
+                      </span>
+                      <div className="w-8 h-8 rounded-full bg-[#D4A017]/20 flex items-center justify-center text-[#D4A017]">
+                        <Icon className="w-4 h-4" />
                       </div>
-                    ))}
+                      <h3 className="text-lg font-bold text-white">{cat.title}</h3>
+                    </div>
+                    {/* Awards list */}
+                    <div className="divide-y divide-border">
+                      {cat.awards.map((award) => (
+                        <div key={award.name} className="px-6 py-4 flex items-start gap-4 hover:bg-[#F8F9FB] transition-colors">
+                          <Award className="w-4 h-4 text-[#D4A017] mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-semibold text-secondary">
+                              {award.name}
+                            </p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {award.desc}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </AnimatedSection>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ── Nomination & Evaluation + Form ── */}
-      <section id="nomination-form" className="py-24 lg:py-32 border-b border-border scroll-mt-24" style={{ backgroundColor: "hsl(220 14% 97%)" }}>
+      {/* ─── NOMINATION & EVALUATION ────────────────────────────────────────── */}
+      <section
+        id="nomination-form"
+        className="py-20 border-b border-border scroll-mt-24"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.nominationEyebrow}</p>
-            <h2 className="text-[1.75rem] lg:text-[2rem] font-bold text-secondary leading-snug mb-4">{T.nominationHeading}</h2>
-            <p className="text-[1rem] text-muted-foreground leading-[1.85]">{T.nominationPara}</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-            <div>
-              <p className="text-xs font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-6">{T.metricsLabel}</p>
-              <div className="space-y-px bg-border">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Left: Evaluation criteria */}
+            <AnimatedSection>
+              <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+                {T.nominationEyebrow}
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
+                {T.nominationHeading}
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-8">
+                {T.nominationPara}
+              </p>
+              <p className="text-xs font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-4">
+                {T.metricsLabel}
+              </p>
+              <div className="space-y-3">
                 {T.metrics.map((m, i) => (
-                  <div key={m.title} className="bg-white px-7 py-5 flex items-start gap-5">
-                    <span className="text-accent font-bold text-[0.75rem] mt-0.5 flex-shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                  <div
+                    key={m.title}
+                    className="bg-white p-5 rounded-xl border border-border flex items-start gap-4 hover:shadow-md transition-shadow"
+                  >
+                    <span className="text-sm font-bold text-[#D4A017] mt-0.5 flex-shrink-0">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                     <div>
-                      <p className="text-[0.9375rem] font-semibold text-secondary mb-1">{m.title}</p>
-                      <p className="text-[0.875rem] text-muted-foreground leading-snug">{m.desc}</p>
+                      <p className="text-sm font-semibold text-secondary mb-0.5">
+                        {m.title}
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {m.desc}
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </AnimatedSection>
 
-            <div className="bg-white p-8 border border-border">
-              {nomSubmitted ? (
-                <div className="border border-accent/40 p-10 text-center">
-                  <p className="text-[1.125rem] font-bold text-secondary mb-2">
-                    {language === "fr" ? "Votre candidature a été soumise. Merci !" : "Your nomination has been submitted. Thank you!"}
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleNomSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-[0.75rem] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                        {language === "fr" ? "Nom complet" : "Full Name"}
-                      </label>
-                      <input className={inputCls("name")} value={nomForm.name}
-                        onChange={e => { setNomForm({...nomForm, name: e.target.value}); setNomErrors({...nomErrors, name: false}); }}
-                        placeholder={language === "fr" ? "Votre nom" : "Your name"} />
+            {/* Right: Nomination form */}
+            <AnimatedSection delay={150}>
+              <div className="bg-white p-8 rounded-2xl border border-border shadow-md">
+                {nomSubmitted ? (
+                  <div className="text-center py-12">
+                    <div className="text-5xl mb-4">🎉</div>
+                    <p className="text-xl font-bold text-secondary">
+                      {language === "fr"
+                        ? "Votre candidature a été soumise. Merci !"
+                        : "Your nomination has been submitted. Thank you!"}
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleNomSubmit} className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                          {language === "fr" ? "Nom complet" : "Full Name"}
+                        </label>
+                        <input
+                          className={inputCls("name")}
+                          value={nomForm.name}
+                          onChange={(e) => {
+                            setNomForm({ ...nomForm, name: e.target.value });
+                            setNomErrors({ ...nomErrors, name: false });
+                          }}
+                          placeholder={
+                            language === "fr" ? "Votre nom" : "Your name"
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                          {language === "fr" ? "Organisation" : "Organisation"}
+                        </label>
+                        <input
+                          className={inputCls("org")}
+                          value={nomForm.org}
+                          onChange={(e) => {
+                            setNomForm({ ...nomForm, org: e.target.value });
+                            setNomErrors({ ...nomErrors, org: false });
+                          }}
+                          placeholder={
+                            language === "fr"
+                              ? "Votre organisation"
+                              : "Your organisation"
+                          }
+                        />
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-[0.75rem] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                        {language === "fr" ? "Organisation" : "Organisation"}
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                        Email
                       </label>
-                      <input className={inputCls("org")} value={nomForm.org}
-                        onChange={e => { setNomForm({...nomForm, org: e.target.value}); setNomErrors({...nomErrors, org: false}); }}
-                        placeholder={language === "fr" ? "Votre organisation" : "Your organisation"} />
+                      <input
+                        type="email"
+                        className={inputCls("email")}
+                        value={nomForm.email}
+                        onChange={(e) => {
+                          setNomForm({ ...nomForm, email: e.target.value });
+                          setNomErrors({ ...nomErrors, email: false });
+                        }}
+                        placeholder="your@email.com"
+                      />
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-[0.75rem] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">Email</label>
-                    <input type="email" className={inputCls("email")} value={nomForm.email}
-                      onChange={e => { setNomForm({...nomForm, email: e.target.value}); setNomErrors({...nomErrors, email: false}); }}
-                      placeholder="your@email.com" />
-                  </div>
-                  <div>
-                    <label className="block text-[0.75rem] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                      {language === "fr" ? "Catégorie" : "Award Category"}
-                    </label>
-                    <select className={inputCls("category")} value={nomForm.category}
-                      onChange={e => { setNomForm({...nomForm, category: e.target.value}); setNomErrors({...nomErrors, category: false}); }}>
-                      <option value="">— {language === "fr" ? "Sélectionner" : "Select category"} —</option>
-                      {T.categories.map(c => <option key={c.number} value={c.title}>{c.title}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[0.75rem] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                      {language === "fr" ? "Description" : "Description of Impact"}
-                    </label>
-                    <textarea rows={4} className={`${inputCls("description")} resize-none`} value={nomForm.description}
-                      onChange={e => { setNomForm({...nomForm, description: e.target.value}); setNomErrors({...nomErrors, description: false}); }}
-                      placeholder={language === "fr" ? "Décrivez l'impact..." : "Describe the impact and achievements..."} />
-                  </div>
-                  <button type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 transition-colors bg-accent text-white hover:bg-accent/90">
-                    {language === "fr" ? "Soumettre la nomination" : "Submit Nomination"} <ArrowRight className="w-4 h-4" />
-                  </button>
-                </form>
-              )}
-            </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                        {language === "fr" ? "Catégorie" : "Award Category"}
+                      </label>
+                      <select
+                        className={inputCls("category")}
+                        value={nomForm.category}
+                        onChange={(e) => {
+                          setNomForm({ ...nomForm, category: e.target.value });
+                          setNomErrors({ ...nomErrors, category: false });
+                        }}
+                      >
+                        <option value="">
+                          — {language === "fr" ? "Sélectionner" : "Select category"} —
+                        </option>
+                        {T.categories.map((c) => (
+                          <option key={c.number} value={c.title}>
+                            {c.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                        {language === "fr"
+                          ? "Description de l'impact"
+                          : "Description of Impact"}
+                      </label>
+                      <textarea
+                        rows={4}
+                        className={`${inputCls("description")} resize-none`}
+                        value={nomForm.description}
+                        onChange={(e) => {
+                          setNomForm({
+                            ...nomForm,
+                            description: e.target.value,
+                          });
+                          setNomErrors({ ...nomErrors, description: false });
+                        }}
+                        placeholder={
+                          language === "fr"
+                            ? "Décrivez l'impact..."
+                            : "Describe the impact and achievements..."
+                        }
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-full bg-[#D4A017] text-white hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
+                    >
+                      {language === "fr"
+                        ? "Soumettre la nomination"
+                        : "Submit Nomination"}{" "}
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </form>
+                )}
+              </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
 
-      {/* ── About (evaluation philosophy + objectives + attendees) ── */}
-      <section id="about" className="py-24 lg:py-32 border-b border-border scroll-mt-24">
+      {/* ─── ABOUT (Evaluation philosophy + attendees + objectives) ──────────── */}
+      <section
+        id="about"
+        className="py-20 border-b border-border scroll-mt-24 bg-[#F8F9FB]"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start mb-20">
-            <div>
-              <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.aboutEyebrow}</p>
-              <h2 className="text-[1.75rem] lg:text-[2.25rem] font-bold text-secondary leading-snug mb-6">{T.aboutHeading}</h2>
-              <p className="text-[1rem] text-muted-foreground leading-[1.85] mb-8">{T.aboutPara1}</p>
-              <CTAButtonLight primary onClick={() => scrollToSection("get-involved")}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+            <AnimatedSection>
+              <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+                {T.aboutEyebrow}
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
+                {T.aboutHeading}
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                {T.aboutPara1}
+              </p>
+              <CTAButtonLight
+                primary
+                onClick={() => scrollToSection("get-involved")}
+              >
                 {T.aboutCta} <ArrowRight className="w-4 h-4" />
               </CTAButtonLight>
-            </div>
-            <div>
-              <p className="text-xs font-semibold tracking-[0.18em] uppercase text-muted-foreground mb-6">{T.aboutAttendeesLabel}</p>
-              <div className="space-y-px bg-border">
+            </AnimatedSection>
+
+            <AnimatedSection delay={150}>
+              <p className="text-xs font-semibold tracking-[0.18em] uppercase text-muted-foreground mb-4">
+                {T.aboutAttendeesLabel}
+              </p>
+              <div className="space-y-3">
                 {T.attendees.map((a, i) => (
-                  <div key={i} className="bg-background p-6 flex items-start gap-4">
-                    <ChevronRight className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                    <p className="text-[0.9375rem] text-foreground leading-snug">{a}</p>
+                  <div
+                    key={i}
+                    className="bg-white p-4 rounded-xl border border-border flex items-start gap-3 hover:shadow-md transition-shadow"
+                  >
+                    <ChevronRight className="w-4 h-4 text-[#D4A017] mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-foreground leading-relaxed">{a}</p>
                   </div>
                 ))}
               </div>
-            </div>
+            </AnimatedSection>
           </div>
 
           <div className="pt-16 border-t border-border">
-            <div className="text-center mb-12">
-              <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.objectivesEyebrow}</p>
-              <h3 className="text-[1.5rem] font-bold text-secondary leading-snug mb-4">{T.objectivesHeading}</h3>
-              <p className="text-[1rem] text-muted-foreground max-w-2xl mx-auto leading-[1.85]">{T.objectivesPara}</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border max-w-4xl mx-auto">
+            <AnimatedSection className="text-center mb-12">
+              <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+                {T.objectivesEyebrow}
+              </p>
+              <h3 className="text-2xl md:text-3xl font-bold text-secondary mb-4">
+                {T.objectivesHeading}
+              </h3>
+              <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                {T.objectivesPara}
+              </p>
+            </AnimatedSection>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {T.objectives.map((o, i) => (
-                <div key={o.title} className="bg-white p-8 flex items-start gap-5">
-                  <span className="text-[0.6875rem] font-bold tracking-widest text-accent/50 mt-1 flex-shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <p className="text-[0.9375rem] font-bold text-secondary mb-2">{o.title}</p>
-                    <p className="text-[0.875rem] text-muted-foreground leading-[1.75]">{o.desc}</p>
+                <AnimatedSection key={o.title} delay={i * 80}>
+                  <div className="bg-white p-6 rounded-xl border border-border hover:shadow-md transition-shadow">
+                    <span className="text-sm font-bold text-[#D4A017] block mb-2">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h4 className="text-base font-bold text-secondary mb-1">
+                      {o.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {o.desc}
+                    </p>
                   </div>
-                </div>
+                </AnimatedSection>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Media & Press ── */}
-      <section id="media" className="py-24 lg:py-32 border-b border-border scroll-mt-24">
+      {/* ─── MEDIA & PRESS ────────────────────────────────────────────────────── */}
+      <section id="media" className="py-20 border-b border-border scroll-mt-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.mediaEyebrow}</p>
-            <h2 className="text-[1.75rem] lg:text-[2rem] font-bold text-secondary leading-snug mb-6">{T.mediaHeading}</h2>
-            <p className="text-[1rem] text-muted-foreground leading-[1.85] mb-8">{T.mediaPara}</p>
-            <div className="flex items-center gap-3">
-              <Mail className="w-4 h-4 text-accent flex-shrink-0" />
-              <div>
-                <p className="text-[0.75rem] text-muted-foreground uppercase tracking-wider font-semibold mb-1">{T.mediaDirectorLabel}</p>
-                <a href="mailto:media@africaweb3institute.org"
-                  className="text-[0.9375rem] font-semibold text-secondary border-b border-accent/40 pb-px hover:text-accent transition-colors">
-                  media@africaweb3institute.org
-                </a>
+            <AnimatedSection>
+              <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+                {T.mediaEyebrow}
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
+                {T.mediaHeading}
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-8">
+                {T.mediaPara}
+              </p>
+              <div className="flex items-center gap-4 bg-[#F8F9FB] p-5 rounded-xl border border-border">
+                <Mail className="w-5 h-5 text-[#D4A017] flex-shrink-0" />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-0.5">
+                    {T.mediaDirectorLabel}
+                  </p>
+                  <a
+                    href="mailto:media@africaweb3institute.org"
+                    className="text-base font-semibold text-secondary hover:text-[#D4A017] transition-colors border-b border-[#D4A017]/30 pb-0.5"
+                  >
+                    media@africaweb3institute.org
+                  </a>
+                </div>
               </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── INSTITUTIONAL ENGAGEMENT ────────────────────────────────────────── */}
+      <section
+        id="get-involved"
+        className="py-20 scroll-mt-24 bg-[#0B1437] relative overflow-hidden"
+      >
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: "url('/Awi_Website_pics.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            mixBlendMode: "overlay",
+          }}
+        />
+        <div className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center">
+          <AnimatedSection>
+            <Trophy className="w-12 h-12 mx-auto mb-6 text-[#D4A017]" />
+            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+              {T.engagementEyebrow}
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              {T.engagementHeading}
+            </h2>
+            <p className="text-white/70 leading-relaxed mb-10 max-w-xl mx-auto">
+              {T.engagementPara}
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <button
+                onClick={() => scrollToSection("nomination-form")}
+                className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full bg-[#D4A017] text-white hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
+              >
+                {T.engagementCta1} <ArrowRight className="w-4 h-4" />
+              </button>
+              <a
+                href="mailto:info@africaweb3institute.org"
+                className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full border border-white/30 text-white hover:bg-white/10 transition-colors"
+              >
+                {T.engagementCta2}
+              </a>
+              <a
+                href="mailto:info@africaweb3institute.org?subject=Sponsorship Enquiry — Africa Blockchain Awards 2025"
+                className="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full border border-white/30 text-white hover:bg-white/10 transition-colors"
+              >
+                {T.engagementCta3}
+              </a>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
-      {/* ── Institutional Engagement ── */}
-      <section id="get-involved" className="py-24 lg:py-32 scroll-mt-24" style={{ backgroundColor: "hsl(220 14% 97%)" }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <Trophy className="w-10 h-10 mx-auto mb-6" style={{ color: "#D4A017" }} />
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.engagementEyebrow}</p>
-          <h2 className="text-[1.75rem] lg:text-[2.5rem] font-bold text-secondary leading-snug mb-5 max-w-2xl mx-auto">{T.engagementHeading}</h2>
-          <p className="text-[1rem] text-muted-foreground leading-[1.85] mb-10 max-w-xl mx-auto">{T.engagementPara}</p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <button onClick={() => scrollToSection("nomination-form")}
-              className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 bg-accent text-white hover:bg-accent/90 transition-colors">
-              {T.engagementCta1} <ArrowRight className="w-4 h-4" />
-            </button>
-            <a href="mailto:info@africaweb3institute.org"
-              className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 border border-secondary text-secondary hover:bg-secondary hover:text-white transition-colors">
-              {T.engagementCta2}
-            </a>
-            <a href="mailto:info@africaweb3institute.org?subject=Sponsorship Enquiry — Africa Blockchain Awards 2025"
-              className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 border border-secondary text-secondary hover:bg-secondary hover:text-white transition-colors">
-              {T.engagementCta3}
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Back to home ── */}
-      <div className="border-t border-border py-6 bg-muted/20">
+      {/* ─── BACK TO HOME ───────────────────────────────────────────────────── */}
+      <div className="border-t border-border py-6 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-[0.8125rem] text-muted-foreground hover:text-secondary transition-colors">
-            {T.backHome}
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-secondary transition-colors"
+          >
+            {T.backHome || "Back to Home"}
           </Link>
         </div>
       </div>
-
     </div>
   );
 }

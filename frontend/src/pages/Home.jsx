@@ -8,9 +8,10 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <Partners />
+  
       <ExploreAWI />
       <WhyAfrica />
+          <Partners />
       <FinalCTA />
     </>
   );

@@ -240,7 +240,7 @@ export default function AfricaMapSVG({ onCountryClick = null, interactive = fals
         minZoom={2}
         maxZoom={7}
         zoomControl={false}
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
         style={{ width: "100%", height: "600px", borderRadius: "12px" }}
         maxBounds={[[-40, -30], [40, 60]]}
       >

@@ -7,8 +7,9 @@ import { useNavDropdown } from "../../lib/NavDropdownContext";
 
 // ─── Paths for highlighting active dropdowns ────────────────────────────────
 const ABOUT_PATHS = ["/about", "/team", "/board"];
+const NEWS_PATHS = ["/news"];
 const INTELLIGENCE_PATHS = [
-  "awpii",
+  "AWPII",
   "country-tracker",
   "enforcement-watch",
   "stablecoin-tracker",
@@ -68,7 +69,7 @@ const getIntelligenceItems = (language) => [
     section: getLabel(language, "Indexes & Data", "Indices & Données"),
     items: [
       {
-        label: "AWPII",
+        label:getLabel(language, "Africa Web3 Policy & Innovation Index","Indice africain des politiques et de l'innovation Web3"),
         desc: getLabel(
           language,
           "Africa Web3 Policy & Innovation Index",
@@ -228,8 +229,8 @@ const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
           to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
         }
         @keyframes vItemIn {
-          from { opacity: 0; transform: translateX(-8px); }
-          to { opacity: 1; transform: translateX(0); }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
       `}</style>
 
@@ -240,7 +241,9 @@ const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
         {flatItems.map((item, i) => {
           const active = isActive(item.href);
           return (
-            <div key={item.href} style={{ animation: `vItemIn 0.22s ease ${i * 0.05}s both` }}>
+            <div key={item.href} style={{ animation: `vItemIn 0.15s ease both` }}>
+
+
               {i > 0 && (
                 <div
                   className="-mx-2.5"
@@ -267,9 +270,8 @@ const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
               >
                 <span className="flex-1">{item.label}</span>
                 <ChevronRight
-                  className={`w-3.5 h-3.5 shrink-0 transition-all duration-150 ${
-                    active ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"
-                  }`}
+                  className={`w-3.5 h-3.5 shrink-0 transition-all duration-150 ${active ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"
+                    }`}
                   style={{ color: active ? "#D4A017" : "#9CA3AF" }}
                 />
               </button>
@@ -342,6 +344,10 @@ const MobileAccordion = ({ label, expanded, onToggle, sections, navigateTo, isAc
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const thresholdRef = useRef(0);
+  
+
   const { activeDropdown, setActiveDropdown } = useNavDropdown();
   const [mobileExpanded, setMobileExpanded] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -367,15 +373,24 @@ export default function Navbar() {
   };
 
   // ─── Effects ────────────────────────────────────────────────────────────────
-
+  // Compute threshold on mount/resize
   useEffect(() => {
-    return () => {
-      if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
+    const computeThreshold = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      thresholdRef.current = maxScroll * 0.5;
     };
+    computeThreshold();
+    window.addEventListener("resize", computeThreshold);
+    return () => window.removeEventListener("resize", computeThreshold);
   }, []);
 
+  // Updated scroll listener
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 8);
+      setIsHidden(scrollY > thresholdRef.current);
+    };
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -398,6 +413,22 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
+ useEffect(() => {
+  const handleOpenMobileDropdown = (e) => {
+    setOpen(true);
+    // Map desktop dropdown keys to mobile accordion keys
+    let mobileKey = e.detail;
+    if (mobileKey === "programmes") mobileKey = "programs";
+    setMobileExpanded(mobileKey);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  document.addEventListener('openMobileDropdown', handleOpenMobileDropdown);
+  return () => {
+    document.removeEventListener('openMobileDropdown', handleOpenMobileDropdown);
+  };
+}, []);
+
   // ─── Helpers ────────────────────────────────────────────────────────────────
 
   const navigateTo = (href) => {
@@ -418,11 +449,22 @@ export default function Navbar() {
   const aboutActive = isPartialPath(location.pathname, ABOUT_PATHS, false);
   const intelligenceActive = isPartialPath(location.pathname, INTELLIGENCE_PATHS, true);
   const programsActive = isPartialPath(location.pathname, PROGRAMS_PATHS, true);
+   const newsActive = isPartialPath(location.pathname, NEWS_PATHS, false);
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50" style={{ padding: "12px 12px 0" }}>
+    <nav
+      ref={navRef}
+      className="fixed left-0 right-0 z-50"
+      style={{
+        padding: "12px 12px 0",
+        transition: "opacity 0.35s ease, transform 0.35s ease",
+        opacity: isHidden ? 0 : 1,
+        transform: isHidden ? "translateY(-20px)" : "translateY(0)",
+        pointerEvents: isHidden ? "none" : "auto",
+      }}
+    >
       <div
         className="max-w-[1600px] mx-auto transition-all duration-200"
         style={{
@@ -452,11 +494,11 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop navigation */}
-          <div className="hidden lg:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-6  ml-3">
             <Link
               to="/"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-[0.9375rem] font-semibold transition-colors"
+              className="text-[0.9375rem]  md:text-[0.5] font-semibold transition-colors"
               style={{ color: isActive("/") ? "#D4A017" : "#111827" }}
             >
               {T.home}
@@ -512,10 +554,19 @@ export default function Navbar() {
                 <VerticalDropdownMenu sections={programsItems} navigateTo={navigateTo} isActive={isActive} />
               )}
             </div>
+              {/* ✅ NEW: News link */}
+            <Link
+              to="/news"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="text-[0.9375rem] font-semibold transition-colors"
+              style={{ color: newsActive ? "#D4A017" : "#111827" }}
+            >
+              {getLabel(language, "News", "Actualités")}
+            </Link>
 
             <button
               onClick={() => navigateTo("/contact")}
-              className="text-[0.9375rem] font-semibold transition-colors"
+              className="text-[0.9375rem] md:text-[0.5] font-semibold transition-colors"
               style={{ color: isActive("/contact") ? "#D4A017" : "#111827" }}
             >
               {T.contact}
@@ -523,19 +574,19 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right side */}
-          <div className="hidden lg:flex items-center gap-3.5 mr-1.5">
+          <div className="hidden lg:flex items-center gap-3.5 mx-3.5">
             <a
-             href="/AWI_Media_Kit_2026.pdf"
-  target="_blank"
-  rel="noopener noreferrer"
-  title="Africa Web3 Institute Media Kit"
-  className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
-  style={{ color: "#111827" }}
->
-  <Download className="w-3.5 h-3.5" />
-  {getLabel(language, "Media Kit", "Kit Média")}
-</a>
-            
+              href="/AWI_Media_Kit_2026.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Africa Web3 Institute Media Kit"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+              style={{ color: "#111827" }}
+            >
+              <Download className="w-3.5 h-3.5" />
+              {getLabel(language, "Media Kit", "Kit Média")}
+            </a>
+
 
             <div className="flex items-center rounded-full overflow-hidden border" style={{ borderColor: "#E5E7EB" }}>
               <button
@@ -633,6 +684,18 @@ export default function Navbar() {
             isActive={isActive}
           />
 
+          
+ <Link
+            to="/news"
+            onClick={() => {
+              setOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex items-center w-full px-6 py-3.5 text-sm font-medium border-b"
+            style={{ color: isActive("/news") ? "#D4A017" : "#374151", borderColor: "#F3F4F6" }}
+          >
+         {getLabel(language, "News", "Actualités")}
+          </Link>
           <Link
             to="/contact"
             onClick={() => {

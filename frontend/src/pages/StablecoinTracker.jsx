@@ -27,9 +27,12 @@ export default function StablecoinTracker() {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
-
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
-          <TrackerHeader activeNav={activeNav} onNavChange={setActiveNav} />
+        {/* TrackerHeader – ensure it uses flex-wrap or overflow-x-auto */}
+       <div className="overflow-x-auto overflow-y-visible -mx-4 px-4 sm:mx-0 sm:px-0">
+  <TrackerHeader activeNav={activeNav} onNavChange={setActiveNav} />
+</div>
+
         {/* Hero */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight mb-1.5">
@@ -42,11 +45,15 @@ export default function StablecoinTracker() {
           </p>
         </div>
 
-        {/* Stat cards */}
-        <StatCards />
+        {/* Stat cards  */}
+      
+       
+          <StatCards />
+        
 
         {/* Map card */}
         <div className="rounded-xl border border-border bg-card/50 overflow-hidden mb-5">
+          {/* FilterBar + Legend: wrap on small screens */}
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border">
             <FilterBar active={activeFilter} onChange={setActiveFilter} />
             <MapLegend />
@@ -54,7 +61,7 @@ export default function StablecoinTracker() {
 
           <Suspense
             fallback={
-              <div className="h-[420px] flex items-center justify-center bg-muted/20">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center bg-muted/20">
                 <div className="text-muted-foreground text-sm flex items-center gap-2">
                   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
@@ -69,13 +76,14 @@ export default function StablecoinTracker() {
           </Suspense>
         </div>
 
-        {/* Highlights */}
+        {/* Highlights – ensure it's responsive (grid or horizontal scroll) */}
         <HighlightsPanel />
 
-        {/* Table card */}
+        {/* Table / Issuers card */}
         <div className="rounded-xl border border-border bg-card/50 overflow-hidden">
+          {/* Tabs + Search – responsive layout */}
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border">
-            <div className="flex gap-0">
+            <div className="flex gap-0 order-1 sm:order-none">
               {TABS.map((tab) => (
                 <button
                   key={tab}
@@ -92,7 +100,7 @@ export default function StablecoinTracker() {
             </div>
 
             {activeTab === "Countries" && (
-              <div className="flex items-center gap-2 bg-muted/30 border border-border rounded-lg px-3 py-1.5 flex-1 max-w-xs">
+              <div className="flex items-center gap-2 bg-muted/30 border border-border rounded-lg px-3 py-1.5 w-full sm:w-auto sm:flex-1 sm:max-w-xs order-2 sm:order-1">
                 <SearchIcon />
                 <input
                   type="text"
@@ -113,6 +121,7 @@ export default function StablecoinTracker() {
           {activeTab === "Countries" ? (
             <CountriesTable filter={activeFilter} search={search} />
           ) : (
+            /* IssuersGrid – ensure it uses responsive grid columns */
             <IssuersGrid />
           )}
         </div>

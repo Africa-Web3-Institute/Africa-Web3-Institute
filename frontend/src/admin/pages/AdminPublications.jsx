@@ -5,7 +5,7 @@ import {
   BookOpen, BarChart2, TrendingUp, Calendar,
 } from "lucide-react";
 
-// ─── Mock data — replace with API calls later ──────────────────────────────
+// ─── Mock data ──────────────────────────────────────────────────────────────
 const MOCK_PUBLICATIONS = [
   { id: 1, title: "State of Web3 Africa 2026 — Q1 Report", category: "State of Web3 Africa", status: "Published", date: "March 2026", author: "AWI Research Team", available: true, downloads: 487 },
   { id: 2, title: "State of Web3 Africa 2025 — Annual Report", category: "State of Web3 Africa", status: "Published", date: "December 2025", author: "AWI Research Team", available: true, downloads: 1240 },
@@ -275,13 +275,91 @@ function DeleteConfirm({ publication, onClose, onConfirm }) {
   );
 }
 
+// ─── Publication Card (mobile) ───────────────────────────────────────────
+function PublicationCard({ pub, onEdit, onDelete, onPreview }) {
+  const ss = STATUS_STYLES[pub.status] || STATUS_STYLES.Draft;
+  const Icon = CATEGORY_ICONS[pub.category] || FileText;
+
+  return (
+    <div
+      className="rounded-xl p-4 space-y-3"
+      style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5"
+          style={{ backgroundColor: "rgba(212,160,23,0.12)" }}
+        >
+          <Icon size={14} style={{ color: "#D4A017" }} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-sm font-semibold leading-snug">
+            {pub.title}
+          </p>
+          <p className="text-gray-500 text-xs mt-0.5">{pub.author}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <span className="text-gray-400">{pub.category}</span>
+        <span className="text-gray-600">•</span>
+        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${ss.bg} ${ss.text}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${ss.dot}`} />
+          {pub.status}
+        </span>
+        <span className="text-gray-600">•</span>
+        <span className="flex items-center gap-1 text-gray-400">
+          <Calendar size={11} />
+          {pub.date}
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between pt-1 border-t border-gray-700/50">
+        <div className="flex items-center gap-1 text-gray-400 text-xs">
+          {pub.available ? (
+            <>
+              <Download size={12} />
+              <span>{pub.downloads.toLocaleString()}</span>
+            </>
+          ) : (
+            <span className="text-gray-600">—</span>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => onEdit(pub)}
+            className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-gray-700 transition-colors"
+            title="Edit"
+          >
+            <Edit2 size={14} />
+          </button>
+          <button
+            onClick={() => onPreview(pub)}
+            className="p-1.5 rounded-md text-gray-500 hover:text-blue-400 hover:bg-gray-700 transition-colors"
+            title="Preview"
+          >
+            <Eye size={14} />
+          </button>
+          <button
+            onClick={() => onDelete(pub)}
+            className="p-1.5 rounded-md text-gray-500 hover:text-red-400 hover:bg-gray-700 transition-colors"
+            title="Delete"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function AdminPublications() {
   const [publications, setPublications] = useState(MOCK_PUBLICATIONS);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
-  const [modal, setModal] = useState(null); // null | { mode: "add"|"edit", data?: pub }
+  const [modal, setModal] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   // Filter
@@ -301,8 +379,6 @@ export default function AdminPublications() {
   const totalDownloads = publications.reduce((sum, p) => sum + p.downloads, 0);
 
   const handleSave = (pub) => {
-    // TODO: replace with API call
-    // await fetch("/api/publications", { method: pub.id ? "PUT" : "POST", body: JSON.stringify(pub) })
     setPublications(prev =>
       pub.id && prev.find(p => p.id === pub.id)
         ? prev.map(p => p.id === pub.id ? pub : p)
@@ -312,8 +388,6 @@ export default function AdminPublications() {
   };
 
   const handleDelete = (id) => {
-    // TODO: replace with API call
-    // await fetch(`/api/publications/${id}`, { method: "DELETE" })
     setPublications(prev => prev.filter(p => p.id !== id));
     setDeleteTarget(null);
   };
@@ -322,7 +396,7 @@ export default function AdminPublications() {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-white text-xl font-bold">Publications</h1>
           <p className="text-gray-400 text-sm mt-0.5">
@@ -331,7 +405,7 @@ export default function AdminPublications() {
         </div>
         <button
           onClick={() => setModal({ mode: "add" })}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors w-full sm:w-auto"
           style={{ backgroundColor: "#D4A017" }}
           onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
           onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
@@ -342,7 +416,7 @@ export default function AdminPublications() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: "Published", value: published, color: "#10b981" },
           { label: "In Review", value: inReview, color: "#D4A017" },
@@ -355,18 +429,18 @@ export default function AdminPublications() {
             style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
           >
             <p className="text-gray-400 text-xs mb-1">{s.label}</p>
-            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+            <p className="text-xl md:text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
       <div
-        className="flex flex-wrap gap-3 items-center p-4 rounded-xl"
+        className="flex flex-col md:flex-row flex-wrap gap-3 items-start md:items-center p-4 rounded-xl"
         style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
       >
         {/* Search */}
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative w-full md:flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
             value={search}
@@ -376,38 +450,40 @@ export default function AdminPublications() {
           />
         </div>
 
-        {/* Category filter */}
-        <div className="relative">
-          <select
-            value={categoryFilter}
-            onChange={e => setCategoryFilter(e.target.value)}
-            className="bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-yellow-600 appearance-none"
-          >
-            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-          </select>
-          <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+        <div className="flex flex-wrap gap-3 w-full md:w-auto">
+          {/* Category filter */}
+          <div className="relative flex-1 md:flex-none">
+            <select
+              value={categoryFilter}
+              onChange={e => setCategoryFilter(e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-yellow-600 appearance-none"
+            >
+              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+            </select>
+            <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+          </div>
+
+          {/* Status filter */}
+          <div className="relative flex-1 md:flex-none">
+            <select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-yellow-600 appearance-none"
+            >
+              {STATUSES.map(s => <option key={s}>{s}</option>)}
+            </select>
+            <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+          </div>
         </div>
 
-        {/* Status filter */}
-        <div className="relative">
-          <select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            className="bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-yellow-600 appearance-none"
-          >
-            {STATUSES.map(s => <option key={s}>{s}</option>)}
-          </select>
-          <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-        </div>
-
-        <p className="text-gray-500 text-xs ml-auto">
+        <p className="text-gray-500 text-xs ml-auto hidden md:block">
           {filtered.length} of {publications.length} publications
         </p>
       </div>
 
-      {/* Table */}
+      {/* ─── Table (desktop) ───────────────────────────────────────────────── */}
       <div
-        className="rounded-xl overflow-hidden"
+        className="rounded-xl overflow-hidden hidden md:block"
         style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
       >
         <div className="overflow-x-auto">
@@ -530,6 +606,28 @@ export default function AdminPublications() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* ─── Cards (mobile) ────────────────────────────────────────────────── */}
+      <div className="md:hidden space-y-3">
+        {filtered.length === 0 ? (
+          <div className="text-center py-12 text-gray-500 text-sm">
+            No publications match your filters.
+          </div>
+        ) : (
+          filtered.map(pub => (
+            <PublicationCard
+              key={pub.id}
+              pub={pub}
+              onEdit={pub => setModal({ mode: "edit", data: pub })}
+              onDelete={setDeleteTarget}
+              onPreview={() => {}}
+            />
+          ))
+        )}
+        <p className="text-gray-500 text-xs text-center pt-2">
+          {filtered.length} of {publications.length} publications
+        </p>
       </div>
 
       {/* Modals */}

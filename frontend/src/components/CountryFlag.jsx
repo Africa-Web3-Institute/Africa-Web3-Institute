@@ -8,6 +8,21 @@ const EMOJI_TO_ISO = {
   "🇳🇦": "na", "🇸🇬": "sg", "🇦🇪": "ae", "🇭🇰": "hk",
   "🇧🇭": "bh", "🇸🇻": "sv", "🇯🇵": "jp", "🇨🇭": "ch",
   "🇪🇺": "eu",
+    // New additions for Francophone Africa and others
+  "🇨🇩": "cd", // DR Congo
+  "🇲🇱": "ml", // Mali
+  "🇧🇫": "bf", // Burkina Faso
+  "🇬🇳": "gn", // Guinea
+  "🇳🇪": "ne", // Niger
+  "🇹🇬": "tg", // Togo
+  "🇧🇯": "bj", // Benin
+  "🇲🇬": "mg", // Madagascar
+  "🇧🇮": "bi", // Burundi
+  "🇹🇩": "td", // Chad
+  "🇨🇫": "cf", // Central African Republic
+  "🇬🇦": "ga", // Gabon
+  "🇨🇬": "cg", // Congo
+  "🇰🇲": "km", // Comoros
 };
 
 export default function CountryFlag({ emoji, size = 20, className = "" }) {

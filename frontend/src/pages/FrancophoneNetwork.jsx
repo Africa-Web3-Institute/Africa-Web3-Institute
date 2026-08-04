@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+// src/pages/FrancophoneNetwork.js
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { GraduationCap, Globe, Rocket, Mail } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
+import CountryFlag from "../components/CountryFlag"
 
+// ─── Country flags mapping ──────────────────────────────────────────────────
 const COUNTRY_FLAGS = {
   "Cameroon": "🇨🇲", "Cameroun": "🇨🇲",
   "Senegal": "🇸🇳", "Sénégal": "🇸🇳",
@@ -31,6 +34,45 @@ const OFFER_ICONS = [
   <Rocket className="w-6 h-6" />,
 ];
 
+// ─── Scroll reveal hook ──────────────────────────────────────────────────────
+function useScrollReveal() {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, isVisible };
+}
+
+// ─── Animated section wrapper ───────────────────────────────────────────────
+const AnimatedSection = ({ children, className = "", delay = 0 }) => {
+  const { ref, isVisible } = useScrollReveal();
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 export default function FrancophoneNetwork() {
   const { language } = useLanguage();
   const T = t[language].francophoneNetwork;
@@ -43,10 +85,11 @@ export default function FrancophoneNetwork() {
     setSubmitted(true);
   };
 
+
   return (
-    <div className="bg-background">
-      {/* About */}
-      <section className="relative overflow-hidden">
+    <div className="bg-white text-foreground overflow-hidden">
+      {/* ─── HERO SECTION ───────────────────────────────────────────────────── */}
+      <section className="relative min-h-[60vh] flex items-center overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -55,148 +98,209 @@ export default function FrancophoneNetwork() {
             backgroundPosition: "center",
           }}
         />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(11,20,55,0.85)" }} />
-        <div className="relative max-w-4xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
-          <p className="text-[0.6875rem] font-semibold tracking-[0.2em] uppercase mb-4" style={{ color: "#D4A017" }}>
-            {T.aboutEyebrow}
-          </p>
-          <h2 className="font-display text-[2rem] lg:text-[2.5rem] font-bold text-white leading-snug mb-5">
-            {T.aboutHeading}
-          </h2>
-          <p className="text-[0.9375rem] lg:text-[1.0625rem] leading-[1.75]" style={{ color: "rgba(255,255,255,0.75)" }}>
-            {T.aboutBody}
-          </p>
+        <div className="absolute inset-0 bg-linear-to-r from-[#0B1437] via-[#0B1437]/90 to-[#0B1437]/70" />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 w-full">
+          <div className="max-w-3xl">
+            <AnimatedSection>
+              <p className="inline-block text-xs font-semibold tracking-[0.18em] uppercase mb-4 px-4 py-1.5 border border-[#D4A017]/30 rounded-full text-[#D4A017] bg-[#D4A017]/10">
+                {T.aboutEyebrow || "Network"}
+              </p>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.1] mb-6">
+                {T.aboutHeading || "Francophone Web3 & Students Network"}
+              </h1>
+              <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-xl">
+                {T.aboutBody || "Connecting French-speaking African students and young professionals with opportunities in the Web3 ecosystem."}
+              </p>
+            
+            </AnimatedSection>
+          </div>
         </div>
       </section>
 
-      {/* What We Offer */}
-      <section className="py-20 lg:py-28 border-b border-border bg-muted/30">
+      {/* ─── WHAT WE OFFER ──────────────────────────────────────────────────── */}
+      <section className="py-20 border-b border-border bg-[#F8F9FB]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-[0.6875rem] font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "#D4A017" }}>{T.offerEyebrow}</p>
-            <h2 className="font-display text-[2rem] font-bold text-secondary">{T.offerHeading}</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {T.offers.map((item, i) => (
-              <div key={item.title} className="p-7 rounded-lg bg-background" style={{ border: "1px solid rgba(212,160,23,0.2)" }}>
-                <div className="mb-4" style={{ color: "#D4A017" }}>{OFFER_ICONS[i]}</div>
-                <h3 className="font-display text-[1.0625rem] font-bold text-secondary mb-2">{item.title}</h3>
-                <p className="text-[0.875rem] text-muted-foreground leading-[1.75]">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <AnimatedSection className="text-center mb-12">
+            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+              {T.offerEyebrow || "What We Offer"}
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary">
+              {T.offerHeading || "Empowering the Next Generation"}
+            </h2>
+          </AnimatedSection>
 
-      {/* Countries */}
-      <section className="py-20 lg:py-28 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-[0.6875rem] font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "#D4A017" }}>{T.countriesEyebrow}</p>
-            <h2 className="font-display text-[2rem] font-bold text-secondary">{T.countriesHeading}</h2>
-          </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-            {T.countries.map((name) => (
-              <div key={name} className="flex flex-col items-center gap-2 p-4 rounded-lg text-center" style={{ border: "1px solid hsl(var(--border))" }}>
-                <span className="text-2xl">{COUNTRY_FLAGS[name] || "🌍"}</span>
-                <span className="text-[0.75rem] text-muted-foreground font-medium">{name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Join Form + Get in Touch */}
-      <section id="join" className="py-20 lg:py-28 bg-muted/30">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div>
-            <div className="text-center lg:text-left mb-10">
-              <p className="text-[0.6875rem] font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "#D4A017" }}>{T.formEyebrow}</p>
-              <h2 className="font-display text-[2rem] font-bold text-secondary">{T.formHeading}</h2>
-            </div>
-            {submitted ? (
-              <div className="text-center p-10 rounded-lg" style={{ border: "1px solid rgba(212,160,23,0.4)", backgroundColor: "rgba(212,160,23,0.06)" }}>
-                <p className="text-[1.0625rem] font-semibold text-secondary">{T.successTitle}</p>
-                <p className="text-muted-foreground mt-2">{T.successBody}</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5 bg-background p-8 rounded-lg" style={{ border: "1px solid hsl(var(--border))" }}>
-                {["name", "email", "institution"].map((key) => (
-                  <div key={key}>
-                    <label className="block text-[0.8125rem] font-medium text-secondary mb-1.5">{T.formFields[key].label}</label>
-                    <input
-                      type={key === "email" ? "email" : "text"}
-                      required
-                      value={form[key]}
-                      onChange={e => setForm({ ...form, [key]: e.target.value })}
-                      placeholder={T.formFields[key].placeholder}
-                      className="w-full px-4 py-2.5 text-[0.875rem] rounded-md outline-none"
-                      style={{ border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--background))" }}
-                    />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {T.offers?.map((item, idx) => (
+              <AnimatedSection key={item.title} delay={idx * 100}>
+                <div className="group bg-white p-8 rounded-2xl border border-border hover:border-[#D4A017]/40 hover:shadow-xl transition-all duration-300">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#0B1437] text-[#D4A017] mb-6 group-hover:scale-110 transition-transform duration-300">
+                    {OFFER_ICONS[idx] || <GraduationCap className="w-6 h-6" />}
                   </div>
-                ))}
-                <div>
-                  <label className="block text-[0.8125rem] font-medium text-secondary mb-1.5">{T.formFields.country.label}</label>
-                  <select
-                    required
-                    value={form.country}
-                    onChange={e => setForm({ ...form, country: e.target.value })}
-                    className="w-full px-4 py-2.5 text-[0.875rem] rounded-md outline-none"
-                    style={{ border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--background))" }}
-                  >
-                    <option value="">{T.formFields.country.placeholder}</option>
-                    {T.countries.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <h3 className="text-xl font-bold text-secondary mb-3">{item.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
-                <div>
-                  <label className="block text-[0.8125rem] font-medium text-secondary mb-1.5">{T.formFields.interest.label}</label>
-                  <select
-                    required
-                    value={form.interest}
-                    onChange={e => setForm({ ...form, interest: e.target.value })}
-                    className="w-full px-4 py-2.5 text-[0.875rem] rounded-md outline-none"
-                    style={{ border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--background))" }}
-                  >
-                    <option value="">{T.formFields.interest.placeholder}</option>
-                    {T.interests.map(i => <option key={i} value={i}>{i}</option>)}
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-3 text-[0.875rem] font-semibold rounded-md transition-all"
-                  style={{ backgroundColor: "#D4A017", color: "#fff" }}
-                  onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
-                  onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
-                >
-                  {T.submitBtn}
-                </button>
-              </form>
-            )}
-          </div>
-
-          <div>
-            <div className="text-center lg:text-left mb-10">
-              <p className="text-[0.6875rem] font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "#D4A017" }}>{T.contactEyebrow}</p>
-              <h2 className="font-display text-[2rem] font-bold text-secondary">{T.contactHeading}</h2>
-            </div>
-            <div className="p-8 rounded-lg bg-background text-center lg:text-left" style={{ border: "1px solid hsl(var(--border))" }}>
-              <a
-                href="mailto:francophone@africaweb3institute.org"
-                className="inline-flex items-center gap-2 text-[0.9375rem] font-medium transition-colors"
-                style={{ color: "#D4A017" }}
-              >
-                <Mail className="w-4 h-4" />
-                francophone@africaweb3institute.org
-              </a>
-            </div>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 pb-8">
-        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-[0.875rem] text-muted-foreground hover:text-secondary transition-colors">
-          {T.backHome}
-        </Link>
+  {/* ─── COUNTRIES ────────────────────────────────────────────────────── */}
+<section className="py-20 border-b border-border">
+  <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <AnimatedSection className="text-center mb-12">
+      <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+        {T.countriesEyebrow || "Our Reach"}
+      </p>
+      <h2 className="text-3xl md:text-4xl font-bold text-secondary">
+        {T.countriesHeading || "Pan-African Presence"}
+      </h2>
+    </AnimatedSection>
+
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+      {T.countries?.map((name, idx) => {
+        const emoji = COUNTRY_FLAGS[name]; // get the flag emoji from mapping
+        return (
+          <AnimatedSection key={name} delay={idx * 30}>
+            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white border border-border hover:border-[#D4A017]/30 hover:shadow-md transition-all duration-300">
+              {emoji ? (
+                <CountryFlag emoji={emoji} size={32} />
+              ) : (
+                <span className="text-3xl">🌍</span> 
+              )}
+              <span className="text-xs text-muted-foreground font-medium text-center">{name}</span>
+            </div>
+          </AnimatedSection>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+
+   {/* ─── JOIN FORM + CONTACT ───────────────────────────────────────────── */}
+<section id="join" className="py-16 md:py-20 bg-[#F8F9FB]">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 lg:gap-16">
+      {/* Form */}
+      <AnimatedSection>
+        <div className="mb-6">
+          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+            {T.formEyebrow || "Join the Network"}
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">
+            {T.formHeading || "Become a Member"}
+          </h2>
+        </div>
+
+        {submitted ? (
+          <div className="p-8 sm:p-10 rounded-2xl bg-white border border-[#D4A017]/30 shadow-lg text-center">
+            <div className="text-5xl mb-4">🎉</div>
+            <p className="text-xl font-bold text-secondary">{T.successTitle || "Welcome aboard!"}</p>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">{T.successBody || "We'll be in touch soon with next steps."}</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-border">
+            {["name", "email", "institution"].map((key) => (
+              <div key={key}>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  {T.formFields?.[key]?.label || key}
+                </label>
+                <input
+                  type={key === "email" ? "email" : "text"}
+                  required
+                  value={form[key]}
+                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                  placeholder={T.formFields?.[key]?.placeholder || ""}
+                  className="w-full px-4 py-2.5 text-sm sm:text-base rounded-lg border border-border focus:ring-2 focus:ring-[#D4A017]/30 focus:border-[#D4A017] outline-none transition"
+                />
+              </div>
+            ))}
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1.5">
+                {T.formFields?.country?.label || "Country"}
+              </label>
+              <select
+                required
+                value={form.country}
+                onChange={(e) => setForm({ ...form, country: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm sm:text-base rounded-lg border border-border focus:ring-2 focus:ring-[#D4A017]/30 focus:border-[#D4A017] outline-none transition"
+              >
+                <option value="">{T.formFields?.country?.placeholder || "Select your country"}</option>
+                {T.countries?.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1.5">
+                {T.formFields?.interest?.label || "Area of Interest"}
+              </label>
+              <select
+                required
+                value={form.interest}
+                onChange={(e) => setForm({ ...form, interest: e.target.value })}
+                className="w-full px-4 py-2.5 text-sm sm:text-base rounded-lg border border-border focus:ring-2 focus:ring-[#D4A017]/30 focus:border-[#D4A017] outline-none transition"
+              >
+                <option value="">{T.formFields?.interest?.placeholder || "Select an interest"}</option>
+                {T.interests?.map((i) => (
+                  <option key={i} value={i}>{i}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3.5 sm:py-3 rounded-full bg-[#D4A017] text-white font-semibold text-sm sm:text-base hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
+            >
+              {T.submitBtn || "Join Now"}
+            </button>
+          </form>
+        )}
+      </AnimatedSection>
+
+      {/* Contact Side */}
+      <AnimatedSection delay={150}>
+        <div className="mb-6">
+          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+            {T.contactEyebrow || "Get in Touch"}
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">
+            {T.contactHeading || "Contact Us"}
+          </h2>
+        </div>
+        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-border">
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 leading-relaxed">
+            Have questions or want to partner with us? Reach out directly to our team.
+          </p>
+          <a
+            href="mailto:francophone@africaweb3institute.org"
+            className="inline-flex items-center gap-3 text-base sm:text-lg font-medium text-[#D4A017] hover:text-[#b88a12] transition-colors break-all"
+          >
+            <Mail className="w-5 h-5 shrink-0" />
+            <span className="break-all text-xs md:text-md">francophone@africaweb3institute.org</span>
+          </a>
+          <div className="mt-8 pt-6 border-t border-border">
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              We typically respond within 24 hours.
+            </p>
+          </div>
+        </div>
+      </AnimatedSection>
+    </div>
+  </div>
+</section>
+
+      {/* ─── BACK TO HOME ───────────────────────────────────────────────────── */}
+      <div className="border-t border-border py-6 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-secondary transition-colors"
+          >
+             {T.backHome || "Back to Home"}
+          </Link>
+        </div>
       </div>
     </div>
   );

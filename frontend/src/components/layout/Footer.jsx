@@ -12,6 +12,11 @@ export default function Footer() {
   const { language } = useLanguage();
   const T = t[language].footer;
 
+    const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+
   const renderLinks = (section) => (
     <div>
       <h4 className="text-xs font-bold tracking-[0.2em] uppercase mb-5" style={{ color: "#D4A017" }}>
@@ -23,6 +28,7 @@ export default function Footer() {
           <li key={link.to}>
             <Link
               to={link.to}
+              onClick={scrollToTop}
               className="text-sm transition-colors"
               style={{ color: "#111827" }}
               onMouseEnter={e => e.currentTarget.style.color = "#D4A017"}

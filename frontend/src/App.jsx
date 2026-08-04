@@ -26,11 +26,14 @@ import ScrollToHash from './components/ScrollToHash';
 import IndabaSeries from './pages/IndabaSeries';
 import { useTracker } from './hooks/useTracker';
 import StablecoinTracker from './pages/StablecoinTracker';
-//import Intelligence from './pages/Intelligence';
+import NewsletterLanding from "./pages/NewsletterLanding";
+import Newsletters from "./pages/NewsletterArchive";
 import ProgramsEvents from './pages/ProgramsEvents';
 import Contact from './pages/Contact';
 import EventsPage from './pages/EventsPage';
 import Careers from './pages/Careers'
+import News from './pages/News'
+import NewsArticle from "./pages/NewsArticle";
 
 
 // Admin
@@ -110,6 +113,11 @@ return (
       <Route path="/contact" element={<Contact />} />
       <Route path="/events" element={<EventsPage />} />
       <Route path="/careers" element={<Careers/>}/>
+      <Route path="/news" element={<News/>}/>
+      <Route path="/news/:slug" element={<NewsArticle />} /> 
+    
+<Route path="/newsletter" element={<NewsletterLanding />} />
+<Route path="/newsletters/archive" element={<Newsletters />} />
 
     </Route>
 

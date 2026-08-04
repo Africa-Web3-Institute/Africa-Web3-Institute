@@ -1,11 +1,14 @@
 // src/pages/Team.js
-import React from "react";
+import {useEffect, useRef, useState }  from "react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
 import { FaLinkedin as Linkedin, FaTwitter as Twitter } from "react-icons/fa";
+import { Users, MapPin, Briefcase, ArrowRight } from "lucide-react";
 import KateAcH from "../assets/Kate_operations-lead.png";
 
+
+// ─── Team data ───────────────────────────────────────────────────────────────
 const CORE_TEAM = [
   {
     name: "Afrikanus Kofi Akosah Adusei",
@@ -81,87 +84,214 @@ const CORE_TEAM = [
   },
 ];
 
-function TeamCard({ member }) {
-  const [hovered, setHovered] = React.useState(false);
+// ─── Scroll reveal hook ──────────────────────────────────────────────────────
+function useScrollReveal() {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, isVisible };
+}
+
+// ─── Reusable animated section wrapper ──────────────────────────────────────
+const AnimatedSection = ({ children, className = "", delay = 0 }) => {
+  const { ref, isVisible } = useScrollReveal();
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// ─── Team Card ──────────────────────────────────────────────────────────────
+function TeamCard({ member, index }) {
+  const [hovered, setHovered] =useState(false);
   const { language } = useLanguage();
   const T = t[language].about;
 
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="bg-white p-6 flex flex-col items-center text-center transition-all duration-200"
-      style={{
-        border: hovered ? "1.5px solid #D4A017" : "1.5px solid hsl(var(--border))",
-        transform: hovered ? "translateY(-4px)" : "none",
-        boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.08)" : "none",
-      }}
-    >
-      <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0 flex items-center justify-center"
-        style={{ border: "2px solid #D4A017", backgroundColor: member.photo ? "transparent" : "#0B1437" }}>
-        {member.photo ? (
-          <img src={member.photo} alt={`${member.name} — ${member.role}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-        ) : (
-          <span className="text-[1.25rem] font-bold" style={{ color: "#D4A017" }}>{member.initials}</span>
-        )}
+    <AnimatedSection delay={index * 50} className="h-full">
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="group relative bg-white rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-300 h-full border border-border hover:border-[#D4A017]/40 hover:shadow-xl"
+        style={{
+          transform: hovered ? "translateY(-6px)" : "none",
+        }}
+      >
+        {/* Avatar */}
+        <div className="relative mb-5">
+          <div className="w-24 h-24 rounded-full overflow-hidden ring-2 ring-[#D4A017] ring-offset-2 ring-offset-white transition-all duration-300 group-hover:ring-4">
+            {member.photo ? (
+              <img
+                src={member.photo}
+                alt={`${member.name} — ${member.role}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <div className="w-full h-full bg-[#0B1437] flex items-center justify-center text-2xl font-bold text-[#D4A017]">
+                {member.name.charAt(0)}
+              </div>
+            )}
+          </div>
+          {/* Decorative dot */}
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#D4A017] border-2 border-white" />
+        </div>
+
+        {/* Name & Role */}
+        <p className="text-base font-bold text-secondary leading-tight mb-1">{member.name}</p>
+        <p className="text-sm font-medium text-[#D4A017] mb-1">{T.roles?.[member.role] || member.role}</p>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
+          <MapPin className="w-3 h-3" />
+          <span>{member.country}</span>
+        </div>
+
+        {/* Social links */}
+        <div className="flex gap-3 mt-auto pt-3 border-t border-border w-full justify-center">
+          {member.linkedin && (
+            <a
+              href={member.linkedin.startsWith("http") ? member.linkedin : `https://${member.linkedin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} on LinkedIn`}
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:border-[#D4A017] hover:text-[#D4A017] hover:bg-[#D4A017]/5 transition-all duration-200"
+            >
+              <Linkedin className="w-4 h-4" />
+            </a>
+          )}
+          {member.twitter && (
+            <a
+              href={member.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} on X (Twitter)`}
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:border-[#D4A017] hover:text-[#D4A017] hover:bg-[#D4A017]/5 transition-all duration-200"
+            >
+              <Twitter className="w-4 h-4" />
+            </a>
+          )}
+        </div>
       </div>
-      <p className="text-[0.9375rem] font-bold text-secondary mb-1">{member.name}</p>
-      <p className="text-[0.8125rem] text-muted-foreground mb-1">{T.roles[member.role] || member.role}</p>
-      {member.country ? <p className="text-[0.8125rem] mb-3" style={{ color: "#D4A017" }}>{member.country}</p> : <div className="mb-3" />}
-      <div className="flex gap-3 mt-auto">
-        {member.linkedin && (
-          <a href={member.linkedin.startsWith("http") ? member.linkedin : `https://${member.linkedin}`}
-            target="_blank" rel="noopener noreferrer"
-            aria-label={`${member.name} on LinkedIn`}
-            className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
-            style={{ border: "1px solid hsl(var(--border))", color: "hsl(var(--muted-foreground))" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "hsl(var(--border))"; e.currentTarget.style.color = "hsl(var(--muted-foreground))"; }}
-          >
-            <Linkedin className="w-3.5 h-3.5" />
-          </a>
-        )}
-        {member.twitter && (
-          <a href={member.twitter} target="_blank" rel="noopener noreferrer"
-            aria-label={`${member.name} on X (Twitter)`}
-            className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
-            style={{ border: "1px solid hsl(var(--border))", color: "hsl(var(--muted-foreground))" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "hsl(var(--border))"; e.currentTarget.style.color = "hsl(var(--muted-foreground))"; }}
-          >
-            <Twitter className="w-3.5 h-3.5" />
-          </a>
-        )}
-      </div>
-    </div>
+    </AnimatedSection>
   );
 }
 
+// ─── Main Component ──────────────────────────────────────────────────────────
 export default function Team() {
   const { language } = useLanguage();
   const T = t[language].about;
 
+
+
   return (
-    <div className="bg-background text-foreground">
-      {/* Core Team Grid */}
-      <section className="py-20 border-b border-border" style={{ background: "hsl(220 14% 97%)" }}>
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h2 className="text-[1.75rem] font-bold text-secondary">{T.teamTitle}</h2>
-            <p className="text-muted-foreground">{T.teamSubtitle}</p>
+    <div className="bg-white text-foreground overflow-hidden">
+      {/* ─── HERO SECTION ───────────────────────────────────────────────────── */}
+      <section className="relative min-h-[50vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-[#0B1437] via-[#0B1437]/95 to-[#0B1437]" />
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "url('https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            mixBlendMode: "overlay",
+          }}
+        />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 w-full">
+          <div className="max-w-3xl">
+            <AnimatedSection>
+              <p className="inline-block text-xs font-semibold tracking-[0.18em] uppercase mb-4 px-4 py-1.5 border border-[#D4A017]/30 rounded-full text-[#D4A017] bg-[#D4A017]/10">
+                {T.teamTitle || "Our Team"}
+              </p>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.1] mb-6">
+                The People Behind <br className="hidden sm:block" />
+                <span className="text-[#D4A017]">Africa's Web3 Future</span>
+              </h1>
+              <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-xl">
+                {T.teamSubtitle ||
+                  "A pan-African team of policy experts, researchers, and technologists driving regulatory innovation across the continent."}
+              </p>
+             
+            </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      {/* ─── TEAM GRID ────────────────────────────────────────────────────────── */}
+      <section className="py-20 bg-[#F8F9FB]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <AnimatedSection className="text-center mb-12">
+            <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">
+              Meet the Team
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary">
+              A Diverse, Pan-African <br className="sm:hidden" /> Collective
+            </h2>
+            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+              Our team spans the continent—and beyond—bringing together deep policy expertise, technical rigour, and a shared commitment to shaping Africa's digital future.
+            </p>
+          </AnimatedSection>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {CORE_TEAM.map((member) => (
-              <TeamCard key={member.name} member={member} />
+            {CORE_TEAM.map((member, index) => (
+              <TeamCard key={member.name} member={member} index={index} />
             ))}
           </div>
         </div>
       </section>
 
-      <div className="border-t border-border py-6 bg-muted/20">
+      {/* ─── JOIN THE TEAM ──────────────────────────────────────────────────── */}
+      <section className="py-20 border-t border-border">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+          <AnimatedSection>
+            <div className="bg-[#0B1437] rounded-3xl p-12 md:p-16 shadow-2xl">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                Shape the Future of Web3 Policy in Africa
+              </h2>
+              <p className="text-white/70 leading-relaxed mb-8 max-w-2xl mx-auto">
+                We're always looking for passionate researchers, policy analysts, and technologists to join our mission. If you're driven by impact, we want to hear from you.
+              </p>
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#D4A017] text-white font-semibold hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
+              >
+                Get in touch <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ─── BACK TO HOME ───────────────────────────────────────────────────── */}
+      <div className="border-t border-border py-6 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <Link to="/" className="text-[0.8125rem] text-muted-foreground hover:text-secondary transition-colors">
-            {T.backHome}
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-secondary transition-colors"
+          >
+             {T.backHome}
           </Link>
         </div>
       </div>

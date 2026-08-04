@@ -1,4 +1,4 @@
- import { COUNTRIES, ISSUERS } from "../../data/trackerCountries";
+import { COUNTRIES, ISSUERS } from "../../data/trackerCountries";
 
 const stats = [
   {
@@ -29,11 +29,11 @@ const stats = [
 
 export default function StatCards() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
       {stats.map((s) => (
         <div
           key={s.label}
-          className="relative rounded-xl border border-white/[0.07] bg-[#0f2040]/70 px-4 py-4 overflow-hidden"
+          className="relative rounded-xl border border-white/[0.07] bg-[#0f2040]/70 px-4 py-4 sm:px-5 sm:py-5 overflow-hidden"
         >
           {/* top accent line */}
           <div
@@ -42,16 +42,16 @@ export default function StatCards() {
               background: `linear-gradient(90deg, ${s.accent}, transparent)`,
             }}
           />
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">
+          <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">
             {s.label}
           </p>
           <p
-            className="text-3xl font-bold font-mono leading-none"
+            className="text-2xl sm:text-3xl font-bold font-mono leading-none"
             style={{ color: s.accent }}
           >
             {s.value}
           </p>
-          <p className="text-[11px] text-slate-500 mt-1.5">{s.sub}</p>
+          <p className="text-[11px] sm:text-xs text-slate-300 mt-1.5">{s.sub}</p>
         </div>
       ))}
     </div>

@@ -124,7 +124,7 @@ export default function EnforcementWatch() {
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
 
       {/* Hero */}
-      <section style={{ backgroundColor: "#1A1F36" }} className="pt-12 pb-0">
+      <section   style={{ backgroundColor: "#0B1437" }} className="pt-12 pb-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 pb-10">
           <span className="inline-block text-[0.6875rem] font-bold tracking-[0.18em] uppercase px-3 py-1 rounded-full mb-4" style={{ backgroundColor: "rgba(212,160,23,0.15)", color: "#D4A017", border: "1px solid rgba(212,160,23,0.3)" }}>
             {T.liveIntelligence}
@@ -210,10 +210,24 @@ export default function EnforcementWatch() {
 
     {/* Timeline */}
       <section className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-        {filtered.length === 0 ? (
-          <div className="py-20 text-center text-muted-foreground">
-            {T.noResults}
-          </div>
+       {filtered.length === 0 ? (
+  <div className="py-16 text-center bg-white border border-border rounded-lg shadow-sm max-w-2xl mx-auto px-8">
+    <p className="text-lg font-semibold text-secondary mb-2">
+      {T.noResultsTitle || "No enforcement actions found"}
+    </p>
+    <p className="text-muted-foreground mb-4">
+      {T.noResultsDesc || "Try adjusting your filters or search terms."}
+    </p>
+    <button
+      onClick={resetFilters}
+      className="text-sm font-semibold transition-colors"
+      style={{ color: "#D4A017" }}
+      onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
+      onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}
+    >
+      {T.resetFilters}
+    </button>
+  </div>
         ) : (
           <div className="relative">
             {/* Vertical line — hidden on mobile */}

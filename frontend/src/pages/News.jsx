@@ -1,5 +1,5 @@
 // src/pages/News.js
-import React, { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
@@ -14,7 +14,6 @@ import {
   Video,
   Mic,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
 
 // ─── Scroll reveal hook ──────────────────────────────────────────────────────
 function useScrollReveal() {
@@ -56,7 +55,7 @@ const AnimatedSection = ({ children, className = "", delay = 0 }) => {
 
 // ─── Sample News Data ──────────────────────────────────────────────────────
 // TODO: Replace this with data from your CMS or API
-const NEWS_DATA = [
+export const NEWS_DATA = [
   {
     id: 1,
     title: "Africa Web3 Institute Launches Groundbreaking Policy Index",
@@ -245,6 +244,10 @@ export default function News() {
   const { language } = useLanguage();
   const T = t[language]?.news || {};
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -267,35 +270,88 @@ export default function News() {
   return (
     <div className="bg-white text-foreground overflow-hidden">
       {/* ─── HERO SECTION ───────────────────────────────────────────────────── */}
-      <section className="relative min-h-[45vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0B1437] via-[#0B1437]/95 to-[#0B1437]" />
+      <section
+        className="relative min-h-[55vh] flex items-center overflow-hidden"
+        style={{ backgroundColor: "#0B1437" }}
+      >
+        {/* Background image */}
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0"
           style={{
-            backgroundImage:
-              "url('https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png')",
+            backgroundImage: "url('/news-hero-bg.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            mixBlendMode: "overlay",
+            // backgroundAttachment: "fixed", // uncomment for parallax
           }}
         />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 w-full">
+
+        {/* Gradient overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(
+                to bottom,
+                rgba(11, 20, 55, 0.1) 0%,
+                rgba(11, 20, 55, 0.5) 40%,
+                rgba(11, 20, 55, 0.85) 80%,
+                rgba(11, 20, 55, 0.95) 100%
+              )
+            `,
+          }}
+        />
+
+        {/* Subtle pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: "60px 60px",
+          }}
+        />
+
+        {/* Gold accent line */}
+        <div
+          className="absolute left-0 top-1/4 w-1.5 h-32 bg-[#D4A017] hidden md:block"
+          style={{ boxShadow: "0 0 30px rgba(212,160,23,0.3)" }}
+        />
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 w-full z-10">
           <div className="max-w-3xl">
             <AnimatedSection>
-              <p className="inline-block text-xs font-semibold tracking-[0.18em] uppercase mb-4 px-4 py-1.5 border border-[#D4A017]/30 rounded-full text-[#D4A017] bg-[#D4A017]/10">
+              <p
+                className="inline-block text-xs font-semibold tracking-[0.18em] uppercase mb-4 px-5 py-1.5 rounded-full text-[#D4A017] bg-[#D4A017]/15 backdrop-blur-sm border border-[#D4A017]/40"
+                style={{ boxShadow: "0 0 20px rgba(212,160,23,0.15)" }}
+              >
                 {T.tag || "News & Insights"}
               </p>
+
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.1] mb-6">
                 {T.title || "Latest News &"}
                 <br className="hidden sm:block" />
-                <span className="text-[#D4A017]">
+                <span className="text-[#D4A017] drop-shadow-lg">
                   {T.highlight || "Expert Insights"}
                 </span>
               </h1>
-              <p className="text-lg text-white/80 leading-relaxed max-w-xl">
+
+              <p className="text-lg text-white/80 leading-relaxed max-w-xl backdrop-blur-[2px] p-4 -ml-4 rounded-xl">
                 {T.subtitle ||
                   "Discover the latest updates, expert opinions, and in-depth analysis shaping the future of Web3 policy in Africa."}
               </p>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  to="/newsletter"
+                  onClick={scrollToTop}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A017] text-white font-semibold rounded-full hover:bg-[#b88a12] transition-all shadow-lg shadow-[#D4A017]/25 hover:shadow-[#D4A017]/40 hover:-translate-y-0.5"
+                >
+                  Subscribe to Newsletter
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+              </div>
             </AnimatedSection>
           </div>
         </div>
@@ -305,7 +361,6 @@ export default function News() {
       <section className="py-6 border-b border-border bg-[#F8F9FB] sticky top-0 z-40 backdrop-blur-md bg-[#F8F9FB]/90">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Categories */}
             <div className="flex flex-wrap items-center gap-2">
               <Filter className="w-4 h-4 text-muted-foreground mr-1" />
               {categories.map((cat) => (
@@ -323,7 +378,6 @@ export default function News() {
               ))}
             </div>
 
-            {/* Search */}
             <div className="relative w-full sm:w-64">
               <input
                 type="text"
@@ -378,14 +432,11 @@ export default function News() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Featured Article */}
               {featuredNews && (
                 <AnimatedSection>
                   <NewsCard item={featuredNews} featured />
                 </AnimatedSection>
               )}
-
-              {/* Regular Articles Grid */}
               {regularNews.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {regularNews.map((item, index) => (
@@ -419,12 +470,13 @@ export default function News() {
                   className="flex-1 px-5 py-3 rounded-full border-0 focus:ring-2 focus:ring-[#D4A017] text-sm"
                   required
                 />
-                <button
-                  type="submit"
+                <Link
+                  to="/newsletter"
+                  onClick={scrollToTop}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#D4A017] text-white font-semibold hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
                 >
                   Subscribe <ArrowRight className="w-4 h-4" />
-                </button>
+                </Link>
               </form>
             </div>
           </AnimatedSection>

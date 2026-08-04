@@ -2,8 +2,6 @@
    GLOBAL CSS — Africa Web3 Institute
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @import "tailwindcss";
 
 @theme {
@@ -231,4 +229,30 @@
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gold-shimmer,
+  .animate-kb,
+  .animate-float,
+  .animate-marquee,
+  .animate-pulse-ring,
+  .animate-slow-spin,
+  .animate-bounce-y,
+  .partners-track {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

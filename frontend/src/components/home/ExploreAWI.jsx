@@ -22,7 +22,7 @@ const CARD_META = [
     accent: "#D4A017",
     iconBg: "rgba(212,160,23,0.12)",
     href: "/intelligence",
-    dropdownKey: "intelligence",   
+    dropdownKey: "intelligence",
     image: "/images/moments/speaker-session.jpg",
   },
   {
@@ -30,7 +30,7 @@ const CARD_META = [
     accent: "#D4A017",
     iconBg: "rgba(212,160,23,0.12)",
     href: "/programs-events",
-     dropdownKey: "programmes",   
+    dropdownKey: "programmes",
     image: "/images/moments/policy-convening.jpg",
   },
   {
@@ -69,10 +69,17 @@ function ExploreCard({ card, meta, index }) {
   const { setActiveDropdown } = useNavDropdown();
   const Icon = meta.icon;
 
-   const handleClick = () => {
+  const handleClick = () => {
     if (meta.dropdownKey) {
+      // Desktop: open the dropdown
       setActiveDropdown(meta.dropdownKey);
-      window.scrollTo({ top: 0, behavior: "smooth" }); // so the navbar dropdown is visible
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // Mobile: open the menu and expand the accordion
+      if (window.innerWidth < 1024) {
+        const event = new CustomEvent('openMobileDropdown', { detail: meta.dropdownKey });
+        document.dispatchEvent(event);
+      }
     } else {
       navigate(meta.href);
     }
@@ -119,7 +126,7 @@ function ExploreCard({ card, meta, index }) {
 
           {/* Floating icon badge — sits on boundary line */}
           <span
-            className="absolute bottom-0 left-7 translate-y-1/2 z-30 inline-flex items-center justify-center w-12 h-12 rounded-xl shadow-lg"
+            className="absolute bottom-2 left-7 translate-y-1/2 z-30 inline-flex items-center justify-center w-12 h-12 rounded-xl shadow-lg"
             style={{
               backgroundColor: "#fff",
               border: `1.5px solid rgba(212,160,23,0.35)`,

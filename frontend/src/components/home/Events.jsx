@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { motion, useInView } from "framer-motion";
 import { MapPin, Calendar } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
@@ -12,6 +12,86 @@ const scrollTo = (id) => {
 
 const slugify = (month) => month.toLowerCase().replace(/\s+/g, "-");
 
+// ─── Helper: filter only events with a future date ──────
+const filterUpcoming = (monthData) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const isFuture = (dateStr) => {
+    if (!dateStr) return false;
+
+    // Helper to parse a single date like "20 August 2026"
+    const parseDate = (str) => {
+      const monthNames = {
+        Jan: 0, January: 0,
+        Feb: 1, February: 1,
+        Mar: 2, March: 2,
+        Apr: 3, April: 3,
+        May: 4, May: 4,
+        Jun: 5, June: 5,
+        Jul: 6, July: 6,
+        Aug: 7, August: 7,
+        Sep: 8, September: 8,
+        Oct: 9, October: 9,
+        Nov: 10, November: 10,
+        Dec: 11, December: 11
+      };
+
+      // Try to match "DD Month YYYY"
+      const parts = str.trim().split(/\s+/);
+      if (parts.length === 3) {
+        const day = Number.parseInt(parts[0], 10);
+        const month = monthNames[parts[1]];
+        const year = Number.parseInt(parts[2], 10);
+        if (!Number.isNaN(day) && month !== undefined && !Number.isNaN(year)) {
+          return new Date(year, month, day);
+        }
+      }
+
+      // Try to match "DD–DD Month YYYY" (range) – use the END date
+      const rangeMatch = str.match(/(\d+)\s*[–-]\s*(\d+)\s+(\w+)\s+(\d+)/);
+      if (rangeMatch) {
+        const endDay = Number.parseInt(rangeMatch[2], 10);
+        const month = monthNames[rangeMatch[3]];
+        const year = Number.parseInt(rangeMatch[4], 10);
+        if (!Number.isNaN(endDay) && month !== undefined && !Number.isNaN(year)) {
+          return new Date(year, month, endDay);
+        }
+      }
+
+      // Try to parse as a standard date
+      const parsed = new Date(str);
+      if (!Number.isNaN(parsed)) return parsed;
+
+      return null;
+    };
+
+    const eventDate = parseDate(dateStr);
+    if (!eventDate) return false;
+
+    // Also check if it's a range (we already use the end date)
+    // Return true if the event is today or in the future
+    return eventDate >= today;
+  };
+
+  // Handle both single month groups and section arrays
+  if (Array.isArray(monthData)) {
+    return monthData
+      .map((sub) => ({
+        ...sub,
+        events: sub.events.filter((ev) => isFuture(ev.date)),
+      }))
+      .filter((sub) => sub.events.length > 0);
+  }
+
+  // Single month group
+  return {
+    ...monthData,
+    events: monthData.events.filter((ev) => isFuture(ev.date)),
+  };
+};
+
+// ─── Get unique months from filtered data ──────────────
 const getUniqueMonths = (months) => {
   const seen = [];
   months.forEach((entry) => {
@@ -131,7 +211,7 @@ function EventCard({ event, T }) {
             cta.variant === "outline" ? (
               <OutlineBtn key={cta.label}>{cta.label}</OutlineBtn>
             ) : (
-              <PrimaryBtn key={cta.label}>{cta.label} →</PrimaryBtn>
+              <PrimaryBtn key={cta.label}>{cta.label}</PrimaryBtn>
             )
           )}
         </div>
@@ -185,10 +265,35 @@ export default function Events() {
   const { language } = useLanguage();
   const T = t[language]?.events || t["en"].events;
 
-  const bannerRef = useRef(null);
-  const bannerIn  = useInView(bannerRef, { once: true, margin: "-80px 0px" });
+  // ─── Filter events to only show upcoming ────────────────
+  const upcomingMonths = useMemo(() => {
+    if (!T.months) return [];
 
-  const uniqueMonths = getUniqueMonths(T.months);
+    return T.months
+      .map((monthGroup) => {
+        if (monthGroup.section) {
+          // Has multiple sub-sections
+          const filteredSection = filterUpcoming(monthGroup.section);
+          if (filteredSection.length === 0) return null;
+          return { ...monthGroup, section: filteredSection };
+        } else {
+          // Single month group
+          const filtered = filterUpcoming(monthGroup);
+          if (filtered.events.length === 0) return null;
+          return filtered;
+        }
+      })
+      .filter(Boolean);
+  }, [T.months]);
+
+  // ─── Unique months for navigation ─────────────────────
+  const uniqueMonths = useMemo(() => {
+    return getUniqueMonths(upcomingMonths);
+  }, [upcomingMonths]);
+
+  const bannerRef = useRef(null);
+  const bannerIn = useInView(bannerRef, { once: true, margin: "-80px 0px" });
+
   const monthIdAssigned = new Set();
   const getMonthId = (month) => {
     if (monthIdAssigned.has(month)) return undefined;
@@ -202,7 +307,6 @@ export default function Events() {
 
   return (
     <section id="events" className="border-b border-border bg-background">
-
       {/* ── Hero: animated visual as background ──────────────── */}
       <div ref={bannerRef} className="relative overflow-hidden py-20 lg:py-28">
         <motion.div
@@ -218,7 +322,7 @@ export default function Events() {
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <Reveal as="div" className="max-w-2xl">
             <h2
-              className="font-display font-bold leading-snug tracking-tight mb-5 text-white"
+              className="font-san font-bold leading-snug tracking-tight mb-5 text-white"
               style={{ fontSize: "clamp(1.75rem, 3vw, 2.375rem)" }}
             >
               {T.heading}
@@ -226,21 +330,7 @@ export default function Events() {
             <p className="text-[1rem] leading-[1.82] mb-3" style={{ color: "rgba(255,255,255,0.75)" }}>{T.intro1}</p>
             <p className="text-[1rem] leading-[1.82] mb-8" style={{ color: "rgba(255,255,255,0.75)" }}>{T.intro2}</p>
 
-            {/* Quick month nav */}
-            <div className="flex flex-wrap gap-2">
-              {uniqueMonths.map((month) => (
-                <button
-                  key={month}
-                  onClick={() => scrollToMonth(month)}
-                  className="text-[0.75rem] font-semibold px-3.5 py-2 rounded-full border transition-all"
-                  style={{ borderColor: "rgba(255,255,255,0.3)", color: "#fff", backgroundColor: "rgba(255,255,255,0.06)" }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.backgroundColor = "rgba(212,160,23,0.15)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)"; }}
-                >
-                  {month}
-                </button>
-              ))}
-            </div>
+        
           </Reveal>
         </div>
       </div>
@@ -248,35 +338,42 @@ export default function Events() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-20 lg:pt-24 pb-24 lg:pb-32">
         {/* ── Month-by-month event cards ────────────────────── */}
         <div className="space-y-16">
-          {T.months.map((monthGroup, idx) =>
-            monthGroup.section ? (
-              <MonthSection key={idx} groups={monthGroup.section} T={T} getMonthId={getMonthId} />
-            ) : (
-              <div key={monthGroup.month}>
-                <div id={getMonthId(monthGroup.month)} className="flex items-center gap-4 mb-8 scroll-mt-24">
-                  <h3
-                    className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase shrink-0"
-                    style={{ color: "#D4A017" }}
-                  >
-                    {monthGroup.month}
-                  </h3>
-                  <motion.div
-                    className="flex-1 h-px"
-                    style={{ backgroundColor: "#D4A017", opacity: 0.25 }}
-                    initial={{ scaleX: 0, originX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  />
+          {upcomingMonths.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-lg text-gray-500">No upcoming events at the moment.</p>
+              <p className="text-sm text-gray-400 mt-2">Check back later for new events.</p>
+            </div>
+          ) : (
+            upcomingMonths.map((monthGroup, idx) =>
+              monthGroup.section ? (
+                <MonthSection key={idx} groups={monthGroup.section} T={T} getMonthId={getMonthId} />
+              ) : (
+                <div key={monthGroup.month}>
+                  <div id={getMonthId(monthGroup.month)} className="flex items-center gap-4 mb-8 scroll-mt-24">
+                    <h3
+                      className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase shrink-0"
+                      style={{ color: "#D4A017" }}
+                    >
+                      {monthGroup.month}
+                    </h3>
+                    <motion.div
+                      className="flex-1 h-px"
+                      style={{ backgroundColor: "#D4A017", opacity: 0.25 }}
+                      initial={{ scaleX: 0, originX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {monthGroup.events.map((event, i) => (
+                      <Reveal key={event.title} delay={(i % 3) * 0.08}>
+                        <EventCard event={event} T={T} />
+                      </Reveal>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                  {monthGroup.events.map((event, i) => (
-                    <Reveal key={event.title} delay={(i % 3) * 0.08}>
-                      <EventCard event={event} T={T} />
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
+              )
             )
           )}
         </div>
@@ -291,7 +388,6 @@ export default function Events() {
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           whileHover={{ borderColor: "#D4A017" }}
         >
-          {/* Sweep shimmer */}
           <motion.div
             className="absolute inset-0 pointer-events-none"
             style={{

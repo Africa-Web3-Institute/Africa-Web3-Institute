@@ -173,9 +173,9 @@ export default function AWPII() {
                     <button
                       key={country.id}
                       onClick={() => setSelectedCountryKey(country.key)}
-                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all text- dark:text-muted-foreground border ${
+                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all  dark:text-muted-foreground border ${
                         selectedCountryKey === country.key
-                          ? "bg-slate-900 dark:text-white border-slate-900 dark:bg-slate-850 dark:border-slate-700 shadow-sm font-semibold scale-[1.01]"
+                          ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-850 dark:border-slate-700 shadow-sm font-semibold scale-[1.01]"
                           : "bg-slate-50/50 hover:bg-slate-50 border-slate-100 dark:bg-slate-950/40 dark:border-slate-850 dark:hover:bg-slate-950/80 text-foreground"
                       }`}
                     >
@@ -340,7 +340,7 @@ export default function AWPII() {
             <div className="space-y-px bg-white/10">
               {T.questions.map((q, i) => (
                 <div key={i} className="bg-secondary px-8 py-5 flex items-start gap-5 border border-white/10">
-                  <span className="text-accent font-bold text-[0.75rem] mt-0.5 flex-shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-accent font-bold text-[0.75rem] mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
                   <p className="text-[0.9375rem] text-white/80 leading-snug">{q}</p>
                 </div>
               ))}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
+import { useNavDropdown } from "../../lib/NavDropdownContext";
 
 const container = {
   hidden: {},
@@ -17,6 +18,19 @@ export default function FinalCTA() {
   const { language } = useLanguage();
   const T = t[language].finalCTA;
   const navigate = useNavigate();
+  const { setActiveDropdown } = useNavDropdown();
+
+  const handleIntelligenceClick = () => {
+    // Desktop: open the dropdown
+    setActiveDropdown("intelligence");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Mobile: open the menu and expand Intelligence accordion
+    if (window.innerWidth < 1024) {
+      const event = new CustomEvent('openMobileDropdown', { detail: 'intelligence' });
+      document.dispatchEvent(event);
+    }
+  };
 
   return (
     <section className="py-28 lg:py-36 relative overflow-hidden" style={{ backgroundColor: "#0B1437" }}>
@@ -83,7 +97,7 @@ export default function FinalCTA() {
             {T.cta1} <ArrowRight className="w-4 h-4" />
           </motion.button>
           <motion.button
-            onClick={() => navigate("/intelligence")}
+            onClick={handleIntelligenceClick} // ✅ Now opens Intelligence dropdown
             className="inline-flex items-center justify-center gap-2 text-[0.9rem] font-semibold px-8 py-4 rounded-full"
             style={{ border: "1px solid rgba(255,255,255,0.26)", color: "rgba(255,255,255,0.9)" }}
             whileHover={{ scale: 1.04, backgroundColor: "rgba(255,255,255,0.08)" }}
