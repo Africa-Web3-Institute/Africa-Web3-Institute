@@ -1,17 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import { MapContainer, GeoJSON, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { COUNTRIES, MAP_COLORS, STATUS } from "../../data/trackerCountries";
-
-// African country ISO alpha-3 codes
-const AFRICA_ISOS = new Set([
-  "DZA","AGO","BEN","BWA","BFA","BDI","CPV","CMR","CAF","TCD",
-  "COM","COD","COG","CIV","DJI","EGY","GNQ","ERI","SWZ","ETH",
-  "GAB","GMB","GHA","GIN","GNB","KEN","LSO","LBR","LBY","MDG",
-  "MWI","MLI","MRT","MUS","MAR","MOZ","NAM","NER","NGA","RWA",
-  "STP","SEN","SLE","SOM","ZAF","SSD","SDN","TZA","TGO","TUN",
-  "UGA","ZMB","ZWE","ESH","REU","MYT","SHN","SOM",
-]);
+import { COUNTRIES, MAP_COLORS, STATUS, AFRICA_ISOS } from "../../data/trackerCountries";
+import CountryFlag from "../CountryFlag";
 
 // Build ISO alpha-3 → country data lookup
 function buildIsoLookup() {
@@ -23,11 +14,18 @@ function buildIsoLookup() {
 }
 const ISO_LOOKUP = buildIsoLookup();
 
-// Natural Earth uses "ISO_A3" property on each feature
+// This GeoJSON source (datasets/geo-countries) uses "ISO3166-1-Alpha-3" on
+// each feature's properties -- NOT "ISO_A3"/"iso_a3" (that's a Natural Earth
+// convention, a different dataset). Getting this key wrong means every
+// feature is filtered out silently -- the map renders with zero shapes.
+function getIso3(feature) {
+  return feature.properties?.["ISO3166-1-Alpha-3"];
+}
+
 function getCountryEntry(feature) {
-  const iso = feature.properties?.ISO_A3 || feature.properties?.iso_a3;
+  const iso = getIso3(feature);
   if (!iso || !AFRICA_ISOS.has(iso)) return null;
-  return ISO_LOOKUP[iso] || { status: "none", name: feature.properties?.ADMIN || feature.properties?.name, flag: "🌍", framework: "No data", regulator: "—" };
+  return ISO_LOOKUP[iso] || { status: "none", name: feature.properties?.name, flag: "🌍", framework: "No data", regulator: "—" };
 }
 
 // Tooltip
@@ -37,7 +35,10 @@ function MapTooltip({ data, pos }) {
   return (
     <div className="fixed z-[9999] pointer-events-none" style={{ left: pos.x + 16, top: pos.y - 10 }}>
       <div className="bg-[#0a1628]/95 border border-white/10 rounded-xl shadow-2xl px-3.5 py-3 min-w-[200px]">
-        <p className="font-semibold text-sm mb-2">{data.flag} {data.name}</p>
+        <p className="font-semibold text-sm mb-2 text-slate-100 flex items-center gap-1.5">
+          <CountryFlag emoji={data.flag} size={18} />
+          {data.name}
+        </p>
         <div className="flex justify-between text-xs gap-3 mb-1">
           <span className="text-slate-400">Status</span>
           <span style={{ color: s.color }} className="font-medium">{s.label}</span>
@@ -77,7 +78,7 @@ function ZoomControls() {
   );
 }
 
-export default function WorldMap({ activeFilter }) {
+export default function AfricaMap({ activeFilter }) {
   const [geoData, setGeoData] = useState(null);
   const [tooltip, setTooltip] = useState({ data: null, pos: null });
   const geoRef = useRef();
@@ -90,12 +91,12 @@ export default function WorldMap({ activeFilter }) {
         // Filter to Africa only
         const africaOnly = {
           ...geojson,
-          features: geojson.features.filter((f) => {
-            const iso = f.properties?.ISO_A3 || f.properties?.iso_a3;
-            return AFRICA_ISOS.has(iso);
-          }),
+          features: geojson.features.filter((f) => AFRICA_ISOS.has(getIso3(f))),
         };
         setGeoData(africaOnly);
+      })
+      .catch((err) => {
+        console.error("Failed to load country geometry", err);
       });
   }, []);
 
@@ -141,10 +142,11 @@ export default function WorldMap({ activeFilter }) {
         maxBounds={[[-40, -25], [40, 55]]}
         maxBoundsViscosity={0.8}
       >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
-          attribution=""
-        />
+        {/* No TileLayer -- the world basemap was rendering every other
+            continent in the same dark shade as Africa, making the map look
+            "global" even though only African shapes are ever colored. The
+            GeoJSON polygons below already carry their own fill/border, so
+            they're the entire map now; nothing else needs to render. */}
 
         {geoData && (
           <GeoJSON

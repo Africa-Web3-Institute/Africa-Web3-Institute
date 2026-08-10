@@ -2,8 +2,75 @@ import { useState } from "react";
 
 const NAV_LINKS = ["Countries", "Issuers", "Currencies", "Stablecoins", "Blockchains", "Updates"];
 
+// Only these actually drive content right now. Everything else is a
+// preview of what's coming and shouldn't look clickable.
+const ENABLED_LINKS = new Set(["Countries", "Issuers"]);
+
 export default function TrackerHeader({ activeNav, onNavChange }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  function scrollToContent() {
+    document.getElementById("tracker-content")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function handleNavClick(link, { mobile = false } = {}) {
+    onNavChange(link);
+    scrollToContent();
+    if (mobile) setMobileOpen(false);
+  }
+
+  function renderNavButton(link, { mobile = false } = {}) {
+    const enabled = ENABLED_LINKS.has(link);
+    const isActive = enabled && activeNav === link;
+
+    if (!enabled) {
+      return (
+        <span
+          key={link}
+          aria-disabled="true"
+          title="Coming soon"
+          className={
+            mobile
+              ? "flex items-center justify-between gap-2 text-left px-4 py-3 rounded-lg text-[15px] font-medium text-slate-600 cursor-not-allowed select-none"
+              : "shrink-0 flex items-center gap-1.5 px-2 md:px-2.5 lg:px-3 py-1.5 rounded-md text-[11px] md:text-[12px] lg:text-[13px] font-medium text-slate-600 whitespace-nowrap cursor-not-allowed select-none"
+          }
+        >
+          {link}
+          <span
+            className={
+              mobile
+                ? "text-[10px] font-semibold uppercase tracking-wide text-slate-500 bg-white/[0.04] border border-white/[0.07] rounded-full px-2 py-0.5"
+                : "text-[9px] font-semibold uppercase tracking-wide text-slate-500 bg-white/[0.04] border border-white/[0.07] rounded-full px-1.5 py-0.5 hidden lg:inline-block"
+            }
+          >
+            Soon
+          </span>
+        </span>
+      );
+    }
+
+    return (
+      <button
+        key={link}
+        onClick={() => handleNavClick(link, { mobile })}
+        className={
+          mobile
+            ? `text-left px-4 py-3 rounded-lg text-[15px] font-medium transition-colors ${
+                isActive
+                  ? "text-[#22c55e] bg-[#22c55e]/10"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+              }`
+            : `shrink-0 px-2 md:px-2.5 lg:px-3 py-1.5 rounded-md text-[11px] md:text-[12px] lg:text-[13px] font-medium transition-colors whitespace-nowrap ${
+                isActive
+                  ? "text-[#22c55e] bg-[#22c55e]/10"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+              }`
+        }
+      >
+        {link}
+      </button>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-30 bg-[#0a1628]/95 backdrop-blur-md border-b border-white/[0.07] relative">
@@ -22,19 +89,7 @@ export default function TrackerHeader({ activeNav, onNavChange }) {
 
           {/* Desktop nav – hidden on mobile */}
           <nav className="hidden md:flex items-center flex-nowrap gap-0.5 md:gap-1 lg:gap-1.5 overflow-x-auto scrollbar-hide justify-start lg:justify-center">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link}
-                onClick={() => onNavChange(link)}
-                className={`shrink-0 px-2 md:px-2.5 lg:px-3 py-1.5 rounded-md text-[11px] md:text-[12px] lg:text-[13px] font-medium transition-colors whitespace-nowrap ${
-                  activeNav === link
-                    ? "text-[#22c55e] bg-[#22c55e]/10"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
-                }`}
-              >
-                {link}
-              </button>
-            ))}
+            {NAV_LINKS.map((link) => renderNavButton(link))}
           </nav>
 
           {/* Right side: badge + hamburger */}
@@ -62,22 +117,7 @@ export default function TrackerHeader({ activeNav, onNavChange }) {
         {/* Mobile dropdown – shown below header */}
         {mobileOpen && (
           <div className="absolute top-14 left-0 right-0 bg-[#0a1628]/98 backdrop-blur-md border-b border-white/[0.07] p-4 flex flex-col gap-1 z-40 shadow-2xl md:hidden">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link}
-                onClick={() => {
-                  onNavChange(link);
-                  setMobileOpen(false);
-                }}
-                className={`text-left px-4 py-3 rounded-lg text-[15px] font-medium transition-colors ${
-                  activeNav === link
-                    ? "text-[#22c55e] bg-[#22c55e]/10"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
-                }`}
-              >
-                {link}
-              </button>
-            ))}
+            {NAV_LINKS.map((link) => renderNavButton(link, { mobile: true }))}
           </div>
         )}
       </div>

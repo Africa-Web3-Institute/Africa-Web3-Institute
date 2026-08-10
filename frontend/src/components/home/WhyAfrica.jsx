@@ -40,9 +40,9 @@ export default function WhyAfrica() {
             >
               <div className="relative w-full h-full overflow-hidden rounded-[20px]">
                 <motion.img
-                  src="/images/hero/slide-3.jpg"
+                  src="/whyAfrica_Img1.jpg"
                   alt="Africa Web3 Institute"
-                  className="w-full h-full object-cover"
+                  className="w-full h-300px object-cover"
                   initial={{ scale: 1.12 }}
                   animate={inView ? { scale: 1 } : {}}
                   transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}

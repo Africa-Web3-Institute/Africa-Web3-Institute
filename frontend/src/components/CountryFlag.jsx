@@ -1,28 +1,70 @@
 // src/components/CountryFlag.jsx
 const EMOJI_TO_ISO = {
-  "🇳🇬": "ng", "🇿🇦": "za", "🇰🇪": "ke", "🇷🇼": "rw",
-  "🇬🇭": "gh", "🇪🇬": "eg", "🇪🇹": "et", "🇸🇳": "sn",
-  "🇹🇿": "tz", "🇲🇦": "ma", "🇨🇲": "cm", "🇨🇮": "ci",
-  "🇿🇼": "zw", "🇿🇲": "zm", "🇩🇿": "dz", "🇺🇬": "ug",
-  "🇹🇳": "tn", "🇧🇼": "bw", "🇲🇺": "mu", "🇸🇨": "sc",
-  "🇳🇦": "na", "🇸🇬": "sg", "🇦🇪": "ae", "🇭🇰": "hk",
-  "🇧🇭": "bh", "🇸🇻": "sv", "🇯🇵": "jp", "🇨🇭": "ch",
-  "🇪🇺": "eu",
-    // New additions for Francophone Africa and others
-  "🇨🇩": "cd", // DR Congo
-  "🇲🇱": "ml", // Mali
-  "🇧🇫": "bf", // Burkina Faso
-  "🇬🇳": "gn", // Guinea
-  "🇳🇪": "ne", // Niger
-  "🇹🇬": "tg", // Togo
+  // Non-African (kept from original)
+  "🇸🇬": "sg", // Singapore
+  "🇦🇪": "ae", // UAE
+  "🇭🇰": "hk", // Hong Kong
+  "🇧🇭": "bh", // Bahrain
+  "🇸🇻": "sv", // El Salvador
+  "🇯🇵": "jp", // Japan
+  "🇨🇭": "ch", // Switzerland
+  "🇪🇺": "eu", // European Union
+
+  // All 54 African Union member states, A-Z
+  "🇩🇿": "dz", // Algeria
+  "🇦🇴": "ao", // Angola
   "🇧🇯": "bj", // Benin
-  "🇲🇬": "mg", // Madagascar
+  "🇧🇼": "bw", // Botswana
+  "🇧🇫": "bf", // Burkina Faso
   "🇧🇮": "bi", // Burundi
-  "🇹🇩": "td", // Chad
+  "🇨🇻": "cv", // Cabo Verde
+  "🇨🇲": "cm", // Cameroon
   "🇨🇫": "cf", // Central African Republic
-  "🇬🇦": "ga", // Gabon
-  "🇨🇬": "cg", // Congo
+  "🇹🇩": "td", // Chad
   "🇰🇲": "km", // Comoros
+  "🇨🇬": "cg", // Congo (the)
+  "🇨🇩": "cd", // Congo (the Democratic Republic of the)
+  "🇨🇮": "ci", // Cote d'Ivoire
+  "🇩🇯": "dj", // Djibouti
+  "🇪🇬": "eg", // Egypt
+  "🇬🇶": "gq", // Equatorial Guinea
+  "🇪🇷": "er", // Eritrea
+  "🇸🇿": "sz", // Eswatini
+  "🇪🇹": "et", // Ethiopia
+  "🇬🇦": "ga", // Gabon
+  "🇬🇲": "gm", // Gambia
+  "🇬🇭": "gh", // Ghana
+  "🇬🇳": "gn", // Guinea
+  "🇬🇼": "gw", // Guinea-Bissau
+  "🇰🇪": "ke", // Kenya
+  "🇱🇸": "ls", // Lesotho
+  "🇱🇷": "lr", // Liberia
+  "🇱🇾": "ly", // Libya
+  "🇲🇬": "mg", // Madagascar
+  "🇲🇼": "mw", // Malawi
+  "🇲🇱": "ml", // Mali
+  "🇲🇷": "mr", // Mauritania
+  "🇲🇺": "mu", // Mauritius
+  "🇲🇦": "ma", // Morocco
+  "🇲🇿": "mz", // Mozambique
+  "🇳🇦": "na", // Namibia
+  "🇳🇪": "ne", // Niger
+  "🇳🇬": "ng", // Nigeria
+  "🇷🇼": "rw", // Rwanda
+  "🇸🇹": "st", // Sao Tome and Principe
+  "🇸🇳": "sn", // Senegal
+  "🇸🇨": "sc", // Seychelles
+  "🇸🇱": "sl", // Sierra Leone
+  "🇸🇴": "so", // Somalia
+  "🇿🇦": "za", // South Africa
+  "🇸🇸": "ss", // South Sudan
+  "🇸🇩": "sd", // Sudan
+  "🇹🇿": "tz", // Tanzania
+  "🇹🇬": "tg", // Togo
+  "🇹🇳": "tn", // Tunisia
+  "🇺🇬": "ug", // Uganda
+  "🇿🇲": "zm", // Zambia
+  "🇿🇼": "zw", // Zimbabwe
 };
 
 export default function CountryFlag({ emoji, size = 20, className = "" }) {

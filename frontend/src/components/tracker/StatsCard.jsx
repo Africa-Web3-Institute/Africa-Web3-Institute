@@ -1,10 +1,14 @@
 import { COUNTRIES, ISSUERS } from "../../data/trackerCountries";
 
+// Unique stablecoins across all tracked issuers (dedupes symbols that
+// might appear more than once, e.g. PYUSD listed under two issuers)
+const uniqueCoins = new Set(ISSUERS.flatMap((i) => i.coins || []));
+
 const stats = [
   {
     label: "Countries Tracked",
-    value: "214",
-    sub: "↑ 3 added this month",
+    value: String(COUNTRIES.length),
+    sub: `${COUNTRIES.filter((c) => c.status === "live").length} with live frameworks`,
     accent: "#22c55e",
   },
   {
@@ -21,7 +25,7 @@ const stats = [
   },
   {
     label: "Stablecoins Listed",
-    value: "89",
+    value: String(uniqueCoins.size),
     sub: "Fiat-backed & regulated",
     accent: "#38bdf8",
   },

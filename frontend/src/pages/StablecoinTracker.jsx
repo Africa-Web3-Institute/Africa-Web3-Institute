@@ -9,8 +9,6 @@ import IssuersGrid from "../components/tracker/IssuersGrid";
 
 const AfricaMap = lazy(() => import("../components/tracker/AfricaMap"));
 
-const TABS = ["Countries", "Issuers"];
-
 function SearchIcon() {
   return (
     <svg className="w-3.5 h-3.5 text-muted-foreground shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -20,18 +18,19 @@ function SearchIcon() {
 }
 
 export default function StablecoinTracker() {
-  const [activeNav, setActiveNav] = useState("Countries");
+  // Single source of truth for which section is active -- the header nav
+  // and the content below both read/write this, instead of each keeping
+  // their own separate state that could disagree with each other.
+  const [activeSection, setActiveSection] = useState("Countries");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [activeTab, setActiveTab] = useState("Countries");
   const [search, setSearch] = useState("");
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
-        {/* TrackerHeader – ensure it uses flex-wrap or overflow-x-auto */}
-       <div className="overflow-x-auto overflow-y-visible -mx-4 px-4 sm:mx-0 sm:px-0">
-  <TrackerHeader activeNav={activeNav} onNavChange={setActiveNav} />
-</div>
+        <div className="overflow-x-auto overflow-y-visible -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TrackerHeader activeNav={activeSection} onNavChange={setActiveSection} />
+        </div>
 
         {/* Hero */}
         <div className="mb-6">
@@ -41,19 +40,14 @@ export default function StablecoinTracker() {
           </h1>
           <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
             Monitor stablecoin laws, licensing frameworks, and regulatory status
-            across 54 Africa countries — updated continuously.
+            across Africa — updated continuously.
           </p>
         </div>
 
-        {/* Stat cards  */}
-      
-       
-          <StatCards />
-        
+        <StatCards />
 
         {/* Map card */}
         <div className="rounded-xl border border-border bg-card/50 overflow-hidden mb-5">
-          {/* FilterBar + Legend: wrap on small screens */}
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border">
             <FilterBar active={activeFilter} onChange={setActiveFilter} />
             <MapLegend />
@@ -76,20 +70,21 @@ export default function StablecoinTracker() {
           </Suspense>
         </div>
 
-        {/* Highlights – ensure it's responsive (grid or horizontal scroll) */}
         <HighlightsPanel />
 
-        {/* Table / Issuers card */}
-        <div className="rounded-xl border border-border bg-card/50 overflow-hidden">
-          {/* Tabs + Search – responsive layout */}
+        {/* Content card -- local tabs here AND the header nav above both
+            read/write the same activeSection state, so switching from
+            either place stays in sync. The local tabs exist so you don't
+            have to scroll back to the header just to switch sections. */}
+        <div id="tracker-content" className="rounded-xl border border-border bg-card/50 overflow-hidden scroll-mt-20">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border">
             <div className="flex gap-0 order-1 sm:order-none">
-              {TABS.map((tab) => (
+              {["Countries", "Issuers"].map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => setActiveSection(tab)}
                   className={`px-4 py-2 text-[13px] font-medium border-b-2 transition-colors ${
-                    activeTab === tab
+                    activeSection === tab
                       ? "text-primary border-primary"
                       : "text-muted-foreground border-transparent hover:text-foreground"
                   }`}
@@ -99,7 +94,7 @@ export default function StablecoinTracker() {
               ))}
             </div>
 
-            {activeTab === "Countries" && (
+            {activeSection === "Countries" && (
               <div className="flex items-center gap-2 bg-muted/30 border border-border rounded-lg px-3 py-1.5 w-full sm:w-auto sm:flex-1 sm:max-w-xs order-2 sm:order-1">
                 <SearchIcon />
                 <input
@@ -118,10 +113,9 @@ export default function StablecoinTracker() {
             )}
           </div>
 
-          {activeTab === "Countries" ? (
+          {activeSection === "Countries" ? (
             <CountriesTable filter={activeFilter} search={search} />
           ) : (
-            /* IssuersGrid – ensure it uses responsive grid columns */
             <IssuersGrid />
           )}
         </div>

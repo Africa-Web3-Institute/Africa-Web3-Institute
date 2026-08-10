@@ -1,33 +1,47 @@
+import { COUNTRIES, ISSUERS, AFRICA_ISOS, STRIDE_COUNTRY_IDS } from "../../data/trackerCountries";
+import CountryFlag from "../CountryFlag";
+
+const MAX_ITEMS = 4;
+
+function isAfrican(c) {
+  return (c.iso || []).some((code) => AFRICA_ISOS.has(code));
+}
+
+// ISSUERS don't carry ISO codes, only a free-text `country` string, so we
+// match against the African country names we already track elsewhere.
+const AFRICAN_NAMES = Object.keys(STRIDE_COUNTRY_IDS);
+function issuerIsAfrican(i) {
+  return AFRICAN_NAMES.some((name) => i.country?.includes(name));
+}
+
+function countryDetail(c) {
+  return c.since && c.since !== "—" ? `${c.framework} — ${c.since}` : c.framework;
+}
+
+function issuerDetail(i) {
+  const coins = (i.coins || []).join(", ");
+  return i.country ? `${coins} — ${i.country}` : coins;
+}
+
+const liveCountries = COUNTRIES.filter(isAfrican).filter((c) => c.status === "live").slice(0, MAX_ITEMS);
+const proposedCountries = COUNTRIES.filter(isAfrican).filter((c) => c.status === "proposed").slice(0, MAX_ITEMS);
+const liveIssuers = ISSUERS.filter((i) => i.status === "live").filter(issuerIsAfrican).slice(0, MAX_ITEMS);
+
 const HIGHLIGHTS = [
   {
     label: "Live Frameworks",
     dot: "#22c55e",
-    items: [
-      { flag: "🇪🇺", country: "European Union", detail: "MiCA — Full implementation 2024" },
-      { flag: "🇸🇬", country: "Singapore", detail: "MAS Payment Services Act" },
-      { flag: "🇦🇪", country: "UAE", detail: "VARA / ADGM frameworks" },
-      { flag: "🇭🇰", country: "Hong Kong", detail: "HKMA Stablecoin Ordinance" },
-    ],
+    items: liveCountries.map((c) => ({ flag: c.flag, name: c.name, detail: countryDetail(c) })),
   },
   {
     label: "Proposed Legislation",
     dot: "#f97316",
-    items: [
-      { flag: "🇺🇸", country: "United States", detail: "GENIUS Act — Senate 2025" },
-      { flag: "🇬🇧", country: "United Kingdom", detail: "FCA Stablecoin Regime" },
-      { flag: "🇧🇷", country: "Brazil", detail: "BACEN Virtual Asset Framework" },
-      { flag: "🇨🇦", country: "Canada", detail: "OSFI Digital Asset Guidance" },
-    ],
+    items: proposedCountries.map((c) => ({ flag: c.flag, name: c.name, detail: countryDetail(c) })),
   },
   {
     label: "Key Issuers",
     dot: "#a78bfa",
-    items: [
-      { flag: "🏦", country: "Circle Internet Financial", detail: "USDC, EURC — US/EU/SG licensed" },
-      { flag: "🏦", country: "Tether Operations", detail: "USDT, EURT — El Salvador / BVI" },
-      { flag: "🏦", country: "Paxos Trust", detail: "USDP, PYUSD — NYDFS regulated" },
-      { flag: "🏦", country: "SG — FORGE", detail: "EURCV — MiCA regulated, France" },
-    ],
+    items: liveIssuers.map((i) => ({ flag: i.flag, name: i.name, detail: issuerDetail(i) })),
   },
 ];
 
@@ -49,22 +63,28 @@ export default function HighlightsPanel() {
             </p>
           </div>
 
-          <div className="space-y-0">
-            {group.items.map((item, i) => (
-              <div
-                key={item.country}
-                className={`flex items-start gap-3 py-2.5 ${i < group.items.length - 1 ? "border-b border-white/[0.05]" : ""}`}
-              >
-                <span className="text-xl leading-none shrink-0 mt-0.5">{item.flag}</span>
-                <div>
-                  <p className="text-[13px] font-semibold text-slate-200 leading-tight">
-                    {item.country}
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 leading-tight">{item.detail}</p>
+          {group.items.length === 0 ? (
+            <p className="text-[12px] text-slate-500 py-2.5">No entries yet.</p>
+          ) : (
+            <div className="space-y-0">
+              {group.items.map((item, i) => (
+                <div
+                  key={item.name}
+                  className={`flex items-start gap-3 py-2.5 ${i < group.items.length - 1 ? "border-b border-white/[0.05]" : ""}`}
+                >
+                  <span className="shrink-0 mt-0.5">
+                    <CountryFlag emoji={item.flag} size={20} />
+                  </span>
+                  <div>
+                    <p className="text-[13px] font-semibold text-slate-200 leading-tight">
+                      {item.name}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-tight">{item.detail}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       ))}
     </div>

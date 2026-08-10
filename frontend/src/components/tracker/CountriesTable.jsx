@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { COUNTRIES } from "../../data/trackerCountries";
+import { COUNTRIES, strideCountryUrl, AFRICA_ISOS } from "../../data/trackerCountries";
 import StatusPill from "./StatusPill";
 import CountryFlag from "../CountryFlag";
 
@@ -19,10 +19,11 @@ const COLS = [
   { key: "since", label: "Since" },
 ];
 
-// Compute total number of African countries once
-const TOTAL_AFRICAN = COUNTRIES.filter(
-  (c) => c.continent === "Africa" || c.region === "Africa"
-).length;
+function isAfrican(c) {
+  return (c.iso || []).some((code) => AFRICA_ISOS.has(code));
+}
+
+const TOTAL_AFRICAN = COUNTRIES.filter(isAfrican).length;
 
 export default function CountriesTable({ filter, search }) {
   const [sort, setSort] = useState({ key: "name", dir: 1 });
@@ -30,7 +31,7 @@ export default function CountriesTable({ filter, search }) {
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     return COUNTRIES
-      .filter((c) => c.continent === "Africa" || c.region === "Africa")
+      .filter(isAfrican)
       .filter((c) => {
         const matchFilter = filter === "all" || c.status === filter;
         const matchSearch =
@@ -62,6 +63,35 @@ export default function CountriesTable({ filter, search }) {
       e.preventDefault();
       toggleSort(key);
     }
+  }
+
+  // Renders the country flag + name, optionally linked
+  function renderCountryName(c, size = 20) {
+    const url = strideCountryUrl(c.name);
+    const content = (
+      <>
+        <CountryFlag emoji={c.flag} size={size} />
+        <span className="font-medium text-slate-300">{c.name}</span>
+      </>
+    );
+
+    if (url) {
+      return (
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2.5 hover:text-primary transition-colors"
+        >
+          {content}
+        </a>
+      );
+    }
+    return (
+      <div className="flex items-center gap-2.5">
+        {content}
+      </div>
+    );
   }
 
   const EmptyState = () => (
@@ -100,16 +130,26 @@ export default function CountriesTable({ filter, search }) {
                     tabIndex={sortable ? 0 : undefined}
                     role={sortable ? "button" : undefined}
                     aria-sort={
-                      isSorted ? (sort.dir === 1 ? "ascending" : "descending") : sortable ? "none" : undefined
+                      isSorted
+                        ? sort.dir === 1
+                          ? "ascending"
+                          : "descending"
+                        : sortable
+                        ? "none"
+                        : undefined
                     }
                     className={`text-left px-3 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 whitespace-nowrap select-none ${
-                      sortable ? "cursor-pointer hover:text-slate-300 focus:outline-none focus:text-slate-200" : ""
+                      sortable
+                        ? "cursor-pointer hover:text-slate-300 focus:outline-none focus:text-slate-200"
+                        : ""
                     }`}
                   >
                     <span className="flex items-center gap-1">
                       {col.label}
                       {isSorted && (
-                        <span className="text-slate-400">{sort.dir === 1 ? "↑" : "↓"}</span>
+                        <span className="text-slate-400">
+                          {sort.dir === 1 ? "↑" : "↓"}
+                        </span>
                       )}
                     </span>
                   </th>
@@ -128,22 +168,22 @@ export default function CountriesTable({ filter, search }) {
                 key={c.name}
                 className="border-b border-white/[0.04] hover:bg-white/[0.025] transition-colors group"
               >
-                <td className="px-3 py-3">
-                  <div className="flex items-center gap-2.5 font-medium text-slate-200">
-                    <span className="text-base leading-none">{c.flag}</span>
-                    {c.name}
-                  </div>
-                </td>
+                <td className="px-3 py-3">{renderCountryName(c, 20)}</td>
                 <td className="px-3 py-3">
                   <StatusPill status={c.status} />
                 </td>
                 <td className="px-3 py-3 max-w-[220px]">
-                  <span className="text-slate-400 text-xs leading-snug">{c.framework}</span>
+                  <span className="text-slate-400 text-xs leading-snug">
+                    {c.framework}
+                  </span>
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex flex-wrap gap-1">
                     {c.types.map((t) => {
-                      const tc = TYPE_COLORS[t] || { color: "#64748b", bg: "rgba(100,116,139,0.08)" };
+                      const tc = TYPE_COLORS[t] || {
+                        color: "#64748b",
+                        bg: "rgba(100,116,139,0.08)",
+                      };
                       return (
                         <span
                           key={t}
@@ -157,10 +197,14 @@ export default function CountriesTable({ filter, search }) {
                   </div>
                 </td>
                 <td className="px-3 py-3">
-                  <span className="text-slate-400 text-xs font-mono">{c.regulator}</span>
+                  <span className="text-slate-400 text-xs font-mono">
+                    {c.regulator}
+                  </span>
                 </td>
                 <td className="px-3 py-3">
-                  <span className="text-slate-500 text-xs font-mono">{c.since}</span>
+                  <span className="text-slate-500 text-xs font-mono">
+                    {c.since}
+                  </span>
                 </td>
               </tr>
             ))}
@@ -178,9 +222,8 @@ export default function CountriesTable({ filter, search }) {
           filtered.map((c) => (
             <div key={c.name} className="px-4 py-3 flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5 font-medium text-slate-200">
-                  <CountryFlag emoji={c.flag} size={20} />
-                  {c.name}
+                <div className="flex items-center gap-2.5">
+                  {renderCountryName(c, 18)}
                 </div>
                 <StatusPill status={c.status} />
               </div>
@@ -194,7 +237,10 @@ export default function CountriesTable({ filter, search }) {
                 <span className="font-semibold text-slate-300">Types:</span>
                 <div className="flex flex-wrap gap-1">
                   {c.types.map((t) => {
-                    const tc = TYPE_COLORS[t] || { color: "#64748b", bg: "rgba(100,116,139,0.08)" };
+                    const tc = TYPE_COLORS[t] || {
+                      color: "#64748b",
+                      bg: "rgba(100,116,139,0.08)",
+                    };
                     return (
                       <span
                         key={t}
@@ -211,7 +257,9 @@ export default function CountriesTable({ filter, search }) {
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
                 <span className="font-semibold text-slate-300">Regulator:</span>
                 <span className="font-mono">{c.regulator}</span>
-                <span className="ml-auto text-slate-500 font-mono">{c.since}</span>
+                <span className="ml-auto text-slate-500 font-mono">
+                  {c.since}
+                </span>
               </div>
             </div>
           ))
