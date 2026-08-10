@@ -32,9 +32,29 @@ function getCountryEntry(feature) {
 function MapTooltip({ data, pos }) {
   if (!data || !pos) return null;
   const s = STATUS[data.status] || STATUS.none;
+
+  const TOOLTIP_WIDTH = 220; // matches min-w-[200px] + padding, used for clamping
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+
+  const style = isMobile
+    ? {
+        // On mobile, ignore tap x-position entirely and center the card --
+        // anchoring to tap position pushes it off-screen for countries near
+        // the map edges (e.g. Zimbabwe, near the right side of Africa).
+        left: "50%",
+        transform: "translateX(-50%)",
+        top: Math.max(12, Math.min(pos.y - 10, window.innerHeight - 180)),
+      }
+    : {
+        // Desktop: follow the cursor, but clamp so it can't run off the
+        // right edge of the viewport either.
+        left: Math.min(pos.x + 16, window.innerWidth - TOOLTIP_WIDTH - 12),
+        top: pos.y - 10,
+      };
+
   return (
-    <div className="fixed z-[9999] pointer-events-none" style={{ left: pos.x + 16, top: pos.y - 10 }}>
-      <div className="bg-[#0a1628]/95 border border-white/10 rounded-xl shadow-2xl px-3.5 py-3 min-w-[200px]">
+    <div className="fixed z-[9999] pointer-events-none" style={style}>
+      <div className="bg-[#0a1628]/95 border border-white/10 rounded-xl shadow-2xl px-3.5 py-3 min-w-[200px] max-w-[calc(100vw-24px)]">
         <p className="font-semibold text-sm mb-2 text-slate-100 flex items-center gap-1.5">
           <CountryFlag emoji={data.flag} size={18} />
           {data.name}
