@@ -9,6 +9,11 @@ import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import usersRoutes from './routes/users.js';
 import settingsRoutes from './routes/settings.js';
+import contactRoutes from './routes/contact.js';
+import visualizationRoutes from './routes/visualization.js';
+import newsletterRoutes from './routes/newsletter.js';
+import stateOfWeb3Routes from './routes/stateOfWeb3.js';
+import researchMetricsRoutes from './routes/researchMetrics.js';
 
 // Load environment variables
 dotenv.config();
@@ -28,10 +33,16 @@ app.use('/api', analyticsRoutes); // Handles /api/event, /api/live, /api/export
 app.use('/api/admin', authRoutes); // Handles /api/admin/login
 app.use('/api/admin/users', usersRoutes);
 app.use('/api/admin/settings', settingsRoutes);
+app.use('/api', contactRoutes); // Handles /api/contact, /api/contact-messages
+app.use('/api/visualizations', visualizationRoutes); // Week 4: Research Visualization Systems
+app.use('/api/newsletter', newsletterRoutes); // Week 5: Newsletter Intelligence & Tracking
+app.use('/api/state-of-web3', stateOfWeb3Routes); // Week 6: State of Web3 in Africa Dashboard
+app.use('/api/research-metrics', researchMetricsRoutes); // Week 7: Research Repository Metrics
+app.use('/api', researchMetricsRoutes); // Handles /api/publications/:id/download
 app.use('/api', contentRoutes); // Handles /api/publications, /api/enforcement, /api/awpii, /api/tracker
 
 // Start server after DB initialization
-const startServer = async () => {
+export const startServer = async () => {
   try {
     await initDB();
     app.listen(PORT, () => {
@@ -47,4 +58,11 @@ const startServer = async () => {
   }
 };
 
-startServer();
+export { app };
+
+import { fileURLToPath } from 'url';
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  startServer();
+}
+
+
