@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   FileText,
   BookOpen,
@@ -6,72 +7,10 @@ import {
   TrendingUp,
   Download,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const STATS = [
-  {
-    label: "Total Publications",
-    value: "16",
-    change: "+2 this month",
-    icon: BookOpen,
-    color: "#D4A017",
-  },
-  {
-    label: "Articles Published",
-    value: "13",
-    change: "+3 this month",
-    icon: FileText,
-    color: "#3b82f6",
-  },
-  {
-    label: "Report Downloads",
-    value: "1,240",
-    change: "+18% this month",
-    icon: Download,
-    color: "#10b981",
-  },
-  {
-    label: "Active Users",
-    value: "3,200+",
-    change: "+120 this week",
-    icon: Users,
-    color: "#8b5cf6",
-  },
-];
-
-const RECENT_ACTIVITY = [
-  {
-    action: "Publication added",
-    item: "State of Web3 Africa Q1 2026",
-    time: "2 hours ago",
-    type: "create",
-  },
-  {
-    action: "Article updated",
-    item: "Why Africa Needs Its Own Web3 Policy Framework",
-    time: "5 hours ago",
-    type: "update",
-  },
-  {
-    action: "Enforcement event added",
-    item: "CBN Issues Updated VASP Guidelines",
-    time: "Yesterday",
-    type: "create",
-  },
-  {
-    action: "User registered",
-    item: "new.member@example.com",
-    time: "Yesterday",
-    type: "user",
-  },
-  {
-    action: "Report downloaded",
-    item: "AWPII 2025 Annual Report",
-    time: "2 days ago",
-    type: "download",
-  },
-];
+import { publicationsApi, enforcementApi, awpiiApi, trackerApi } from "../../api/api";
 
 const QUICK_ACTIONS = [
   {
@@ -100,30 +39,105 @@ const QUICK_ACTIONS = [
   },
 ];
 
-const TYPE_COLORS = {
-  create: {
-    bg: "#052e16",
-    text: "#4ade80",
-    label: "Created",
-  },
-  update: {
-    bg: "#172554",
-    text: "#60a5fa",
-    label: "Updated",
-  },
-  user: {
-    bg: "#2e1065",
-    text: "#c084fc",
-    label: "User",
-  },
-  download: {
-    bg: "#422006",
-    text: "#fb923c",
-    label: "Download",
-  },
-};
-
 export default function AdminDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [counts, setCounts] = useState({
+    publications: null,
+    enforcement: null,
+    awpii: null,
+    tracker: null,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchCounts() {
+      setLoading(true);
+      // Each call is independent -- one endpoint failing shouldn't blank
+      // out the cards that did load successfully.
+      const [publications, enforcement, awpii, tracker] = await Promise.all([
+        publicationsApi.getAll().catch((err) => { console.error("Failed to load publications", err); return null; }),
+        enforcementApi.getAll().catch((err) => { console.error("Failed to load enforcement events", err); return null; }),
+        awpiiApi.getAll().catch((err) => { console.error("Failed to load AWPII data", err); return null; }),
+        trackerApi.getAll().catch((err) => { console.error("Failed to load tracker data", err); return null; }),
+      ]);
+
+      if (cancelled) return;
+
+      setCounts({
+        publications: Array.isArray(publications?.data) ? publications.data.length : null,
+        enforcement: Array.isArray(enforcement?.data) ? enforcement.data.length : null,
+        awpii: Array.isArray(awpii?.data) ? awpii.data.length : null,
+        tracker: Array.isArray(tracker?.data) ? tracker.data.length : null,
+      });
+      setLoading(false);
+    }
+
+    fetchCounts();
+    return () => { cancelled = true; };
+  }, []);
+
+  const fmt = (n) => (n === null ? "—" : String(n));
+
+  // Stats we can back with a real endpoint right now. Articles Published,
+  // Report Downloads, and Active Users don't have a matching function in
+  // api.js yet -- rather than guess at an endpoint/response shape (which
+  // is exactly how the tracker/awpii bugs happened), they're marked as
+  // not connected instead of showing a fabricated number.
+  const STATS = [
+    {
+      label: "Total Publications",
+      value: loading ? null : fmt(counts.publications),
+      sub: counts.publications === null && !loading ? "Connect backend" : null,
+      icon: BookOpen,
+      color: "#D4A017",
+    },
+    {
+      label: "Articles Published",
+      value: "—",
+      sub: "Connect backend",
+      icon: FileText,
+      color: "#3b82f6",
+    },
+    {
+      label: "Report Downloads",
+      value: "—",
+      sub: "Connect backend",
+      icon: Download,
+      color: "#10b981",
+    },
+    {
+      label: "Active Users",
+      value: "—",
+      sub: "Connect backend",
+      icon: Users,
+      color: "#8b5cf6",
+    },
+  ];
+
+  const OVERVIEW = [
+    {
+      label: "Countries Tracked",
+      value: loading ? null : fmt(counts.tracker),
+      sub: "Regulatory Tracker",
+    },
+    {
+      label: "Enforcement Events",
+      value: loading ? null : fmt(counts.enforcement),
+      sub: "Enforcement Watch",
+    },
+    {
+      label: "AWPII Nations",
+      value: loading ? null : fmt(counts.awpii),
+      sub: "Policy Index",
+    },
+    {
+      label: "Newsletter Subs",
+      value: "—",
+      sub: "Connect backend",
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Welcome */}
@@ -161,7 +175,7 @@ export default function AdminDashboard() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-            Live — May 2026
+            Live
           </span>
         </div>
       </div>
@@ -198,17 +212,22 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <p className="text-white text-2xl font-bold">
-                {stat.value}
+              <p className="text-white text-2xl font-bold flex items-center gap-2">
+                {stat.value === null ? (
+                  <Loader2 size={18} className="animate-spin text-gray-500" />
+                ) : (
+                  stat.value
+                )}
               </p>
 
-              <p
-                className="text-xs mt-1 flex items-center gap-1"
-                style={{ color: "#4ade80" }}
-              >
-                <ArrowUpRight size={12} />
-                {stat.change}
-              </p>
+              {stat.sub ? (
+                <p className="text-xs mt-1 text-gray-500">{stat.sub}</p>
+              ) : (
+                <p className="text-xs mt-1 flex items-center gap-1" style={{ color: "#4ade80" }}>
+                  <ArrowUpRight size={12} />
+                  Live from backend
+                </p>
+              )}
             </div>
           );
         })}
@@ -264,7 +283,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Recent Activity -- no activity-log endpoint exists yet, so
+            this is an honest empty state instead of the previous static
+            fake list (which would've looked live but never changed). */}
         <div
           className="lg:col-span-2 rounded-xl p-5"
           style={{
@@ -278,46 +299,11 @@ export default function AdminDashboard() {
             </h3>
           </div>
 
-          <div className="space-y-3">
-            {RECENT_ACTIVITY.map((activity) => {
-              const tc =
-                TYPE_COLORS[activity.type] ||
-                TYPE_COLORS.create;
-
-              return (
-                <div
-                  key={`${activity.type}-${activity.item}`}
-                  className="flex items-start gap-3 pb-3 border-b last:border-0 last:pb-0"
-                  style={{
-                    borderColor: "#1f2937",
-                  }}
-                >
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 mt-0.5"
-                    style={{
-                      backgroundColor: tc.bg,
-                      color: tc.text,
-                    }}
-                  >
-                    {tc.label}
-                  </span>
-
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-300 text-xs font-medium truncate">
-                      {activity.item}
-                    </p>
-
-                    <p className="text-gray-500 text-xs">
-                      {activity.action}
-                    </p>
-                  </div>
-
-                  <p className="text-gray-600 text-xs shrink-0">
-                    {activity.time}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <p className="text-gray-400 text-sm">Activity feed isn't connected yet.</p>
+            <p className="text-gray-600 text-xs mt-1">
+              Needs an activity-log endpoint (e.g. GET /api/admin/activity) to show real events here.
+            </p>
           </div>
         </div>
       </div>
@@ -335,37 +321,20 @@ export default function AdminDashboard() {
         </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            {
-              label: "Countries Tracked",
-              value: "18",
-              sub: "Regulatory Tracker",
-            },
-            {
-              label: "Enforcement Events",
-              value: "25",
-              sub: "Enforcement Watch",
-            },
-            {
-              label: "AWPII Nations",
-              value: "18+",
-              sub: "Policy Index",
-            },
-            {
-              label: "Newsletter Subs",
-              value: "—",
-              sub: "Connect backend",
-            },
-          ].map((item) => (
+          {OVERVIEW.map((item) => (
             <div
               key={item.label}
               className="text-center"
             >
               <p
-                className="text-2xl font-bold"
+                className="text-2xl font-bold flex items-center justify-center gap-2"
                 style={{ color: "#D4A017" }}
               >
-                {item.value}
+                {item.value === null ? (
+                  <Loader2 size={16} className="animate-spin text-gray-600" />
+                ) : (
+                  item.value
+                )}
               </p>
 
               <p className="text-gray-300 text-xs font-medium mt-1">
