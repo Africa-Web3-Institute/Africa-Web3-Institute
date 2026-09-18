@@ -5,7 +5,7 @@ import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
 import { FaLinkedin as Linkedin, FaTwitter as Twitter } from "react-icons/fa";
 import { Users, MapPin, Briefcase, ArrowRight } from "lucide-react";
-import KateAcH from "../assets/Kate_operations-lead.png";
+import KateAcH from "../assets/Board/Kate_operations-lead.png";
 
 
 // ─── Team data ───────────────────────────────────────────────────────────────

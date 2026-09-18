@@ -1,7 +1,9 @@
+// src/components/home/ContactSection.jsx
 import { useState } from "react";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
 import Reveal from "../common/Reveal";
+import { Send, Loader2 , Mail} from "lucide-react";
 
 export default function ContactSection() {
   const { language } = useLanguage();
@@ -16,66 +18,72 @@ export default function ContactSection() {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(false);
-  setErrorMessage('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(false);
+    setErrorMessage("");
 
-  const payload = {
-    name: form.name.trim(),
-    email: form.email.trim(),
-    organization: form.organization.trim() || '',
-    message: form.message.trim(),
-    // subject is intentionally omitted – backend will default
+    const payload = {
+      name: form.name.trim(),
+      email: form.email.trim(),
+      organization: form.organization.trim() || "",
+      message: form.message.trim(),
+    };
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitted(true);
+      } else {
+        setError(true);
+        setErrorMessage(data.error || T.errorMsg);
+      }
+    } catch (err) {
+      console.error("Contact error:", err);
+      setError(true);
+      setErrorMessage(T.errorMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-
-    if (response.ok && data.success) {
-      setSubmitted(true);
-    } else {
-      setError(true);
-      setErrorMessage(data.error || T.errorMsg);
-    }
-  } catch (err) {
-    console.error('Contact error:', err);
-    setError(true);
-    setErrorMessage(T.errorMsg);
-  } finally {
-    setLoading(false);
-  }
-};
   const inputClass =
-    "w-full border border-border bg-white px-4 py-3 text-[0.875rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-secondary";
+    "w-full border border-border/60 bg-white/80 backdrop-blur-sm px-4 py-3.5 text-[0.875rem] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#D4A017]/30 focus:border-[#D4A017] transition-all rounded-xl";
 
   return (
-    <section id="contact" className="py-28 lg:py-36 border-b border-border">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section id="contact" className="py-28 lg:py-36 border-b border-border relative overflow-hidden">
+      {/* Decorative background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F8F9FB] to-white/80 pointer-events-none" />
+      <div className="absolute -top-48 -right-48 w-96 h-96 rounded-full bg-[#D4A017]/5 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-48 -left-48 w-96 h-96 rounded-full bg-[#D4A017]/5 blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Left column – unchanged */}
+          {/* Left column – info */}
           <Reveal as="div">
-            <p className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase mb-4" style={{ color: "#D4A017" }}>
+            <p className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase mb-4 text-[#D4A017]">
               {T.eyebrow}
             </p>
             <h2 className="font-display text-[2rem] lg:text-[2.5rem] font-bold text-secondary leading-snug mb-6">
               {T.heading}
             </h2>
             <p className="text-[1rem] text-muted-foreground leading-[1.85]">{T.body}</p>
-            <div className="mt-10 pt-8 border-t border-border">
-              <p className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase mb-3" style={{ color: "#D4A017" }}>
+            <div className="mt-10 pt-8 border-t border-border/60">
+              <p className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase mb-3 text-[#D4A017]">
                 {T.enquiriesLabel}
               </p>
               <a
                 href="mailto:info@africaweb3institute.org"
-                className="text-[1rem] font-medium text-secondary hover:text-primary transition-colors"
+                className="text-[1.125rem] font-medium text-secondary hover:text-[#D4A017] transition-colors inline-flex items-center gap-2"
               >
+                <Mail className="w-5 h-5 text-[#D4A017]" />
                 info@africaweb3institute.org
               </a>
             </div>
@@ -84,15 +92,17 @@ const handleSubmit = async (e) => {
           {/* Right column – form */}
           <Reveal as="div" delay={0.1}>
             {submitted ? (
-              <div className="border border-border p-10 flex flex-col items-start justify-center h-full">
-                <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-3">
+              <div className="border border-[#D4A017]/30 bg-white/80 backdrop-blur-sm rounded-2xl p-10 flex flex-col items-start justify-center h-full shadow-lg">
+                <div className="text-4xl mb-4">✅</div>
+                <p className="text-xs font-semibold tracking-[0.18em] uppercase text-[#D4A017] mb-3">
                   {T.successEyebrow}
                 </p>
-                <p className="text-[1rem] font-semibold text-secondary leading-snug">{T.successMsg}</p>
+                <p className="text-[1.125rem] font-semibold text-secondary leading-snug">{T.successMsg}</p>
+                <p className="text-sm text-muted-foreground mt-3">We'll get back to you within 24 hours.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Honeypot – kept for client-side use, but not sent to backend */}
+              <form onSubmit={handleSubmit} className="space-y-5 bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-border/60">
+                {/* Honeypot */}
                 <input
                   type="text"
                   name="website"
@@ -103,7 +113,7 @@ const handleSubmit = async (e) => {
                   style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0 }}
                   aria-hidden="true"
                 />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-[0.75rem] font-semibold tracking-wide uppercase text-muted-foreground mb-1.5">
                       {T.labels.name}
@@ -159,21 +169,31 @@ const handleSubmit = async (e) => {
                   />
                 </div>
                 {error && (
-                  <p className="text-[0.875rem] text-destructive">
+                  <p className="text-[0.875rem] text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
                     {errorMessage}{" "}
-                    <a href="mailto:info@africaweb3institute.org" className="underline">
+                    <a href="mailto:info@africaweb3institute.org" className="underline font-semibold">
                       info@africaweb3institute.org
-                    </a>.
+                    </a>
+                    .
                   </p>
                 )}
                 <div className="pt-1">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="text-[0.875rem] font-semibold px-8 py-3.5 transition-all disabled:opacity-60"
-                    style={{ backgroundColor: "#D4A017", color: "#0B1437" }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[0.875rem] font-semibold px-8 py-3.5 rounded-full transition-all disabled:opacity-60 bg-[#D4A017] text-[#0B1437] hover:bg-[#b8891a] shadow-md hover:shadow-lg"
                   >
-                    {loading ? T.sending : T.submit}
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {T.sending || "Sending..."}
+                      </>
+                    ) : (
+                      <>
+                        {T.submit}
+                        <Send className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </div>
               </form>

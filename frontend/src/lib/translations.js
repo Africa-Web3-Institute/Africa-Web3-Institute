@@ -254,7 +254,7 @@ export const t = {
         links: [
           { label: "About Us", to: "/about" },
           { label: "Our Team", to: "/team" },
-          { label: "Research", to: "/publications" },
+          { label: "Research", to: "/regulatory-tracker" },
           { label: "Programs", to: "/capacity-building" },
           { label: "Contact", to: "/contact" },
           
@@ -804,7 +804,7 @@ export const t = {
     enforcement: {
       pageTitle: "Africa Web3 Enforcement Watch",
       pageSubtitle: "Tracking regulatory crackdowns, enforcement actions, policy bans, and compliance directives across 18+ African nations",
-      lastUpdated: "Last updated: May 2026",
+      lastUpdated: "Last updated: August 2026",
       eventsTracked: "47 Enforcement events tracked",
       disclaimer: "This page tracks publicly documented regulatory and enforcement activity. AWI does not provide legal advice. All information is sourced from official government publications and verified news sources.",
       statTotal: "Total Actions",

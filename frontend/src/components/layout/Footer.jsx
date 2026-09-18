@@ -75,7 +75,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <Link to="/">
               <img
-                src="/awi-logo.png"
+                src="/logos/awi-logo.png"
                 alt="Africa Web3 Institute logo"
                 className="h-20 mb-5"
                 loading="lazy"

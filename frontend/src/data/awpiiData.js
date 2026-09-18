@@ -1,5 +1,6 @@
 // src/data/awpiiData.js
 // Official May 2026 Snapshot data for the Africa Web3 Policy & Innovation Index (AWPII)
+//Official August 2026 Snapshot data for the Africa Web3 Policy & Innovation Index (AWPII)
 // Bilingual: English (en) and French (fr)
 
 const awpiiData = [
@@ -16,22 +17,22 @@ const awpiiData = [
     content: {
       en: {
         name: "South Africa",
-        key_update: "CARF live; capital flow draft regs",
+        key_update: "Draft cross-border crypto asset manual published (Aug 2026)",
         swot: {
           strengths: "World-class regulatory clarity (300+ FSCA CASPs, CARF live since March 1, 2026), strong TradFi integration, robust enforcement, and institutional maturity.",
           weaknesses: "Transitional uncertainties around capital controls and relatively high compliance burden for smaller players.",
           opportunities: "Finalize stablecoin framework (rand-pegged focus) and expand tokenized asset pilots in supply chains/public services.",
-          threats: "The proposed Capital Flow Management Regulations could introduce stricter reporting or approval requirements for crypto-related outflows, potentially slowing cross-border innovation."
+          threats: "The draft Crypto Assets Manual for Cross-Border Activities, published 3 August 2026 by National Treasury and SARB, proposes a dedicated CASP authorisation regime and stricter reporting for crypto-related outflows involving foreign platforms and self-hosted wallets — potentially slowing cross-border innovation once finalized (comment period runs to 30 September 2026)."
         }
       },
       fr: {
         name: "Afrique du Sud",
-        key_update: "CARF en vigueur ; projets de réglementation des flux de capitaux",
+        key_update: "Publication du projet de manuel des actifs crypto transfrontaliers (août 2026)",
         swot: {
           strengths: "Clarté réglementaire de classe mondiale (plus de 300 CASP agréés par la FSCA, CARF en vigueur depuis le 1er mars 2026), forte intégration TradFi, application rigoureuse et maturité institutionnelle.",
           weaknesses: "Incertitudes transitoires autour des contrôles de capitaux et charge de conformité relativement élevée pour les petits acteurs.",
           opportunities: "Finaliser le cadre des stablecoins (axé sur le rand) et étendre les projets pilotes d'actifs tokenisés dans les chaînes d'approvisionnement et les services publics.",
-          threats: "Les propositions de réglementation sur la gestion des flux de capitaux pourraient introduire des exigences plus strictes de déclaration ou d'approbation pour les sorties liées aux cryptos, freinant potentiellement l'innovation transfrontalière."
+          threats: "Le projet de manuel des actifs crypto pour les activités transfrontalières, publié le 3 août 2026 par le National Treasury et la SARB, propose un régime d'autorisation CASP dédié et une déclaration plus stricte pour les sorties liées aux cryptos impliquant des plateformes étrangères et des portefeuilles auto-hébergés — pouvant ralentir l'innovation transfrontalière une fois finalisé (consultation jusqu'au 30 septembre 2026)."
         }
       }
     }
@@ -82,22 +83,22 @@ const awpiiData = [
     content: {
       en: {
         name: "Mauritius",
-        key_update: "Stable mature framework",
+        key_update: "Dedicated stablecoin guidance issued (Aug 2026)",
         swot: {
-          strengths: "Mature VAITOS framework, clear licensing classes, FATF alignment, and attractive tax environment.",
-          weaknesses: "Smaller domestic market limits raw adoption volume.",
-          opportunities: "Deepen linkages with mainland African markets as a gateway.",
-          threats: "Global shifts in offshore regulations or increased scrutiny on tax-friendly jurisdictions could reduce appeal for international VASPs."
+          strengths: "Mature VAITOS framework, clear licensing classes, FATF alignment, attractive tax environment, and new dedicated stablecoin guidance requiring full reserve backing and independent attestations — reinforcing credibility with institutional counterparties.",
+          weaknesses: "Smaller domestic market limits raw adoption volume; the new stablecoin regime's minimum capital and 5-day redemption rules may raise entry costs for issuers.",
+          opportunities: "Deepen linkages with mainland African markets as a gateway; position Mauritius-licensed stablecoins as a trusted regional settlement instrument.",
+          threats: "Global shifts in offshore regulations or increased scrutiny on tax-friendly jurisdictions could reduce appeal for international VASPs; the FSC's exclusion of algorithmic and yield-bearing stablecoins could push some issuers to more permissive jurisdictions."
         }
       },
       fr: {
         name: "Maurice",
-        key_update: "Cadre mature et stable",
+        key_update: "Directives dédiées aux stablecoins publiées (août 2026)",
         swot: {
-          strengths: "Cadre VAITOS mature, classes de licences claires, alignement FATF et environnement fiscal attractif.",
-          weaknesses: "Un marché domestique plus petit limite le volume brut d'adoption.",
-          opportunities: "Approfondir les liens avec les marchés continentaux africains en tant que passerelle.",
-          threats: "Les évolutions mondiales des réglementations offshore ou une surveillance accrue des juridictions fiscalement avantageuses pourraient réduire l'attrait pour les VASP internationaux."
+          strengths: "Cadre VAITOS mature, classes de licences claires, alignement FATF, environnement fiscal attractif, et nouvelles directives dédiées aux stablecoins exigeant une couverture intégrale des réserves et des attestations indépendantes — renforçant la crédibilité auprès des contreparties institutionnelles.",
+          weaknesses: "Un marché domestique plus petit limite le volume brut d'adoption ; le capital minimum et le rachat sous 5 jours du nouveau régime stablecoin peuvent accroître les coûts d'entrée pour les émetteurs.",
+          opportunities: "Approfondir les liens avec les marchés continentaux africains en tant que passerelle ; positionner les stablecoins agréés à Maurice comme instrument de règlement régional de confiance.",
+          threats: "Les évolutions mondiales des réglementations offshore ou une surveillance accrue des juridictions fiscalement avantageuses pourraient réduire l'attrait pour les VASP internationaux ; l'exclusion par la FSC des stablecoins algorithmiques et à rendement pourrait pousser certains émetteurs vers des juridictions plus permissives."
         }
       }
     }
@@ -115,22 +116,22 @@ const awpiiData = [
     content: {
       en: {
         name: "Ghana",
-        key_update: "Sandbox pilots active",
+        key_update: "Sandbox expands to 20 firms; coordinating committee launched (Aug 2026)",
         swot: {
-          strengths: "VASP Act enforced + active regulatory sandbox (11 firms in pilots); gold-backed stablecoin exploration adds unique innovation angle.",
-          weaknesses: "Early-stage implementation — full licensing still scaling.",
-          opportunities: "Convert successful sandbox pilots into mainstream licenses; integrate gold-backed tokens with cedi ecosystem.",
-          threats: "Execution risks in sandbox-to-full regime transition; potential BoG/SEC coordination challenges."
+          strengths: "VASP Act enforced + regulatory sandbox expanded to 20 participants covering tokenised gold, Treasury bills, bonds, trade finance and commodity exchanges; new Virtual Assets Coordinating Committee (BoG, SEC, Finance Ministry, Cyber Security Authority, FIC) aligns previously fragmented oversight.",
+          weaknesses: "Early-stage implementation — full licensing still scaling across an unusually broad sandbox cohort.",
+          opportunities: "Convert successful sandbox pilots into mainstream licenses; integrate gold-backed tokens with cedi ecosystem; leverage state participants (GoldBod, Ghana Commodity Exchange) to fast-track real-world-asset tokenisation standards.",
+          threats: "Execution risks in sandbox-to-full regime transition; coordination among five agencies under the new committee could still surface friction as licensing scales."
         }
       },
       fr: {
         name: "Ghana",
-        key_update: "Projets pilotes du bac à sable actifs",
+        key_update: "Bac à sable étendu à 20 entreprises ; comité de coordination lancé (août 2026)",
         swot: {
-          strengths: "Loi VASP appliquée + bac à sable réglementaire actif (11 entreprises en phase pilote) ; l'exploration de stablecoins adossés à l'or ajoute un angle d'innovation unique.",
-          weaknesses: "Mise en œuvre à un stade précoce — l'octroi complet de licences est encore en cours de déploiement.",
-          opportunities: "Convertir les pilotes réussis du bac à sable en licences générales ; intégrer les jetons adossés à l'or avec l'écosystème du cedi.",
-          threats: "Risques d'exécution dans la transition du bac à sable au régime complet ; défis potentiels de coordination entre la BoG et la SEC."
+          strengths: "Loi VASP appliquée + bac à sable réglementaire étendu à 20 participants couvrant l'or tokenisé, les bons du Trésor, les obligations, le financement commercial et les bourses de matières premières ; le nouveau Comité de coordination des actifs virtuels (BoG, SEC, ministère des Finances, Autorité de cybersécurité, FIC) aligne une supervision auparavant fragmentée.",
+          weaknesses: "Mise en œuvre à un stade précoce — l'octroi complet de licences est encore en cours de déploiement sur une cohorte de bac à sable inhabituellement large.",
+          opportunities: "Convertir les pilotes réussis du bac à sable en licences générales ; intégrer les jetons adossés à l'or avec l'écosystème du cedi ; s'appuyer sur les participants étatiques (GoldBod, Bourse des matières premières du Ghana) pour accélérer les normes de tokenisation d'actifs réels.",
+          threats: "Risques d'exécution dans la transition du bac à sable au régime complet ; la coordination entre cinq agences sous le nouveau comité pourrait encore générer des frictions à mesure que les licences se développent."
         }
       }
     }
@@ -148,22 +149,22 @@ const awpiiData = [
     content: {
       en: {
         name: "Nigeria",
-        key_update: "Strong SEC enforcement + volume leader",
+        key_update: "NRS tax guidance, CBN VASP sandbox, and draft SEC rulebook (Aug 2026)",
         swot: {
-          strengths: "Massive adoption scale (#6 global Chainalysis); ISA 2025 + SEC licensing/tax enforcement provide legal foundation.",
-          weaknesses: "High compliance costs and capital requirements disadvantage smaller VASPs.",
-          opportunities: "Streamline licensing to boost local innovation; expand institutional on-ramps.",
-          threats: "FX controls and CBN monetary policy caution could trigger sudden restrictions; macroeconomic volatility (inflation) drives usage but adds uncertainty."
+          strengths: "Massive adoption scale (#6 global Chainalysis); ISA 2025 + SEC licensing/tax enforcement provide legal foundation; August 2026 brought a wave of operational implementation — NRS virtual-asset tax guidelines, a dedicated CBN VASP/stablecoin sandbox track, three new ARIP entrants, and a comprehensive draft SEC digital-asset rulebook.",
+          weaknesses: "High compliance costs and capital requirements disadvantage smaller VASPs; the proposed SEC rulebook's minimum-capital thresholds could further concentrate the market among well-capitalised players.",
+          opportunities: "Streamline licensing to boost local innovation; expand institutional on-ramps; use the new CBN sandbox track to pilot naira-referenced and foreign-currency stablecoin models ahead of full SEC rules.",
+          threats: "FX controls and CBN monetary policy caution could trigger sudden restrictions; macroeconomic volatility (inflation) drives usage but adds uncertainty; overlapping SEC and CBN rulemaking (rulebook vs. sandbox track) could create short-term compliance ambiguity for VASPs preparing for both regimes."
         }
       },
       fr: {
         name: "Nigeria",
-        key_update: "Application rigoureuse de la SEC + leader en volume",
+        key_update: "Directives fiscales NRS, sandbox VASP de la CBN et projet de règlement SEC (août 2026)",
         swot: {
-          strengths: "Échelle d'adoption massive (6e mondial selon Chainalysis) ; ISA 2025 + application des licences/fiscalité par la SEC fournissent une base juridique.",
-          weaknesses: "Des coûts de conformité et des exigences de capital élevés désavantagent les petits VASP.",
-          opportunities: "Rationaliser l'octroi de licences pour stimuler l'innovation locale ; élargir les passerelles institutionnelles.",
-          threats: "Les contrôles de change et la prudence de la politique monétaire de la CBN pourraient déclencher des restrictions soudaines ; la volatilité macroéconomique (inflation) stimule l'utilisation mais ajoute de l'incertitude."
+          strengths: "Échelle d'adoption massive (6e mondial selon Chainalysis) ; ISA 2025 + application des licences/fiscalité par la SEC fournissent une base juridique ; août 2026 a apporté une vague de mise en œuvre opérationnelle — directives fiscales NRS sur les actifs virtuels, volet sandbox dédié VASP/stablecoin de la CBN, trois nouveaux entrants ARIP, et un projet de règlement SEC complet sur les actifs numériques.",
+          weaknesses: "Des coûts de conformité et des exigences de capital élevés désavantagent les petits VASP ; les seuils de capital minimum du projet de règlement SEC pourraient encore concentrer le marché parmi les acteurs bien capitalisés.",
+          opportunities: "Rationaliser l'octroi de licences pour stimuler l'innovation locale ; élargir les passerelles institutionnelles ; utiliser le nouveau volet sandbox de la CBN pour piloter des modèles de stablecoins référencés au naira et en devises étrangères avant les règles SEC complètes.",
+          threats: "Les contrôles de change et la prudence de la politique monétaire de la CBN pourraient déclencher des restrictions soudaines ; la volatilité macroéconomique (inflation) stimule l'utilisation mais ajoute de l'incertitude ; le chevauchement des réglementations SEC et CBN (règlement vs. volet sandbox) pourrait créer une ambiguïté de conformité à court terme pour les VASP se préparant aux deux régimes."
         }
       }
     }
