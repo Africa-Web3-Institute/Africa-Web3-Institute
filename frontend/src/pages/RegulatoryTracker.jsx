@@ -6,7 +6,7 @@ import { t } from "../lib/translations";
 import {
   REGULATORY_UPDATES, STATUS_COLORS, CONFIDENCE_COLORS, CATEGORY_COLORS,
   REGIONS, CATEGORIES, STATUSES_LIST, CONFIDENCE_LIST, DATE_RANGES, TRACKER_META,
-} from "../data/regulatoryUpdates";
+} from "../data/RegulatoryUpdates";
 import CountryFlag from "../components/CountryFlag";
 
 // NOTE ON FIELDS INTENTIONALLY NOT RENDERED HERE:
