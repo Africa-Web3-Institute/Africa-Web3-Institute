@@ -8,6 +8,7 @@ import { useNavDropdown } from "../../lib/NavDropdownContext";
 // ─── Paths for highlighting active dropdowns ────────────────────────────────
 const ABOUT_PATHS = ["/about", "/team", "/board"];
 const NEWS_PATHS = ["/news"];
+const STATIC_PAGES =["/nrti"];
 const INTELLIGENCE_PATHS = [
   "AWPII",
   "regulatory-tracker",
@@ -194,6 +195,20 @@ const getProgramsItems = (language) => [
           "Sommets politiques, ateliers et activations universitaires"
         ),
         href: "/events",
+      },
+    ],
+  },
+  {
+    section: getLabel(language, "Initiatives", "Initiatives"),
+    items: [
+      {
+        label: "Nigeria RWA Tokenisation Initiative",
+        desc: getLabel(
+          language,
+          "Building Nigeria's tokenised economy",
+          "Construire l'économie tokenisée du Nigeria"
+        ),
+        href: "/nrti/",
       },
     ],
   },
@@ -435,9 +450,13 @@ export default function Navbar() {
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
 
-  const navigateTo = (href) => {
+   const navigateTo = (href) => {
     setOpen(false);
     setActiveDropdown(null);
+    if (STATIC_PAGES.some((p) => href.startsWith(p))) {
+      window.location.assign(href);
+      return;
+    }
     navigate(href);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
