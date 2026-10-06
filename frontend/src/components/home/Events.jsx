@@ -12,6 +12,26 @@ const scrollTo = (id) => {
 
 const slugify = (month) => month.toLowerCase().replace(/\s+/g, "-");
 
+// Strip accents and lowercase, so "août" / "décembre" match "aout" / "decembre"
+const normalizeToken = (str) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+// Covers English and French month names (full + common abbreviations)
+const MONTH_NAMES = {
+  jan: 0, january: 0, janvier: 0,
+  feb: 1, february: 1, fevrier: 1,
+  mar: 2, march: 2, mars: 2,
+  apr: 3, april: 3, avril: 3,
+  may: 4, mai: 4,
+  jun: 5, june: 5, juin: 5,
+  jul: 6, july: 6, juillet: 6,
+  aug: 7, august: 7, aout: 7,
+  sep: 8, sept: 8, september: 8, septembre: 8,
+  oct: 9, october: 9, octobre: 9,
+  nov: 10, november: 10, novembre: 10,
+  dec: 11, december: 11, decembre: 11,
+};
+
 // ─── Helper: filter only events with a future date ──────
 const filterUpcoming = (monthData) => {
   const today = new Date();
@@ -20,39 +40,26 @@ const filterUpcoming = (monthData) => {
   const isFuture = (dateStr) => {
     if (!dateStr) return false;
 
-    // Helper to parse a single date like "20 August 2026"
+    // Helper to parse a single date like "20 August 2026" or "20 août 2026"
     const parseDate = (str) => {
-      const monthNames = {
-        Jan: 0, January: 0,
-        Feb: 1, February: 1,
-        Mar: 2, March: 2,
-        Apr: 3, April: 3,
-        May: 4, May: 4,
-        Jun: 5, June: 5,
-        Jul: 6, July: 6,
-        Aug: 7, August: 7,
-        Sep: 8, September: 8,
-        Oct: 9, October: 9,
-        Nov: 10, November: 10,
-        Dec: 11, December: 11
-      };
-
-      // Try to match "DD Month YYYY"
+      // Try to match "DD Month YYYY" (also handles "DD–DD Month YYYY" since
+      // parseInt stops at the first non-digit character, e.g. "24–25" -> 24)
       const parts = str.trim().split(/\s+/);
       if (parts.length === 3) {
         const day = Number.parseInt(parts[0], 10);
-        const month = monthNames[parts[1]];
+        const month = MONTH_NAMES[normalizeToken(parts[1])];
         const year = Number.parseInt(parts[2], 10);
         if (!Number.isNaN(day) && month !== undefined && !Number.isNaN(year)) {
           return new Date(year, month, day);
         }
       }
 
-      // Try to match "DD–DD Month YYYY" (range) – use the END date
-      const rangeMatch = str.match(/(\d+)\s*[–-]\s*(\d+)\s+(\w+)\s+(\d+)/);
+      // Fallback: match "DD–DD Month YYYY" (range) – use the END date.
+      // \S+ (not \w+) so accented month names like "décembre" match fully.
+      const rangeMatch = str.match(/(\d+)\s*[–-]\s*(\d+)\s+(\S+)\s+(\d+)/);
       if (rangeMatch) {
         const endDay = Number.parseInt(rangeMatch[2], 10);
-        const month = monthNames[rangeMatch[3]];
+        const month = MONTH_NAMES[normalizeToken(rangeMatch[3])];
         const year = Number.parseInt(rangeMatch[4], 10);
         if (!Number.isNaN(endDay) && month !== undefined && !Number.isNaN(year)) {
           return new Date(year, month, endDay);
@@ -69,7 +76,6 @@ const filterUpcoming = (monthData) => {
     const eventDate = parseDate(dateStr);
     if (!eventDate) return false;
 
-    // Also check if it's a range (we already use the end date)
     // Return true if the event is today or in the future
     return eventDate >= today;
   };
