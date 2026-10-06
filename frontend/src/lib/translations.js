@@ -149,20 +149,25 @@ export const t = {
     month: "September 2026",
     events: [
     
-      {
-        title: "VASP Policy Workshop for Journalists",
-        country: "Ghana",
-        date: "17–18 September 2026",
-        location: "Alisa Hotel, Accra",
-        ctas: [{ label: "Request Invitation", variant: "primary" }],
-      },
+     
       {
         title: "Blockchain, Cryptocurrency Financial Crime Enforcement Workshop",
         country: "Zambia",
         date: "24–25 September 2026",
         location: "Radisson Blu, Lusaka",
         description: "A specialised workshop focused on combating financial crimes in the blockchain and cryptocurrency ecosystem, from detection and investigation through to prosecution, adjudication, and judicial decision-making.",
-        // topics: [ ... ], // kept as originally commented
+        topics: [
+"AML/CFT frameworks for virtual assets",
+"Cross-border collaboration and mutual legal assistance",
+"Prosecution strategies and evidentiary challenges in blockchain cases",
+"Role of judges and prosecutors in crypto asset recovery",
+"African and international case studies",
+"Blockchain analytics and advanced transaction tracing",
+"Investigation-to-prosecution pipelines for crypto cases",
+"Adjudication of cryptocurrency cases",
+"Regulatory updates and sentencing considerations",
+"Emerging threats including DeFi exploits, ransomware, NFT fraud, and mixing services",
+],
         ctas: [{ label: "Register Interest", variant: "primary" }],
       },
     
@@ -193,25 +198,32 @@ export const t = {
         location: "Hilton, Kinshasa",
         ctas: [{ label: "Join Policy Dialogue", variant: "primary" }],
       },
-      {
-        title: "VASP Strategy Workshop for Banks",
-        country: "Ghana",
-        date: "29 October 2026",
-        location: "Kempinski, Accra",
-        ctas: [{ label: "Institutional Participation", variant: "primary" }],
-      },
+     
     
     ],
   },
   {
     month: "December 2026",
-    events: [
+    events: [ {
+        title: "VASP Strategy Workshop for Banks",
+        country: "Ghana",
+        date: "1 December 2026",
+        location: "Kempinski, Accra",
+        ctas: [{ label: "Institutional Participation", variant: "primary" }],
+      },
       {
         title: "Web3 Policy Breakfast",
         country: "South Sudan",
         date: "3 December 2026",
         location: "Radisson Blu, Juba",
         ctas: [{ label: "Engage as Stakeholder", variant: "primary" }],
+      },
+     {
+        title: "VASP Policy Workshop for Journalists",
+        country: "Ghana",
+        date: "2-3 December 2026",
+        location: "Alisa Hotel, Accra",
+        ctas: [{ label: "Request Invitation", variant: "primary" }],
       },
     ],
   },
@@ -1011,112 +1023,108 @@ newsletterLanding: {
               ctas: [{ label: "Devenir partenaire", variant: "primary" }],
             },
             {
-              title: "État du Web3 en Afrique 2026 — Lancement T2",
+              title: "État du Web3 en Afrique 2026 — Lancement du rapport (T2)",
               date: "10 juillet 2026",
               location: "",
               description: "Une rencontre axée sur les données, réunissant décideurs, investisseurs et bâtisseurs pour décrypter stablecoins, réglementation et flux de capitaux.",
               ctas: [{ label: "Télécharger le rapport précédent", variant: "outline" }, { label: "Assister au lancement", variant: "primary" }],
             },
+          ],
+        },
+        {
+          month: "Août 2026",
+          events: [
             {
-              title: "Atelier politique VASP pour journalistes",
+              title: "Atelier stratégique VASP pour les banques",
               country: "Ghana",
-              date: "29–30 juillet 2026",
+              date: "20 août 2026",
+              location: "Kempinski, Accra",
+              ctas: [{ label: "Participation institutionnelle", variant: "primary" }],
+            },
+          ],
+        },
+        {
+          month: "Septembre 2026",
+          events: [
+            {
+              title: "Atelier de sensibilisation politique Web3",
+              country: "Congo RDC",
+              date: "10 septembre 2026",
+              location: "Hilton, Kinshasa",
+              ctas: [{ label: "Rejoindre le dialogue politique", variant: "primary" }],
+            },
+            {
+              title: "Atelier sur la lutte contre la criminalité financière liée à la blockchain et aux cryptomonnaies",
+              country: "Zambie",
+              date: "24–25 septembre 2026",
+              location: "Radisson Blu, Lusaka",
+              description: "Un atelier spécialisé axé sur la lutte contre la criminalité financière dans l'écosystème de la blockchain et des cryptomonnaies, couvrant toutes les étapes, de la détection et de l'enquête jusqu'aux poursuites, au jugement et à la prise de décision judiciaire.",
+              topics: [
+                "Cadres de lutte contre le blanchiment d'argent et le financement du terrorisme (LCB/FT) pour les actifs virtuels",
+                "Collaboration transfrontalière et entraide judiciaire",
+                "Stratégies de poursuite et défis liés aux preuves dans les affaires impliquant la blockchain",
+                "Rôle des juges et des procureurs dans le recouvrement d'actifs cryptographiques",
+                "Études de cas africaines et internationales",
+                "Analyse de données blockchain et traçage avancé des transactions",
+                "Processus allant de l'enquête aux poursuites pour les affaires liées aux cryptomonnaies",
+                "Jugement des affaires impliquant des cryptomonnaies",
+                "Mises à jour réglementaires et considérations relatives au prononcé des peines",
+                "Menaces émergentes, notamment les failles DeFi, les rançongiciels, la fraude aux NFT et les services de mixage",
+              ],
+              ctas: [{ label: "Signaler son intérêt", variant: "primary" }],
+            },
+          ],
+        },
+        {
+          month: "Octobre 2026",
+          events: [
+            {
+              title: "État des lieux du Web3 en Afrique 2026 — Lancement du rapport du 3e trimestre",
+              country: "Zambie",
+              date: "2 octobre 2026",
+              location: "Radisson Blu, Lusaka, Zambie",
+              description: "Suivi des initiatives en plein essor, de celles qui stagnent et des domaines où l'Afrique créera de la valeur prochainement.",
+              ctas: [{ label: "Obtenir un accès anticipé", variant: "primary" }],
+            },
+            {
+              title: "Table ronde politique Web3",
+              country: "Tanzanie",
+              date: "4 octobre 2026",
+              location: "Hyatt, Dar es Salaam",
+              ctas: [{ label: "Demander une place à la table", variant: "primary" }],
+            },
+            {
+              title: "Atelier de sensibilisation aux politiques Web3",
+              country: "République démocratique du Congo",
+              date: "18 octobre 2026",
+              location: "Hilton, Kinshasa",
+              ctas: [{ label: "Participer au dialogue politique", variant: "primary" }],
+            },
+          ],
+        },
+        {
+          month: "Décembre 2026",
+          events: [
+            {
+              title: "Atelier stratégique sur les VASP pour les banques",
+              country: "Ghana",
+              date: "1er décembre 2026",
+              location: "Kempinski, Accra",
+              ctas: [{ label: "Participation institutionnelle", variant: "primary" }],
+            },
+            {
+              title: "Petit-déjeuner politique Web3",
+              country: "Soudan du Sud",
+              date: "3 décembre 2026",
+              location: "Radisson Blu, Juba",
+              ctas: [{ label: "Participer en tant que partie prenante", variant: "primary" }],
+            },
+            {
+              title: "Atelier sur les politiques VASP pour les journalistes",
+              country: "Ghana",
+              date: "2-3 décembre 2026",
               location: "Alisa Hotel, Accra",
               ctas: [{ label: "Demander une invitation", variant: "primary" }],
-            },
-          ],
-        },
-        {
-          section: [
-            {
-              month: "Août 2026",
-              events: [
-                {
-                  title: "Atelier stratégique VASP pour les banques",
-                  country: "Ghana",
-                  date: "20 août 2026",
-                  location: "Kempinski, Accra",
-                  ctas: [{ label: "Participation institutionnelle", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "Septembre 2026",
-              events: [
-                {
-                  title: "Atelier de sensibilisation politique Web3",
-                  country: "Congo RDC",
-                  date: "10 septembre 2026",
-                  location: "Hilton, Kinshasa",
-                  ctas: [{ label: "Rejoindre le dialogue politique", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "Septembre 2026",
-              events: [
-                {
-                  title: "Atelier sur la lutte contre la criminalité financière liée à la blockchain et aux cryptomonnaies",
-                  country: "Zambie",
-                  date: "24–25 septembre 2026",
-                  location: "Radisson Blu, Lusaka",
-                  description: "Un atelier spécialisé axé sur la lutte contre les crimes financiers dans l'écosystème blockchain, de la détection à la poursuite judiciaire.",
-                  topics: [
-                    "Cadres AML/CFT pour les actifs virtuels",
-                    "Collaboration transfrontalière et entraide judiciaire",
-                    "Stratégies de poursuite et défis probatoires dans les affaires blockchain",
-                    "Rôle des juges et procureurs dans la récupération d'actifs crypto",
-                    "Études de cas africaines et internationales",
-                    "Analytique blockchain et traçage avancé des transactions",
-                    "Pipelines d'enquête à poursuite pour les affaires crypto",
-                    "Jugement des affaires de cryptomonnaies",
-                    "Mises à jour réglementaires et considérations de détermination de la peine",
-                    "Menaces émergentes incluant exploits DeFi, ransomware, fraude NFT et services de mixage",
-                  ],
-                  ctas: [{ label: "Manifester son intérêt", variant: "primary" }],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          section: [
-            {
-              month: "Septembre 2026",
-              events: [
-                {
-                  title: "État du Web3 en Afrique 2026 — Lancement T3",
-                  country: "Afrique du Sud",
-                  date: "25 septembre 2026",
-                  location: "Marriott Bonvoy, Johannesburg, Afrique du Sud",
-                  description: "Suivre ce qui se développe, ce qui stagne et où l'Afrique capte la valeur ensuite.",
-                  ctas: [{ label: "Accès anticipé", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "Octobre 2026",
-              events: [
-                {
-                  title: "Table ronde politique Web3",
-                  country: "Tanzanie",
-                  date: "4 octobre 2026",
-                  location: "Hyatt, Dar es Salaam",
-                  ctas: [{ label: "Demander une place à la table", variant: "primary" }],
-                },
-              ],
-            },
-            {
-              month: "Décembre 2026",
-              events: [
-                {
-                  title: "Petit-déjeuner politique Web3",
-                  country: "Soudan du Sud",
-                  date: "3 décembre 2026",
-                  location: "Radisson Blu, Juba",
-                  ctas: [{ label: "Participer en tant que partie prenante", variant: "primary" }],
-                },
-              ],
             },
           ],
         },
