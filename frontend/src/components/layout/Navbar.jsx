@@ -8,7 +8,11 @@ import { useNavDropdown } from "../../lib/NavDropdownContext";
 // ─── Paths for highlighting active dropdowns ────────────────────────────────
 const ABOUT_PATHS = ["/about", "/team", "/board"];
 const NEWS_PATHS = ["/news"];
-const STATIC_PAGES =["/nrti"];
+const STATIC_PAGES = [
+  "/nrti",
+  "/ghana-vasp-regulatory-framework",
+];
+
 const INTELLIGENCE_PATHS = [
   "AWPII",
   "regulatory-tracker",
@@ -210,6 +214,20 @@ const getProgramsItems = (language) => [
         ),
         href: "/nrti/",
       },
+    ],
+  },
+   {
+    section: getLabel(language, "Initiatives", "Initiatives"),
+    items: [
+   {
+  label: "Ghana's VASP Regulatory Framework",
+  desc: getLabel(
+    language,
+    "Decoding Ghana's VASP Regulatory Framework",
+    "Décryptage du cadre réglementaire ghanéen pour les VASP"
+  ),
+  href: "/ghana-vasp-regulatory-framework/",
+},
     ],
   },
 ];
