@@ -10,7 +10,7 @@ const ABOUT_PATHS = ["/about", "/team", "/board"];
 const NEWS_PATHS = ["/news"];
 const STATIC_PAGES = [
   "/nrti",
-  "/ghana-vasp-regulatory-framework",
+  "/ghana-vasp-journalists-workshop",
 ];
 
 const INTELLIGENCE_PATHS = [
@@ -226,7 +226,7 @@ const getProgramsItems = (language) => [
     "Decoding Ghana's VASP Regulatory Framework",
     "Décryptage du cadre réglementaire ghanéen pour les VASP"
   ),
-  href: "/ghana-vasp-regulatory-framework/",
+  href: "/ghana-vasp-journalists-workshop/",
 },
     ],
   },
