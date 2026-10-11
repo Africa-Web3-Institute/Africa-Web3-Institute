@@ -202,7 +202,7 @@ const getProgramsItems = (language) => [
       },
     ],
   },
-  {
+   {
     section: getLabel(language, "Initiatives", "Initiatives"),
     items: [
       {
@@ -214,20 +214,19 @@ const getProgramsItems = (language) => [
         ),
         href: "/nrti/",
       },
-    ],
-  },
-   {
-    section: getLabel(language, "Initiatives", "Initiatives"),
-    items: [
-   {
-  label: "Ghana's VASP Regulatory Framework",
-  desc: getLabel(
-    language,
-    "Decoding Ghana's VASP Regulatory Framework",
-    "Décryptage du cadre réglementaire ghanéen pour les VASP"
-  ),
-  href: "/ghana-vasp-journalists-workshop/",
-},
+           {
+        label: getLabel(
+          language,
+          "Ghana VASP Journalists Workshop",
+          "Atelier VASP Ghana pour journalistes"
+        ),
+        desc: getLabel(
+          language,
+          "Two-day workshop for 40 Ghanaian journalists, Accra, 2–3 December 2026",
+          "Atelier de deux jours pour 40 journalistes ghanéens, Accra, 2–3 décembre 2026"
+        ),
+        href: "/ghana-vasp-journalists-workshop/",
+      },
     ],
   },
 ];
