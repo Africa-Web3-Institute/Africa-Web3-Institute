@@ -9,8 +9,9 @@ import { useNavDropdown } from "../../lib/NavDropdownContext";
 const ABOUT_PATHS = ["/about", "/team", "/board"];
 const NEWS_PATHS = ["/news"];
 const STATIC_PAGES = [
-  "/nrti",
+ "/nrti",
   "/ghana-vasp-journalists-workshop",
+  "/ghana-bank-vasp-readiness-workshop",
 ];
 
 const INTELLIGENCE_PATHS = [
@@ -226,6 +227,19 @@ const getProgramsItems = (language) => [
           "Atelier de deux jours pour 40 journalistes ghanéens, Accra, 2–3 décembre 2026"
         ),
         href: "/ghana-vasp-journalists-workshop/",
+      },
+            {
+        label: getLabel(
+          language,
+          "Ghana Bank VASP Readiness Workshop",
+          "Atelier VASP – Banques du Ghana"
+        ),
+        desc: getLabel(
+          language,
+          "Invitation-only executive workshop for Ghanaian banks, Accra, 1 December 2026",
+          "Atelier exécutif sur invitation pour les banques ghanéennes, Accra, 1er décembre 2026"
+        ),
+        href: "/ghana-bank-vasp-readiness-workshop/",
       },
     ],
   },
