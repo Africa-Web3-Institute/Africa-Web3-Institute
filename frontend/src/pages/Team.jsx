@@ -74,14 +74,7 @@ const CORE_TEAM = [
     linkedin: "https://linkedin.com/in/abdulganiwu",
     twitter: "https://x.com/phrozendon?s=21",
   },
-  {
-    name: "Jarau Moses",
-    role: "Content & Social Media Lead",
-    country: "🇺🇬 Uganda",
-    photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/ea434ea86_A4B9E1C4-DF44-4067-A712-5A915C1FB4FA.png",
-    linkedin: "linkedin.com/in/jaraumoses",
-    twitter: "https://x.com/JarauMoses",
-  },
+
 ];
 
 // ─── Scroll reveal hook ──────────────────────────────────────────────────────
