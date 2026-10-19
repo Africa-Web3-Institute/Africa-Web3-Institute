@@ -108,4 +108,46 @@ export const analyticsApi = {
   }),
 };
 
+
+// ─── Articles (Public & Admin) ──────────────────────────────────────────────
+export const articlesApi = {
+  getAll: (params) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return request(`/api/articles${q}`);
+  },
+  getBySlug: (slug) => request(`/api/articles/${slug}`),
+  create: (data) => request("/api/articles", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/api/articles/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/api/articles/${id}`, { method: "DELETE" }),
+};
+
+// ─── Blogs & Thought Leadership ────────────────────────────────────────────
+export const blogsApi = {
+  getAll: (params) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return request(`/api/blogs${q}`);
+  },
+  getBySlug: (slug) => request(`/api/blogs/${slug}`),
+  create: (data) => request("/api/blogs", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/api/blogs/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/api/blogs/${id}`, { method: "DELETE" }),
+};
+
+// ─── Newsletters & Subscriptions ───────────────────────────────────────────
+export const newsletterApi = {
+  subscribe: (data) =>
+    request("/api/subscribe", {
+      method: "POST",
+      body: JSON.stringify(typeof data === "string" ? { email: data } : data),
+    }),
+  getNewsletters: () => request("/api/newsletters"),
+  getById: (id) => request(`/api/newsletters/${id}`),
+  sendNewsletter: (data) =>
+    request("/api/admin/newsletters/send", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getSubscribers: () => request("/api/admin/subscribers"),
+};
+
 export const API_BASE_URL = API_BASE;

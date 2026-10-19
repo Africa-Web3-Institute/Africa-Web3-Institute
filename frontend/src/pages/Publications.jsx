@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
+import { publicationsApi, newsletterApi } from "../api/api";
+import { useEffect } from "react";
 import { t } from "../lib/translations";
 
 const PUBLICATIONS = [
@@ -204,10 +206,35 @@ function PublicationCard({ pub, T }) {
 export default function Publications() {
   const { language } = useLanguage();
   const T = t[language].publicationsPage;
+  const [publicationsList, setPublicationsList] = useState(PUBLICATIONS);
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    publicationsApi
+      .getAll()
+      .then((res) => {
+        if (!mounted) return;
+        const list = res?.data || (Array.isArray(res) ? res : []);
+        if (list && list.length > 0) {
+          const formatted = list.map((p) => ({
+            ...p,
+            available: p.available === undefined ? true : Boolean(p.available),
+          }));
+          setPublicationsList(formatted);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not load publications from API, using fallback data:", err);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const TABS = [
     { key: "all",        label: T.tabAll },
@@ -219,7 +246,7 @@ export default function Publications() {
   ];
 
   const filtered = useMemo(() => {
-    return PUBLICATIONS.filter(p => {
+    return publicationsList.filter(p => {
       if (activeTab !== "all" && p.category !== activeTab) return false;
       if (search.trim()) {
         const q = search.toLowerCase();

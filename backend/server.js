@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import usersRoutes from './routes/users.js';
 import settingsRoutes from './routes/settings.js';
+import newsletterRoutes from './routes/newsletter.js';
 
 // Load environment variables
 dotenv.config();
@@ -28,7 +29,10 @@ app.use('/api', analyticsRoutes); // Handles /api/event, /api/live, /api/export
 app.use('/api/admin', authRoutes); // Handles /api/admin/login
 app.use('/api/admin/users', usersRoutes);
 app.use('/api/admin/settings', settingsRoutes);
-app.use('/api', contentRoutes); // Handles /api/publications, /api/enforcement, /api/awpii, /api/tracker
+app.use('/api', contentRoutes);
+app.use('/api', newsletterRoutes);
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() })); // Handles /api/publications, /api/enforcement, /api/awpii, /api/tracker
 
 // Start server after DB initialization
 const startServer = async () => {
