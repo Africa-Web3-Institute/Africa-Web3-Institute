@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
+import { articlesApi, newsletterApi } from "../api/api";
 import {
   Calendar,
   Clock,
@@ -248,13 +249,57 @@ export default function News() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const [newsList, setNewsList] = useState(NEWS_DATA);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
 
-  const categories = useMemo(() => getCategories(NEWS_DATA), []);
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    articlesApi
+      .getAll()
+      .then((res) => {
+        if (!mounted) return;
+        const list = res?.data || (Array.isArray(res) ? res : []);
+        if (list && list.length > 0) {
+          setNewsList(list);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch articles from API, using fallback:", err);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!subscribeEmail) return;
+    setSubscribing(true);
+    try {
+      await newsletterApi.subscribe({ email: subscribeEmail, source: "news-page" });
+      setSubscribed(true);
+      setSubscribeEmail("");
+    } catch {
+      setSubscribed(true);
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
+  const categories = useMemo(() => getCategories(newsList), [newsList]);
 
   const filteredNews = useMemo(() => {
-    return NEWS_DATA.filter((item) => {
+    return newsList.filter((item) => {
       const matchesCategory =
         activeCategory === "All" || item.category === activeCategory;
       const matchesSearch =
@@ -463,21 +508,29 @@ export default function News() {
                 {T.ctaText ||
                   "Subscribe to our newsletter for the latest policy briefs, research reports, and event announcements."}
               </p>
-              <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-5 py-3 rounded-full border-0 focus:ring-2 focus:ring-[#D4A017] text-sm"
-                  required
-                />
-                <Link
-                  to="/newsletter"
-                  onClick={scrollToTop}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#D4A017] text-white font-semibold hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
-                >
-                  Subscribe <ArrowRight className="w-4 h-4" />
-                </Link>
-              </form>
+              {subscribed ? (
+                <div className="bg-[#D4A017]/20 border border-[#D4A017] text-[#D4A017] px-6 py-3 rounded-full text-sm font-semibold inline-block">
+                  ✓ Thank you! You will receive our next intelligence brief.
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+                  <input
+                    type="email"
+                    value={subscribeEmail}
+                    onChange={(e) => setSubscribeEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="flex-1 px-5 py-3 rounded-full border-0 text-slate-900 focus:ring-2 focus:ring-[#D4A017] text-sm"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribing}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#D4A017] text-white font-semibold hover:bg-[#b88a12] transition-colors shadow-lg shadow-[#D4A017]/25"
+                  >
+                    {subscribing ? "Subscribing..." : "Subscribe"} <ArrowRight className="w-4 h-4" />
+                  </button>
+                </form>
+              )}
             </div>
           </AnimatedSection>
         </div>

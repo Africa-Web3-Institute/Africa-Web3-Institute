@@ -29,7 +29,9 @@ async function request(path, options = {}) {
     ...(options.headers || {}),
   };
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const cleanPath = path.startsWith("/api/") ? path.replace(/^\/api/, "") : path;
+
+  const res = await fetch(`${API_BASE}${cleanPath}`, {
     ...options,
     headers,
   });
@@ -109,6 +111,48 @@ export const analyticsApi = {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   }),
+};
+
+
+// ─── Articles (Public & Admin) ──────────────────────────────────────────────
+export const articlesApi = {
+  getAll: (params) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return request(`/articles${q}`);
+  },
+  getBySlug: (slug) => request(`/articles/${slug}`),
+  create: (data) => request("/articles", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/articles/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/articles/${id}`, { method: "DELETE" }),
+};
+
+// ─── Blogs & Thought Leadership ────────────────────────────────────────────
+export const blogsApi = {
+  getAll: (params) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return request(`/blogs${q}`);
+  },
+  getBySlug: (slug) => request(`/blogs/${slug}`),
+  create: (data) => request("/blogs", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/blogs/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/blogs/${id}`, { method: "DELETE" }),
+};
+
+// ─── Newsletters & Subscriptions ───────────────────────────────────────────
+export const newsletterApi = {
+  subscribe: (data) =>
+    request("/subscribe", {
+      method: "POST",
+      body: JSON.stringify(typeof data === "string" ? { email: data } : data),
+    }),
+  getNewsletters: () => request("/newsletters"),
+  getById: (id) => request(`/newsletters/${id}`),
+  sendNewsletter: (data) =>
+    request("/admin/newsletters/send", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getSubscribers: () => request("/admin/subscribers"),
 };
 
 export const API_BASE_URL = API_BASE;

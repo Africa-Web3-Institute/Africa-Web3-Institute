@@ -131,6 +131,370 @@ export const seedTrackerCountries = [
   { name: "Bolivia", flag: "🇧🇴", iso: ["BOL"], status: "none", framework: "Crypto assets prohibited", types: ["—"], regulator: "BCB", since: "—" }
 ];
 
+export const seedPublicationsData = [
+  {
+    id: 1,
+    title: "State of Web3 in Africa 2026 Report",
+    description: "Comprehensive analysis of crypto adoption, regulations, and financial inclusion across 54 African nations.",
+    category: "Annual Report",
+    author: "Africa Web3 Institute Research Team",
+    status: "published",
+    date: "2026-01-15",
+    available: 1,
+    downloadUrl: "/downloads/state-of-web3-africa-2026.pdf",
+    downloads: 1420
+  },
+  {
+    id: 2,
+    title: "African Stablecoin Policy Framework",
+    description: "Policy guidelines for central banks and financial regulators on USD and local currency stablecoins.",
+    category: "Policy Brief",
+    author: "Regulatory Working Group",
+    status: "published",
+    date: "2026-03-10",
+    available: 1,
+    downloadUrl: "/downloads/african-stablecoin-policy-framework.pdf",
+    downloads: 890
+  },
+  {
+    id: 3,
+    title: "Sub-Saharan DeFi & Financial Inclusion",
+    description: "Empirical study on decentralised lending, peer-to-peer liquidity, and unbanked population onboarding.",
+    category: "Academic Paper",
+    author: "Dr. Catherine Smith & Research Fellows",
+    status: "published",
+    date: "2026-05-22",
+    available: 1,
+    downloadUrl: "/downloads/subsaharan-defi-inclusion.pdf",
+    downloads: 630
+  },
+  {
+    title: "State of Web3 Africa 2026 — Q1 Report",
+    description: "A comprehensive review of blockchain adoption, policy developments, and ecosystem growth across 18+ African nations in Q1 2026.",
+    category: "State of Web3 Africa",
+    author: "AWI Research Team",
+    date: "March 2026",
+    available: 1,
+    downloadUrl: "https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf"
+  },
+  {
+    title: "State of Web3 Africa 2025 — Annual Report",
+    description: "Full-year review of Africa\x27s Web3 landscape covering regulatory shifts, market growth, and ecosystem milestones across the continent.",
+    category: "State of Web3 Africa",
+    author: "AWI Research Team",
+    date: "December 2025",
+    available: 1,
+    downloadUrl: "#"
+  },
+  {
+    title: "State of Web3 Africa 2026 — Q2 Report",
+    description: "Quarterly intelligence on stablecoin adoption, regulatory changes, and capital flows across African Web3 markets.",
+    category: "State of Web3 Africa",
+    author: "AWI Research Team",
+    date: "June 2026",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "African Stablecoin Adoption Report — May 2026",
+    description: "Monthly tracking of stablecoin transaction volumes, P2P adoption rates, merchant integration, and regulatory developments across Africa.",
+    category: "Monthly African Stablecoin Adoption Report",
+    author: "AWI Research Team",
+    date: "May 2026",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "African Stablecoin Adoption Report — March 2026",
+    description: "March 2026 stablecoin data including cross-border settlement volumes, remittance corridors, and CBDC pilot updates.",
+    category: "Monthly African Stablecoin Adoption Report",
+    author: "AWI Research Team",
+    date: "March 2026",
+    available: 1,
+    downloadUrl: "#"
+  },
+  {
+    title: "VASP Licensing Frameworks in Anglophone Africa",
+    description: "Comparative analysis of virtual asset service provider licensing requirements across Nigeria, South Africa, Kenya, Ghana, and Rwanda.",
+    category: "Policy Brief",
+    author: "AWI Policy Team",
+    date: "April 2026",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "Stablecoin Regulation in Francophone Africa",
+    description: "Policy brief examining the BCEAO and BEAC regional frameworks and their implications for stablecoin adoption across Francophone African nations.",
+    category: "Policy Brief",
+    author: "AWI Policy Team",
+    date: "March 2026",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "CBDCs and Financial Inclusion in Sub-Saharan Africa",
+    description: "Analysis of active and pilot CBDC programs across Sub-Saharan Africa and their potential to accelerate financial inclusion.",
+    category: "Policy Brief",
+    author: "AWI Policy Team",
+    date: "February 2026",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "AML/CFT Compliance for African VASPs",
+    description: "Guidance brief on FATF Travel Rule implementation and AML/CFT obligations for virtual asset service providers operating in African jurisdictions.",
+    category: "Policy Brief",
+    author: "AWI Policy Team",
+    date: "January 2026",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "Why Africa Needs Its Own Web3 Policy Framework",
+    description: "Op-ed examining why African nations must develop indigenous Web3 regulatory frameworks rather than adopting Western models wholesale.",
+    category: "Published Articles",
+    author: "AWI Executive Director",
+    date: "April 2026",
+    available: 1,
+    downloadUrl: "#"
+  },
+  {
+    title: "The Stablecoin Revolution in African Cross-Border Trade",
+    description: "Analysis of how stablecoins are reshaping intra-African trade settlement and what it means for the AfCFTA digital payment infrastructure.",
+    category: "Published Articles",
+    author: "AWI Research Team",
+    date: "March 2026",
+    available: 1,
+    downloadUrl: "#"
+  },
+  {
+    title: "Binance vs Nigeria: What It Means for African Crypto Regulation",
+    description: "In-depth analysis of the Nigeria-Binance regulatory standoff and its implications for VASP regulation across the continent.",
+    category: "Published Articles",
+    author: "AWI Policy Team",
+    date: "January 2026",
+    available: 1,
+    downloadUrl: "#"
+  },
+  {
+    title: "Africa Web3 Policy & Innovation Index (AWPII) 2025",
+    description: "The definitive annual ranking of 18+ African nations on Web3 policy readiness, blockchain innovation activity, and digital asset adoption metrics.",
+    category: "Published Research",
+    author: "AWI Research Team",
+    date: "December 2025",
+    available: 1,
+    downloadUrl: "#"
+  },
+  {
+    title: "Blockchain for Agricultural Supply Chains in Africa",
+    description: "Research paper examining blockchain implementations in African agricultural supply chains with case studies from Kenya, Ghana, and Ethiopia.",
+    category: "Published Research",
+    author: "AWI Research Team",
+    date: "November 2025",
+    available: 0,
+    downloadUrl: "#"
+  },
+  {
+    title: "DeFi Adoption Patterns in Sub-Saharan Africa",
+    description: "Empirical research on decentralized finance usage patterns, barriers to adoption, and opportunities across Sub-Saharan African markets.",
+    category: "Published Research",
+    author: "AWI Research Team",
+    date: "October 2025",
+    available: 0,
+    downloadUrl: "#"
+  }
+];
+
+export const seedArticlesData = [
+  {
+    title: "Africa Web3 Institute Launches Groundbreaking Policy Index",
+    slug: "awpii-launch",
+    excerpt: "The AWPII (Africa Web3 Policy & Innovation Index) is the first comprehensive framework for evaluating Web3 readiness across 18+ African nations.",
+    content: "The Africa Web3 Institute has officially released the inaugural Africa Web3 Policy & Innovation Index (AWPII), benchmarking 18+ African economies across regulatory clarity, innovation infrastructure, and user adoption. The benchmark reveals that South Africa, Kenya, and Mauritius currently lead the continent in policy preparedness.",
+    category: "Research",
+    type: "article",
+    author: "AWI Research Team",
+    authorRole: "Intelligence Desk",
+    date: "2026-07-20",
+    readTime: "5 min read",
+    image: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
+    featured: 1
+  },
+  {
+    title: "Delivering Policy Recommendations at the AU Summit",
+    slug: "au-summit-2026",
+    excerpt: "Our team presented key findings on digital asset regulation to the African Union\x27s digital economy working group.",
+    content: "At the 2026 African Union ministerial session on digital economies, AWI presented five strategic recommendations for standardizing cross-border VASP regulations, harmonizing AML/CFT compliance, and establishing interoperable smart contracts for the African Continental Free Trade Area (AfCFTA).",
+    category: "Policy",
+    type: "article",
+    author: "AWI Policy Team",
+    authorRole: "Government Relations",
+    date: "2026-07-15",
+    readTime: "4 min read",
+    image: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
+    featured: 0
+  },
+  {
+    title: "Web3 Capacity Building Workshop for Central Banks",
+    slug: "central-bank-workshop",
+    excerpt: "AWI facilitated a two-day intensive workshop for 12 central bank officials on stablecoin regulation and CBDC implications.",
+    content: "Twelve central banks from West, East, and Southern Africa gathered for a closed-door technical masterclass led by AWI fellows. Topics centered on reserve attestation protocols, real-time gross settlement (RTGS) integration with programmable currencies, and sovereign digital identity.",
+    category: "Education",
+    type: "article",
+    author: "Education & Capacity Desk",
+    authorRole: "Capacity Building Team",
+    date: "2026-07-10",
+    readTime: "3 min read",
+    image: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
+    featured: 0
+  },
+  {
+    title: "AWI Executive Director Speaks at Binance Blockchain Week",
+    slug: "binance-blockchain-week",
+    excerpt: "Afrikanus Kofi Akosah Adusei shared the stage with global leaders to discuss Africa\x27s role in the future of decentralized finance.",
+    content: "Speaking before a global audience of fintech innovators, AWI Executive Director Afrikanus Kofi Akosah Adusei outlined why indigenous African policy frameworks are essential to avoid the regulatory pitfalls of Western models while fostering local financial inclusion.",
+    category: "Events",
+    type: "video",
+    author: "Executive Leadership",
+    authorRole: "Executive Director",
+    date: "2026-07-05",
+    readTime: "2 min read",
+    image: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
+    featured: 0
+  },
+  {
+    title: "The Indaba Series: Inaugural Policy Dialogue in Nairobi",
+    slug: "indaba-series-nairobi",
+    excerpt: "AWI\x27s flagship policy engagement programme brought together regulators, industry leaders, and academics for a landmark dialogue.",
+    content: "The inaugural Indaba Series policy dialogue convened over 120 key stakeholders in Nairobi to discuss the Kenyan Capital Markets Authority (CMA) draft virtual asset framework, facilitating collaborative dialogue between traditional banking leaders and decentralized finance innovators.",
+    category: "Events",
+    type: "article",
+    author: "AWI Programs Team",
+    authorRole: "Indaba Secretariat",
+    date: "2026-06-28",
+    readTime: "4 min read",
+    image: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
+    featured: 0
+  }
+];
+
+export const seedBlogsData = [
+  {
+    title: "The Rise of Stablecoins in African Trade: Beyond the Hype",
+    slug: "rise-of-stablecoins-african-cross-border-trade",
+    excerpt: "How USD-pegged tokens have quietly replaced correspondent banking corridors for intra-continental commerce and what regulators must do next.",
+    category: "Stablecoins & Payments",
+    author: "Dr. Kweku Mensah",
+    authorRole: "Senior Policy Fellow, AWI",
+    coverImage: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80",
+    tags: "Stablecoins, AfCFTA, Payments, Trade Finance, Central Banking",
+    readTime: "6 min read",
+    publishedAt: "2026-04-12T10:00:00.000Z",
+    isPublished: 1,
+    featured: 1,
+    content: `## The Quiet Revolution in African Trade Settlements\n\nAcross African trading corridors from Lagos to Cotonou, and Nairobi to Kampala, a silent transformation is taking place. Small and medium enterprises (SMEs) are bypassing traditional correspondent banking systems in favor of USD stablecoins such as USDT and USDC.\n\nAccording to AWI\x27s Q1 2026 data, over **$48M in daily P2P stablecoin volume** occurs in Nigeria alone, with a rapidly increasing share dedicated to commercial settlements rather than speculative trading.\n\n### Why Correspondent Banking Is Failing African Traders\n\n1. **High Transaction Fees**: Traditional wire transfers between African countries routinely incur fees exceeding 8% to 12%.\n2. **Settlement Delays**: A wire between West and East Africa can take 3 to 7 business days as funds route through European or North American clearing houses.\n3. **Severe FX Scarcity**: Importers frequently face weeks of delays waiting for commercial banks to allocate official foreign exchange quotas.\n\n### The Rise of Dollar-Denominated Digital Cash\n\nStablecoins have emerged as a pragmatic hedge against domestic currency inflation and an instantaneous settlement layer for cross-border merchants. Importers in Ghana sourcing goods from Kenya can execute final settlements in under two minutes with transaction fees measuring in pennies.`
+  },
+  {
+    title: "Decentralized Physical Infrastructure (DePIN) in Africa: Power, Telecom, and Beyond",
+    slug: "depin-africa-power-connectivity",
+    excerpt: "From decentralized solar mini-grids in Senegal to community mesh Wi-Fi in Nairobi, explore how DePIN protocols are closing Africa\x27s infrastructure gap.",
+    category: "Technology & Infrastructure",
+    author: "Aminata Diallo",
+    authorRole: "Director of Technology & Research",
+    coverImage: "https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1200&q=80",
+    tags: "DePIN, Clean Energy, Telecommunications, Smart Contracts, Infrastructure",
+    readTime: "8 min read",
+    publishedAt: "2026-03-28T09:30:00.000Z",
+    isPublished: 1,
+    featured: 0,
+    content: `## Bridging Africa\x27s Physical Infrastructure Deficit\n\nSub-Saharan Africa faces an estimated **$100 billion annual infrastructure financing gap**. Centralized public utilities and debt-burdened state operators have struggled to deliver universal electricity and broadband coverage to rural and peri-urban populations.\n\nEnter **Decentralized Physical Infrastructure Networks (DePIN)**: blockchain-incentivized models where local communities and independent operators deploy real-world hardware in exchange for tokenized revenue shares.`
+  },
+  {
+    title: "CBDCs vs Private Stablecoins: Which Monetary Path Will African Central Banks Choose?",
+    slug: "cbdcs-vs-stablecoins-central-bank-dilemma",
+    excerpt: "Central banks across 12 African nations are evaluating sovereign digital currencies, yet citizen demand heavily favors dollar stablecoins. An analytical breakdown.",
+    category: "Policy & Regulation",
+    author: "Tendai Moyo",
+    authorRole: "Lead Regulatory Analyst",
+    coverImage: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
+    tags: "CBDC, Central Banking, Monetary Policy, VASP, eNaira",
+    readTime: "7 min read",
+    publishedAt: "2026-03-15T14:15:00.000Z",
+    isPublished: 1,
+    featured: 0,
+    content: `## The Central Banking Crossroads\n\nFrom Nigeria\x27s early launch of the eNaira to the South African Reserve Bank\x27s Project Khokha, and ongoing exploratory pilots in Ghana and Rwanda, African monetary authorities have been pioneers in Central Bank Digital Currency (CBDC) research.\n\nHowever, market reality presents a striking paradox: **retail and institutional adoption of retail CBDCs has remained sluggish**, while organic adoption of private USD stablecoins continues to surge.`
+  },
+  {
+    title: "Francophone Africa\x27s Web3 Talent Boom: 2026 Outlook",
+    slug: "francophone-africa-web3-talent-boom",
+    excerpt: "Abidjan, Dakar, and Yaoundé are emerging as major developer hubs. Discover how bilingual educational initiatives are fueling a new wave of Web3 founders.",
+    category: "Ecosystem & Community",
+    author: "Jean-Paul Bakayoko",
+    authorRole: "Head of Francophone Network, AWI",
+    coverImage: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+    tags: "Francophone Network, Education, Developer Community, Startups, Côte d\x27Ivoire",
+    readTime: "5 min read",
+    publishedAt: "2026-02-20T11:00:00.000Z",
+    isPublished: 1,
+    featured: 0,
+    content: `## Breaking the Language Barrier in African Blockchain Development\n\nHistorically, Anglophone African hubs (Lagos, Nairobi, Cape Town) captured over 85% of venture funding and developer community mindshare in Africa. Yet over the past eighteen months, Francophone West and Central Africa have witnessed a tremendous surge in technical talent and grassroots activity.`
+  },
+  {
+    title: "Real-World Asset (RWA) Tokenization in African Agriculture and Commodities",
+    slug: "real-world-assets-tokenization-african-agriculture",
+    excerpt: "Unlocking liquidity for cocoa, coffee, and agricultural producers through blockchain-based trade credit instruments and verifiable warehouse receipts.",
+    category: "Ecosystem & Community",
+    author: "AWI Research Division",
+    authorRole: "Economics & Finance Desk",
+    coverImage: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80",
+    tags: "RWA, Agriculture, Trade Finance, Tokenization, Commodities",
+    readTime: "6 min read",
+    publishedAt: "2026-01-30T16:00:00.000Z",
+    isPublished: 1,
+    featured: 0,
+    content: `## Transforming African Commodities with On-Chain Proof\n\nAfrican smallholder farmers produce over 65% of the world\x27s cocoa, 12% of coffee, and substantial volumes of cashews and sesame. Yet farmers capture less than 6% of the final retail value, largely due to lack of accessible working capital and reliance on predatory middle-tier brokers.`
+  }
+];
+
+export const seedNewslettersData = [
+  {
+    title: "Issue #12: Stablecoins in Africa — The Real Data",
+    edition: 12,
+    date: "2026-08-01",
+    description: "An empirical deep-dive into on-chain transaction volumes, remittance corridors, and P2P trends across Nigeria, Kenya, and South Africa.",
+    content: "Welcome to edition #12 of the Africa Web3 Institute Weekly Intelligence Brief. This week we examine empirical stablecoin flows and how businesses are settling cross-border invoices on-chain.",
+    readTime: "5 min read",
+    url: "#"
+  },
+  {
+    title: "Issue #11: The AU Digital Asset Framework — A Critical Review",
+    edition: 11,
+    date: "2026-07-25",
+    description: "Breaking down the African Union\x27s proposed harmonized regulatory approach. What works, what doesn\x27t, and what\x27s missing.",
+    content: "In issue #11, our policy analysis examines the AU Digital Asset Framework, highlighting the five key harmonization priorities for regional central banks.",
+    readTime: "4 min read",
+    url: "#"
+  },
+  {
+    title: "Issue #10: Nigeria\x27s SEC Licensing Round — What VASPs Need to Know",
+    edition: 10,
+    date: "2026-07-18",
+    description: "A practical guide to the Accelerated Regulatory Incubation Programme (ARIP) and what it means for digital asset operators in Africa\x27s largest economy.",
+    content: "Issue #10 breaks down the eligibility criteria, capital requirements, and compliance milestones for Nigerian VASP provisional licensing.",
+    readTime: "6 min read",
+    url: "#"
+  },
+  {
+    title: "Issue #9: Francophone Africa\x27s Web3 Moment",
+    edition: 9,
+    date: "2026-07-11",
+    description: "Why the next wave of African crypto adoption is quietly building in Côte d\x27Ivoire, Senegal, and Cameroon.",
+    content: "Issue #9 explores the emerging developer academies, bilingual hackathons, and mobile money bridges powering Francophone Africa.",
+    readTime: "4 min read",
+    url: "#"
+  }
+];
+
 export const seedVisualizationsData = [
   {
     slug: "continental-adoption-index",
@@ -298,7 +662,19 @@ export const seedSubscribersData = [
   { email: "lead.dev@eth-accra.org", name: "Kwame Osei", segment: "developers" },
   { email: "senior.analyst@worldbank.org", name: "Dr. Catherine Smith", segment: "researchers" },
   { email: "founder@payflex.africa", name: "Tendai Moyo", segment: "investors" },
-  { email: "crypto.reporter@techcabal.com", name: "Chidimma Eze", segment: "researchers" }
+  { email: "crypto.reporter@techcabal.com", name: "Chidimma Eze", segment: "researchers" },
+  { email: "director@fintechafrica.org", name: "Kofi Owusu", segment: "general" },
+  { email: "policy.lead@afcfta-secretariat.int", name: "Fatima Al-Hassan", segment: "policy_makers" },
+  { email: "researcher@oxford.edu", name: "David Sterling", segment: "researchers" }
+];
+
+export const seedNewsletterSubscribersData = [
+  { email: "director@fintechafrica.org", name: "Kofi Owusu", source: "homepage" },
+  { email: "policy.lead@afcfta-secretariat.int", name: "Fatima Al-Hassan", source: "publications" },
+  { email: "researcher@oxford.edu", name: "David Sterling", source: "newsletter_landing" },
+  { email: "policy.lead@cbn.gov.ng", name: "Oluwaseun Adeleke", source: "website" },
+  { email: "partner@africa-vc.com", name: "Amina Diallo", source: "website" },
+  { email: "lead.dev@eth-accra.org", name: "Kwame Osei", source: "website" }
 ];
 
 export const seedCampaignsData = [
@@ -322,14 +698,7 @@ export const seedStartupsData = [
   { name: "Kotani Pay", country: "Kenya", category: "Cross-Border Payments", fundingStage: "Seed", fundingTotalUsd: 2000000, foundedYear: 2020, description: "Middleware bringing Web3 stablecoins to USSD mobile money rails.", website: "https://kotanipay.com", activeUsers: 210000 }
 ];
 
-export const seedPublicationsData = [
-  { id: 1, title: "State of Web3 in Africa 2026 Report", description: "Comprehensive analysis of crypto adoption, regulations, and financial inclusion across 54 African nations.", category: "Annual Report", author: "Africa Web3 Institute Research Team", status: "published", date: "2026-01-15", available: 1, downloadUrl: "/downloads/state-of-web3-africa-2026.pdf", downloads: 1420 },
-  { id: 2, title: "African Stablecoin Policy Framework", description: "Policy guidelines for central banks and financial regulators on USD and local currency stablecoins.", category: "Policy Brief", author: "Regulatory Working Group", status: "published", date: "2026-03-10", available: 1, downloadUrl: "/downloads/african-stablecoin-policy-framework.pdf", downloads: 890 },
-  { id: 3, title: "Sub-Saharan DeFi & Financial Inclusion", description: "Empirical study on decentralised lending, peer-to-peer liquidity, and unbanked population onboarding.", category: "Academic Paper", author: "Dr. Catherine Smith & Research Fellows", status: "published", date: "2026-05-22", available: 1, downloadUrl: "/downloads/subsaharan-defi-inclusion.pdf", downloads: 630 }
-];
-
 export const seedCitationsData = [
-
   { publicationId: 1, citationSource: "World Bank Policy Research Working Paper No. 10452", sourceType: "policy_doc", citationDate: "2025-11-12", citationUrl: "https://worldbank.org/research", quote: "As documented by the Africa Web3 Institute, stablecoin adoption in Sub-Saharan Africa serves primarily as inflation hedge..." },
   { publicationId: 1, citationSource: "African Development Bank Fintech Review 2025", sourceType: "academic", citationDate: "2025-12-04", citationUrl: "https://afdb.org/reports", quote: "Referencing Africa Web3 Institute data, VASP regulatory framework implementation has accelerated in 5 Key SACU markets." },
   { publicationId: 2, citationSource: "TechCrunch African Market Analysis", sourceType: "news", citationDate: "2026-02-18", citationUrl: "https://techcrunch.com", quote: "According to Africa Web3 Institute's latest publication, remittance costs dropped by 85% when routed through local stablecoin rails." }
@@ -342,6 +711,66 @@ export const seedContactMessagesData = [
 
 export const seedDatabaseData = async (dbInstance) => {
   console.log("Seeding AWPII, Tracker, Visualizations, Newsletter, Startups, Metrics, Citations, and Contact Data...");
+
+  // Seed Publications
+  const existingPubs = dbInstance.get("SELECT COUNT(*) as count FROM publications");
+  if (!existingPubs || existingPubs.count === 0) {
+    console.log("📄 Seeding publications...");
+    for (const p of seedPublicationsData) {
+      dbInstance.run(
+        "INSERT INTO publications (title, description, category, author, status, date, available, downloadUrl) VALUES (?, ?, ?, ?, \x27published\x27, ?, ?, ?)",
+        [p.title, p.description, p.category, p.author, p.date, p.available, p.downloadUrl]
+      );
+    }
+  }
+
+  // Seed Articles
+  const existingArticles = dbInstance.get("SELECT COUNT(*) as count FROM articles");
+  if (!existingArticles || existingArticles.count === 0) {
+    console.log("📰 Seeding articles...");
+    for (const a of seedArticlesData) {
+      dbInstance.run(
+        "INSERT INTO articles (title, slug, excerpt, content, category, type, author, authorRole, date, readTime, image, featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, \x27published\x27)",
+        [a.title, a.slug, a.excerpt, a.content, a.category, a.type, a.author, a.authorRole, a.date, a.readTime, a.image, a.featured]
+      );
+    }
+  }
+
+  // Seed Blogs
+  const existingBlogs = dbInstance.get("SELECT COUNT(*) as count FROM blogs");
+  if (!existingBlogs || existingBlogs.count === 0) {
+    console.log("✍️ Seeding blogs...");
+    for (const b of seedBlogsData) {
+      dbInstance.run(
+        "INSERT INTO blogs (title, slug, excerpt, content, category, author, authorRole, coverImage, tags, readTime, publishedAt, isPublished, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [b.title, b.slug, b.excerpt, b.content, b.category, b.author, b.authorRole, b.coverImage, b.tags, b.readTime, b.publishedAt, b.isPublished, b.featured]
+      );
+    }
+  }
+
+  // Seed Newsletters
+  const existingNl = dbInstance.get("SELECT COUNT(*) as count FROM newsletters");
+  if (!existingNl || existingNl.count === 0) {
+    console.log("📬 Seeding newsletters archive...");
+    for (const n of seedNewslettersData) {
+      dbInstance.run(
+        "INSERT INTO newsletters (title, edition, date, description, content, readTime, url, status) VALUES (?, ?, ?, ?, ?, ?, ?, \x27sent\x27)",
+        [n.title, n.edition, n.date, n.description, n.content, n.readTime, n.url]
+      );
+    }
+  }
+
+  // Seed Newsletter Subscribers
+  const existingSubs = dbInstance.get("SELECT COUNT(*) as count FROM newsletter_subscribers");
+  if (!existingSubs || existingSubs.count === 0) {
+    console.log("👥 Seeding newsletter subscribers...");
+    for (const s of seedNewsletterSubscribersData) {
+      dbInstance.run(
+        "INSERT INTO newsletter_subscribers (email, name, status, source) VALUES (?, ?, \x27active\x27, ?)",
+        [s.email, s.name, s.source]
+      );
+    }
+  }
 
   // Seed AWPII
   for (const item of seedAwpiiData) {
@@ -422,11 +851,11 @@ export const seedDatabaseData = async (dbInstance) => {
 
   // Seed Publications & Citations (Week 7 KPI)
   for (const item of seedPublicationsData) {
-    const existing = dbInstance.get('SELECT * FROM publications WHERE id = ? OR title = ?', [item.id, item.title]);
+    const existing = dbInstance.get('SELECT * FROM publications WHERE id = ? OR title = ?', [item.id || 0, item.title]);
     if (!existing) {
       dbInstance.run(
         'INSERT INTO publications (id, title, description, category, author, status, date, available, downloadUrl, downloads) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [item.id, item.title, item.description, item.category, item.author, item.status, item.date, item.available, item.downloadUrl, item.downloads]
+        [item.id || null, item.title, item.description || '', item.category || '', item.author || '', item.status || 'published', item.date || '', item.available ? 1 : 0, item.downloadUrl || '', item.downloads || 0]
       );
     }
   }

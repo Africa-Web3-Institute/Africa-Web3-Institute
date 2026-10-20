@@ -21,6 +21,7 @@ const INTELLIGENCE_PATHS = [
   "stablecoin-tracker",
   "publications",
   "intelligence",
+  "blog",
 ];
 const PROGRAMS_PATHS = [
   "/francophone-network",
@@ -123,6 +124,24 @@ const getIntelligenceItems = (language) => [
           "Notes de politique, rapports de recherche et analyses de marché"
         ),
         href: "/publications",
+      },
+      {
+        label: getLabel(language, "Blog & Thought Leadership", "Blog & Pensée Stratégique"),
+        desc: getLabel(
+          language,
+          "Perspectives on African Web3 policy, stablecoins, and monetary sovereignty",
+          "Analyses de fond et perspectives sur les politiques Web3 africaines"
+        ),
+        href: "/blog",
+      },
+      {
+        label: getLabel(language, "Newsletter Archive", "Archives des Bulletins"),
+        desc: getLabel(
+          language,
+          "Past weekly intelligence briefs and policy updates",
+          "Bulletins hebdomadaires passés et veilles stratégiques"
+        ),
+        href: "/newsletters/archive",
       },
     ],
   },
@@ -608,7 +627,7 @@ export default function Navbar() {
                 <VerticalDropdownMenu sections={programsItems} navigateTo={navigateTo} isActive={isActive} />
               )}
             </div>
-              {/* ✅ NEW: News link */}
+              {/* ✅ News link */}
             <Link
               to="/news"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -616,6 +635,16 @@ export default function Navbar() {
               style={{ color: newsActive ? "#D4A017" : "#111827" }}
             >
               {getLabel(language, "News", "Actualités")}
+            </Link>
+
+            {/* ✅ Blog link */}
+            <Link
+              to="/blog"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="text-[0.9375rem] font-semibold transition-colors"
+              style={{ color: isActive("/blog") ? "#D4A017" : "#111827" }}
+            >
+              {getLabel(language, "Blog", "Blog")}
             </Link>
 
             <button
@@ -749,6 +778,17 @@ export default function Navbar() {
             style={{ color: isActive("/news") ? "#D4A017" : "#374151", borderColor: "#F3F4F6" }}
           >
          {getLabel(language, "News", "Actualités")}
+          </Link>
+          <Link
+            to="/blog"
+            onClick={() => {
+              setOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex items-center w-full px-6 py-3.5 text-sm font-medium border-b"
+            style={{ color: isActive("/blog") ? "#D4A017" : "#374151", borderColor: "#F3F4F6" }}
+          >
+         {getLabel(language, "Blog & Insights", "Blog & Analyses")}
           </Link>
           <Link
             to="/contact"

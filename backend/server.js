@@ -36,10 +36,13 @@ app.use('/api/admin/settings', settingsRoutes);
 app.use('/api', contactRoutes); // Handles /api/contact, /api/contact-messages
 app.use('/api/visualizations', visualizationRoutes); // Week 4: Research Visualization Systems
 app.use('/api/newsletter', newsletterRoutes); // Week 5: Newsletter Intelligence & Tracking
+app.use('/api', newsletterRoutes); // Handles /api/subscribe, /api/newsletters, /api/admin/newsletters
 app.use('/api/state-of-web3', stateOfWeb3Routes); // Week 6: State of Web3 in Africa Dashboard
 app.use('/api/research-metrics', researchMetricsRoutes); // Week 7: Research Repository Metrics
 app.use('/api', researchMetricsRoutes); // Handles /api/publications/:id/download
-app.use('/api', contentRoutes); // Handles /api/publications, /api/enforcement, /api/awpii, /api/tracker
+app.use('/api', contentRoutes); // Handles /api/publications, /api/articles, /api/blogs, /api/enforcement, /api/awpii, /api/tracker
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 // Start server after DB initialization
 export const startServer = async () => {

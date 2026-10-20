@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../../lib/LanguageContext";
+import { newsletterApi } from "../../api/api";
 
 const COPY = {
   en: {
@@ -31,10 +32,15 @@ export default function NewsletterStrip() {
   const [error, setError] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidEmail(email)) { setError(true); return; }
     setError(false);
+    try {
+      await newsletterApi.subscribe({ email: email.trim(), source: "homepage-strip" });
+    } catch (err) {
+      console.warn("Newsletter subscription API notice:", err);
+    }
     setDone(true);
   };
 

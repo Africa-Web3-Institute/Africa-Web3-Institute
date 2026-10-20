@@ -34,6 +34,8 @@ import EventsPage from './pages/EventsPage';
 import Careers from './pages/Careers'
 import News from './pages/News'
 import NewsArticle from "./pages/NewsArticle";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import RegulatoryTrackerMethodology from "./pages/RegulatoryTrackerMethodology";
 
 
@@ -116,7 +118,9 @@ return (
       <Route path="/events" element={<EventsPage />} />
       <Route path="/careers" element={<Careers/>}/>
       <Route path="/news" element={<News/>}/>
-      <Route path="/news/:slug" element={<NewsArticle />} /> 
+      <Route path="/news/:slug" element={<NewsArticle />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
     
 <Route path="/newsletter" element={<NewsletterLanding />} />
 <Route path="/newsletters/archive" element={<Newsletters />} />
