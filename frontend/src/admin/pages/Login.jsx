@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
+import { authApi } from "../../api/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -21,35 +22,36 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // TODO: replace with real API call
-      // const res = await fetch("/api/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, password }),
-      //   credentials: "include",
-      // });
-      // if (!res.ok) throw new Error("Invalid credentials");
-      // const data = await res.json();
-      // login(data.user);
+      // Was a raw fetch("/api/admin/login") -- a relative URL resolves
+      // against the dev server origin (localhost:5173), not the backend
+      // (localhost:3001 / VITE_API_URL). authApi.login already knows the
+      // right base URL and handles JSON/error parsing consistently with
+      // every other authenticated call in the app.
+      const data = await authApi.login(email, password);
 
-      // Mock login — remove when backend is ready
-      await new Promise(r => setTimeout(r, 800));
+      const token = data?.token;
+      const user = data?.user || data?.data?.user || { id: 1, name: "Admin", email, role: "admin" };
 
-      if (
-        email === "admin@africaweb3institute.org" &&
-        password === "admin"
-      ) {
-        login({
-          id: 1,
-          name: "Admin User",
-          email,
-          role: "admin",
-          avatar: null,
-        });
-        navigate("/admin");
-      } else {
-        setError("Invalid email or password. Please try again.");
+      if (!token) {
+        // Was previously just a console.warn -- login proceeded anyway,
+        // navigated to /admin with no token stored, the first
+        // authenticated request 401'd, and api.js's handler hard-
+        // redirected back to /login via window.location.href. That's a
+        // full page reload, not a React state update, so the error
+        // state below never got a chance to render -- looked exactly
+        // like a silent login loop with no error message.
+        console.error("Login response missing expected token field. Raw response:", data);
+        throw new Error("Login succeeded but no session token was returned. Check the backend response shape.");
       }
+
+      // AuthContext.login() is the single place that writes to
+      // localStorage["awi_admin_user"] -- pass it the token-inclusive
+      // object directly rather than writing here too. Writing in both
+      // places meant AuthContext's own setItem (storing just `user`,
+      // no token) silently overwrote this file's write right after,
+      // wiping the token every single login.
+      login({ ...user, token });
+      navigate("/admin");
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {

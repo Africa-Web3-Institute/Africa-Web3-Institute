@@ -7,9 +7,7 @@ import {
   Layers,
   Sparkles,
   Send,
-  Globe,
-  BookOpen,
-  Award,
+ 
 } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";

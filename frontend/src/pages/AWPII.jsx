@@ -16,7 +16,7 @@ function CTAButton({ children, primary = false, href = null, onClick = null }) {
     : `${base} border border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground`;
 
   if (href) return <a href={href} className={style}>{children}</a>;
-  return <button onClick={onClick} className={style}>{children}</button>;
+  return <button type="button" onClick={onClick} className={style}>{children}</button>;
 }
 
 export default function AWPII() {
@@ -84,7 +84,7 @@ export default function AWPII() {
               {T.heroCtaPrimary} <ArrowRight className="w-4 h-4" />
             </CTAButton>
             <a
-              href="https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf"
+              href="/reports/AWI_Q1Report.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 border border-white/80 text-white/80 hover:bg-white/10 hover:text-white"
@@ -171,6 +171,7 @@ export default function AWPII() {
                 <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
                   {awpiiData.map((country) => (
                     <button
+                    type="button"
                       key={country.id}
                       onClick={() => setSelectedCountryKey(country.key)}
                       className={`w-full flex items-center justify-between p-3 rounded-lg transition-all  dark:text-muted-foreground border ${

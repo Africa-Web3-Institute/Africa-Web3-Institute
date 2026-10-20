@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import { Save, AlertCircle, RefreshCw, Loader2, FileText, Globe, TrendingUp } from "lucide-react";
 import awpiiDataFallback from "../../data/awpiiData";
 import { COUNTRIES as trackerCountriesFallback } from "../../data/trackerCountries";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+import { awpiiApi, trackerApi } from "../../api/api";
 
 export default function AdminPolicyTracker() {
   const [awpiiData, setAwpiiData] = useState([]);
@@ -17,13 +16,16 @@ export default function AdminPolicyTracker() {
     fetchData();
   }, []);
 
+  // Was doing its own fetch() with its own API_URL and reading the token
+  // from localStorage.getItem("adminToken") -- that key hasn't existed
+  // since Login.jsx/AuthContext.js were fixed to store everything under
+  // "awi_admin_user". Using awpiiApi/trackerApi from api.js means this
+  // page automatically stays correct if the auth storage shape ever
+  // changes again, instead of needing the same fix applied in N places.
   const fetchData = async () => {
     setLoading(true);
     try {
-      const awpiiRes = await fetch(`${API_URL}/api/awpii`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` }
-      });
-      const awpiiJson = await awpiiRes.json();
+      const awpiiJson = await awpiiApi.getAll();
       if (awpiiJson.data && awpiiJson.data.length > 0) {
         setAwpiiData(awpiiJson.data.map(item => ({
           countryKey: item.country,
@@ -37,10 +39,7 @@ export default function AdminPolicyTracker() {
         }));
       }
 
-      const trackerRes = await fetch(`${API_URL}/api/tracker`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` }
-      });
-      const trackerJson = await trackerRes.json();
+      const trackerJson = await trackerApi.getAll();
       if (trackerJson.data && trackerJson.data.length > 0) {
         setTrackerData(trackerJson.data.map(item => ({
           countryName: item.country,
@@ -85,15 +84,7 @@ export default function AdminPolicyTracker() {
     setMessage({ text: "", type: "" });
     try {
       const { countryKey, score, ...details } = item;
-      const res = await fetch(`${API_URL}/api/awpii/${countryKey}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`
-        },
-        body: JSON.stringify({ score: Number(score), details: JSON.stringify(details) })
-      });
-      if (!res.ok) throw new Error("Failed to save AWPII score");
+      await awpiiApi.update(countryKey, { score: Number(score), details: JSON.stringify(details) });
       setMessage({ text: "AWPII Score saved successfully", type: "success" });
     } catch (err) {
       setMessage({ text: err.message, type: "error" });
@@ -108,15 +99,7 @@ export default function AdminPolicyTracker() {
     setMessage({ text: "", type: "" });
     try {
       const { countryName, status, ...details } = item;
-      const res = await fetch(`${API_URL}/api/tracker/${countryName}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`
-        },
-        body: JSON.stringify({ status, details: JSON.stringify(details) })
-      });
-      if (!res.ok) throw new Error("Failed to save Tracker status");
+      await trackerApi.update(countryName, { status, details: JSON.stringify(details) });
       setMessage({ text: "Tracker status saved successfully", type: "success" });
     } catch (err) {
       setMessage({ text: err.message, type: "error" });

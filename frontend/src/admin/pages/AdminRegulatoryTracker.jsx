@@ -7,7 +7,7 @@ const MOCK_DATA = [
   { id: 3, country: "UAE", status: "Live", framework: "VARA" },
 ];
 
-export default function RegulatoryTracker() {
+export default function AdminRegulatoryTracker() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (

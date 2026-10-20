@@ -8,9 +8,15 @@ import { useNavDropdown } from "../../lib/NavDropdownContext";
 // ─── Paths for highlighting active dropdowns ────────────────────────────────
 const ABOUT_PATHS = ["/about", "/team", "/board"];
 const NEWS_PATHS = ["/news"];
+const STATIC_PAGES = [
+ "/nrti",
+  "/ghana-vasp-journalists-workshop",
+  "/ghana-bank-vasp-readiness-workshop",
+];
+
 const INTELLIGENCE_PATHS = [
   "AWPII",
-  "country-tracker",
+  "regulatory-tracker",
   "enforcement-watch",
   "stablecoin-tracker",
   "publications",
@@ -85,7 +91,7 @@ const getIntelligenceItems = (language) => [
           "Live regulatory updates across 18+ African nations",
           "Mises à jour réglementaires en temps réel sur 18+ nations"
         ),
-        href: "/country-tracker",
+        href: "/regulatory-tracker",
       },
       {
         label: getLabel(language, "Stablecoin Tracker", "Suivi Stablecoin"),
@@ -216,6 +222,46 @@ const getProgramsItems = (language) => [
       },
     ],
   },
+   {
+    section: getLabel(language, "Initiatives", "Initiatives"),
+    items: [
+      {
+        label: "Nigeria RWA Tokenisation Initiative",
+        desc: getLabel(
+          language,
+          "Building Nigeria's tokenised economy",
+          "Construire l'économie tokenisée du Nigeria"
+        ),
+        href: "/nrti/",
+      },
+           {
+        label: getLabel(
+          language,
+          "Ghana VASP Journalists Workshop",
+          "Atelier VASP Ghana pour journalistes"
+        ),
+        desc: getLabel(
+          language,
+          "Two-day workshop for 40 Ghanaian journalists, Accra, 2–3 December 2026",
+          "Atelier de deux jours pour 40 journalistes ghanéens, Accra, 2–3 décembre 2026"
+        ),
+        href: "/ghana-vasp-journalists-workshop/",
+      },
+            {
+        label: getLabel(
+          language,
+          "Ghana Bank VASP Readiness Workshop",
+          "Atelier VASP – Banques du Ghana"
+        ),
+        desc: getLabel(
+          language,
+          "Invitation-only executive workshop for Ghanaian banks, Accra, 1 December 2026",
+          "Atelier exécutif sur invitation pour les banques ghanéennes, Accra, 1er décembre 2026"
+        ),
+        href: "/ghana-bank-vasp-readiness-workshop/",
+      },
+    ],
+  },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -274,6 +320,7 @@ const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
                 />
               )}
               <button
+              type="button"
                 onClick={() => navigateTo(item.href)}
                 className="group flex items-center gap-3 w-full text-left rounded-xl px-3.5 py-2.5 text-[0.875rem] font-semibold whitespace-nowrap transition-all duration-150"
                 style={{
@@ -306,6 +353,7 @@ const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
 
 const DesktopDropdownButton = ({ active, label, expanded, onClick }) => (
   <button
+    type="button"
     onClick={onClick}
     className="flex items-center gap-1 text-[0.9375rem] font-semibold transition-colors"
     style={{ color: active ? "#D4A017" : "#111827" }}
@@ -320,6 +368,7 @@ const DesktopDropdownButton = ({ active, label, expanded, onClick }) => (
 
 const MobileMenuLink = ({ label, active, onClick }) => (
   <button
+    type="button"
     onClick={onClick}
     className="flex items-center gap-3 w-full text-left px-8 py-3 text-sm"
     style={{
@@ -334,6 +383,7 @@ const MobileMenuLink = ({ label, active, onClick }) => (
 const MobileAccordion = ({ label, expanded, onToggle, sections, navigateTo, isActive }) => (
   <div className="border-b" style={{ borderColor: "#F3F4F6" }}>
     <button
+      type="button"
       onClick={onToggle}
       className="flex items-center justify-between w-full px-6 py-3.5 text-sm font-medium"
       style={{ color: "#374151" }}
@@ -450,9 +500,13 @@ export default function Navbar() {
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
 
-  const navigateTo = (href) => {
+   const navigateTo = (href) => {
     setOpen(false);
     setActiveDropdown(null);
+    if (STATIC_PAGES.some((p) => href.startsWith(p))) {
+      window.location.assign(href);
+      return;
+    }
     navigate(href);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -503,7 +557,7 @@ export default function Navbar() {
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             <img
-              src="/awi-logo.png"
+              src="/logos/awi-logo.png"
               alt="Africa Web3 Institute logo"
               style={{ height: "46px", width: "auto", objectFit: "contain" }}
             />

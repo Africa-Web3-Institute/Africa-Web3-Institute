@@ -5,7 +5,7 @@ import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
 import { FaLinkedin as Linkedin, FaTwitter as Twitter } from "react-icons/fa";
 import { Users, MapPin, Briefcase, ArrowRight } from "lucide-react";
-import KateAcH from "../assets/Kate_operations-lead.png";
+import KateAcH from "../assets/Board/Kate_operations-lead.png";
 
 
 // ─── Team data ───────────────────────────────────────────────────────────────
@@ -74,14 +74,7 @@ const CORE_TEAM = [
     linkedin: "https://linkedin.com/in/abdulganiwu",
     twitter: "https://x.com/phrozendon?s=21",
   },
-  {
-    name: "Jarau Moses",
-    role: "Content & Social Media Lead",
-    country: "🇺🇬 Uganda",
-    photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/ea434ea86_A4B9E1C4-DF44-4067-A712-5A915C1FB4FA.png",
-    linkedin: "linkedin.com/in/jaraumoses",
-    twitter: "https://x.com/JarauMoses",
-  },
+
 ];
 
 // ─── Scroll reveal hook ──────────────────────────────────────────────────────

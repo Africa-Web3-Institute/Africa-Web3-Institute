@@ -2,7 +2,10 @@
 // Base API client — all requests go through here
 // Token is read from localStorage on every call so it's always fresh
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
+// API_BASE already includes the /api prefix (matches the convention used
+// by the contact page and elsewhere) -- so paths below must NOT repeat
+// "/api/" themselves, or you get a doubled "/api/api/..." URL.
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 function getToken() {
   try {
@@ -26,7 +29,9 @@ async function request(path, options = {}) {
     ...(options.headers || {}),
   };
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const cleanPath = path.startsWith("/api/") ? path.replace(/^\/api/, "") : path;
+
+  const res = await fetch(`${API_BASE}${cleanPath}`, {
     ...options,
     headers,
   });
@@ -62,7 +67,7 @@ async function request(path, options = {}) {
 // ─── Auth ──────────────────────────────────────────────────────────────────
 export const authApi = {
   login: (email, password) =>
-    request("/api/admin/login", {
+    request("/admin/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
@@ -70,38 +75,38 @@ export const authApi = {
 
 // ─── Publications ──────────────────────────────────────────────────────────
 export const publicationsApi = {
-  getAll: ()         => request("/api/publications"),
-  create: (data)     => request("/api/publications",      { method: "POST",   body: JSON.stringify(data) }),
-  update: (id, data) => request(`/api/publications/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
-  remove: (id)       => request(`/api/publications/${id}`,{ method: "DELETE" }),
+  getAll: ()         => request("/publications"),
+  create: (data)     => request("/publications",      { method: "POST",   body: JSON.stringify(data) }),
+  update: (id, data) => request(`/publications/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
+  remove: (id)       => request(`/publications/${id}`,{ method: "DELETE" }),
 };
 
 // ─── Enforcement Watch ─────────────────────────────────────────────────────
 export const enforcementApi = {
-  getAll: ()         => request("/api/enforcement"),
-  create: (data)     => request("/api/enforcement",      { method: "POST",   body: JSON.stringify(data) }),
-  update: (id, data) => request(`/api/enforcement/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
-  remove: (id)       => request(`/api/enforcement/${id}`,{ method: "DELETE" }),
+  getAll: ()         => request("/enforcement"),
+  create: (data)     => request("/enforcement",      { method: "POST",   body: JSON.stringify(data) }),
+  update: (id, data) => request(`/enforcement/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
+  remove: (id)       => request(`/enforcement/${id}`,{ method: "DELETE" }),
 };
 
 // ─── AWPII ─────────────────────────────────────────────────────────────────
 export const awpiiApi = {
-  getAll:  ()              => request("/api/awpii"),
-  update:  (country, data) => request(`/api/awpii/${country}`, { method: "PUT", body: JSON.stringify(data) }),
+  getAll:  ()              => request("/awpii"),
+  update:  (country, data) => request(`/awpii/${country}`, { method: "PUT", body: JSON.stringify(data) }),
 };
 
 // ─── Regulatory Tracker ────────────────────────────────────────────────────
 export const trackerApi = {
-  getAll:  ()              => request("/api/tracker"),
-  update:  (country, data) => request(`/api/tracker/${country}`, { method: "PUT", body: JSON.stringify(data) }),
+  getAll:  ()              => request("/tracker"),
+  update:  (country, data) => request(`/tracker/${country}`, { method: "PUT", body: JSON.stringify(data) }),
 };
 
 // ─── Analytics (no auth) ───────────────────────────────────────────────────
 export const analyticsApi = {
-  health:    ()     => fetch(`${API_BASE}/api/event`).then(r => r.json()),
-  exportCsv: ()     => `${API_BASE}/api/export`,
-  sseUrl:    ()     => `${API_BASE}/api/live`,
-  ingest:    (data) => fetch(`${API_BASE}/api/event`, {
+  health:    ()     => fetch(`${API_BASE}/event`).then(r => r.json()),
+  exportCsv: ()     => `${API_BASE}/export`,
+  sseUrl:    ()     => `${API_BASE}/live`,
+  ingest:    (data) => fetch(`${API_BASE}/event`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -113,41 +118,41 @@ export const analyticsApi = {
 export const articlesApi = {
   getAll: (params) => {
     const q = params ? "?" + new URLSearchParams(params).toString() : "";
-    return request(`/api/articles${q}`);
+    return request(`/articles${q}`);
   },
-  getBySlug: (slug) => request(`/api/articles/${slug}`),
-  create: (data) => request("/api/articles", { method: "POST", body: JSON.stringify(data) }),
-  update: (id, data) => request(`/api/articles/${id}`, { method: "PUT", body: JSON.stringify(data) }),
-  remove: (id) => request(`/api/articles/${id}`, { method: "DELETE" }),
+  getBySlug: (slug) => request(`/articles/${slug}`),
+  create: (data) => request("/articles", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/articles/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/articles/${id}`, { method: "DELETE" }),
 };
 
 // ─── Blogs & Thought Leadership ────────────────────────────────────────────
 export const blogsApi = {
   getAll: (params) => {
     const q = params ? "?" + new URLSearchParams(params).toString() : "";
-    return request(`/api/blogs${q}`);
+    return request(`/blogs${q}`);
   },
-  getBySlug: (slug) => request(`/api/blogs/${slug}`),
-  create: (data) => request("/api/blogs", { method: "POST", body: JSON.stringify(data) }),
-  update: (id, data) => request(`/api/blogs/${id}`, { method: "PUT", body: JSON.stringify(data) }),
-  remove: (id) => request(`/api/blogs/${id}`, { method: "DELETE" }),
+  getBySlug: (slug) => request(`/blogs/${slug}`),
+  create: (data) => request("/blogs", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/blogs/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/blogs/${id}`, { method: "DELETE" }),
 };
 
 // ─── Newsletters & Subscriptions ───────────────────────────────────────────
 export const newsletterApi = {
   subscribe: (data) =>
-    request("/api/subscribe", {
+    request("/subscribe", {
       method: "POST",
       body: JSON.stringify(typeof data === "string" ? { email: data } : data),
     }),
-  getNewsletters: () => request("/api/newsletters"),
-  getById: (id) => request(`/api/newsletters/${id}`),
+  getNewsletters: () => request("/newsletters"),
+  getById: (id) => request(`/newsletters/${id}`),
   sendNewsletter: (data) =>
-    request("/api/admin/newsletters/send", {
+    request("/admin/newsletters/send", {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getSubscribers: () => request("/api/admin/subscribers"),
+  getSubscribers: () => request("/admin/subscribers"),
 };
 
 export const API_BASE_URL = API_BASE;

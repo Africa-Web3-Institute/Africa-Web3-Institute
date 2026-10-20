@@ -1,21 +1,25 @@
 // src/pages/Board.js
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
 import { MapPin ,ArrowRight } from "lucide-react";
-import drRajKapoor from "../assets/Dr_Raj_Kapoor.jpeg";
-import DrTammy from "../assets/Dr_Tammy_Francis.jpeg";
-import CyndaJonesCarswell from "../assets/Cynda_Jones_Carswell.png";
-import JadeBishop from "../assets/JadeBishop.jpg"
-import { useEffect, useRef, useState } from "react";
+import drRajKapoor from "../assets/Board/Dr_Raj_Kapoor.jpeg";
+import DrTammy from "../assets/Board/Dr_Tammy_Francis.jpeg";
+import CyndaJonesCarswell from "../assets/Board/Cynda_Jones_Carswell.png";
+import JadeBishop from "../assets/Board/JadeBishop.jpg";
+import FredrickNonde from "../assets/Board/fredrick_nonde.png";
+import JoergMolt from "../assets/Board/joerg_molt.jpg";
+import DaniilKozin from "../assets/Board/daniil_kozin.jpeg";
+import Web3ThinkTankBg from "../assets/Board/web3_think_tank_bg.png";
+
 
 // ─── Advisory Board Data ─────────────────────────────────────────────────────
 const ADVISORY_BOARD = [
   {
     name: "Prof. Fredrick Ndalamani Nonde",
     country: "🇿🇲 Zambia",
-    photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/aa3c6d347_FNNJRCEO.png",
+    photo: FredrickNonde,
     linkedin: "https://linkedin.com/in/fredrick-ndalamani-nonde-jr-mba-web3-ecosystem-builder-730b16105",
   },
   {
@@ -27,19 +31,19 @@ const ADVISORY_BOARD = [
   {
     name: "Prof. (Dr) h.c. Joerg Molt",
     country: "🇩🇪 Germany",
-    photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/23e1e2951_image_20260608_165401b9457012-8de9-4030-bb7d-ce54f57f0f0b-7.jpg",
+    photo: JoergMolt,
     linkedin: "https://linkedin.com/in/prof-dr-h-c-joerg-m-268882132",
   },
   {
     name: "Jade Bishop",
-    country: "🇿🇦 South Africa", 
+    country: "🇿🇦 South Africa",
     photo: JadeBishop,
     linkedin: "https://www.linkedin.com/in/jade-bishop-2276b7131/",
   },
   {
     name: "Daniil Kozin",
     country: "🇧🇷 Brazil",
-    photo: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/d3c29c585_WhatsAppImage2026-06-24at102503AM.jpeg",
+    photo: DaniilKozin,
     linkedin: "https://www.linkedin.com/in/daniilkozin",
   },
   {
@@ -96,7 +100,7 @@ const AnimatedSection = ({ children, className = "", delay = 0 }) => {
 
 // ─── Board Card ──────────────────────────────────────────────────────────────
 function BoardCard({ member, index }) {
-  const [hovered, setHovered] = React.useState(false);
+  const [hovered, setHovered] = useState(false);
 
   // Extract initials for fallback
   const initials = member.name

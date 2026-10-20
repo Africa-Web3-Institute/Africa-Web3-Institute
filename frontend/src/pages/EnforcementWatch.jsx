@@ -21,7 +21,7 @@ function TypeBadge({ type, label }) {
 
 function SevDot({ severity }) {
   const m = SEV_META[severity] || SEV_META.Low;
-  return <span className="w-2 h-2 rounded-full flex-shrink-0 inline-block" style={{ backgroundColor: m.color }} />;
+  return <span className="w-2 h-2 rounded-full shrink-0 inline-block" style={{ backgroundColor: m.color }} />;
 }
 
 export default function EnforcementWatch() {
@@ -219,6 +219,7 @@ export default function EnforcementWatch() {
       {T.noResultsDesc || "Try adjusting your filters or search terms."}
     </p>
     <button
+    type="button"
       onClick={resetFilters}
       className="text-sm font-semibold transition-colors"
       style={{ color: "#D4A017" }}
@@ -249,11 +250,11 @@ export default function EnforcementWatch() {
                 {group.events.map(ev => (
                   <div key={ev.id} className="relative flex gap-0 lg:gap-0 mb-5 items-start">
                     {/* Date column (desktop) */}
-                    <div className="hidden lg:flex items-start justify-end flex-shrink-0 pt-4" style={{ width: "128px" }}>
+                    <div className="hidden lg:flex items-start justify-end shrink-0 pt-4" style={{ width: "128px" }}>
                       <span className="text-[0.75rem] font-bold text-right pr-3" style={{ color: "#D4A017" }}>{ev.date}</span>
                     </div>
                     {/* Dot on line */}
-                    <div className="hidden lg:flex items-start pt-4 flex-shrink-0" style={{ width: "24px" }}>
+                    <div className="hidden lg:flex items-start pt-4 shrink-0" style={{ width: "24px" }}>
                       <SevDot severity={ev.severity} />
                     </div>
                     {/* Card */}
