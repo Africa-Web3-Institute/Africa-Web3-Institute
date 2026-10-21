@@ -301,7 +301,7 @@ export default function Blog() {
             </div>
 
             {/* Search Input */}
-            <div className="relative w-full md:w-72 flex-shrink-0">
+            <div className="relative w-full md:w-72 shrink-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
@@ -417,7 +417,7 @@ export default function Blog() {
                       </div>
                     </div>
 
-                    <div className="lg:col-span-5 bg-gradient-to-br from-[#0B1437] to-[#1E3A8A] p-8 flex flex-col justify-between text-white relative min-h-[260px]">
+                    <div className="lg:col-span-5 bg-linear-to-br from-[#0B1437] to-[#1E3A8A] p-8 flex flex-col justify-between text-white relative min-h-[260px]">
                       <div className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
                         style={{
                           backgroundImage: `url("${featuredPost.image || "/Awi_Website_pics.jpg"}")`,
@@ -517,8 +517,8 @@ export default function Blog() {
           </h2>
           <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-8">
             {isFr
-              ? "Rejoignez plus de 12 000 régulateurs, chercheurs et bâtisseurs Web3 recevant nos décryptages directement dans leur boîte mail."
-              : "Join over 12,000 regulators, researchers, and financial executives receiving our exclusive briefings directly in their inbox."}
+              ? "Rejoignez de 12 000 régulateurs, chercheurs et bâtisseurs Web3 recevant nos décryptages directement dans leur boîte mail."
+              : "Join the various regulators, researchers, and financial executives receiving our exclusive briefings directly in their inbox."}
           </p>
 
           {newsletterSubscribed ? (

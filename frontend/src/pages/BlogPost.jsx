@@ -27,6 +27,8 @@ const LinkedinIcon = ({ className = "w-4 h-4" }) => (
 );
 import { useLanguage } from "../lib/LanguageContext";
 import { blogsApi } from "../api/api";
+import BlockRenderer from "../components/BlockRenderer";
+import { parseContent } from "../lib/blocks";
 
 const FALLBACK_BLOGS = {
   "rise-of-stablecoins-african-cross-border-trade": {
@@ -181,69 +183,10 @@ export default function BlogPost() {
     );
   }
 
-  // Render paragraphs and markdown headings
+  // Admin posts are saved as blocks; older posts are plain text. parseContent understands both.
   const renderContent = (contentStr) => {
-    if (!contentStr) {
-      return (
-        <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
-          {post.excerpt}
-        </p>
-      );
-    }
-
-    const sections = contentStr.split("\n\n");
-    return sections.map((sec, idx) => {
-      const trimmed = sec.trim();
-      if (!trimmed) return null;
-
-      if (trimmed.startsWith("### ")) {
-        return (
-          <h3 key={idx} className="text-xl font-bold text-[#0B1437] mt-8 mb-3">
-            {trimmed.replace("### ", "")}
-          </h3>
-        );
-      }
-      if (trimmed.startsWith("## ")) {
-        return (
-          <h2 key={idx} className="text-2xl font-extrabold text-[#0B1437] mt-10 mb-4 border-b border-slate-100 pb-2">
-            {trimmed.replace("## ", "")}
-          </h2>
-        );
-      }
-      if (trimmed.startsWith("> ")) {
-        return (
-          <blockquote key={idx} className="border-l-4 border-[#D4A017] bg-[#D4A017]/10 p-5 rounded-r-xl italic text-slate-800 text-base my-6 font-medium">
-            {trimmed.replace("> ", "")}
-          </blockquote>
-        );
-      }
-      if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
-        const items = trimmed.split("\n").map((line) => line.replace(/^[*\-]\s*/, ""));
-        return (
-          <ul key={idx} className="list-disc list-inside space-y-2 my-4 text-slate-700 text-base leading-relaxed pl-2">
-            {items.map((it, i) => (
-              <li key={i}>{it}</li>
-            ))}
-          </ul>
-        );
-      }
-      if (/^\d+\.\s/.test(trimmed)) {
-        const items = trimmed.split("\n");
-        return (
-          <ol key={idx} className="list-decimal list-inside space-y-2.5 my-4 text-slate-700 text-base leading-relaxed pl-2">
-            {items.map((it, i) => (
-              <li key={i}>{it.replace(/^\d+\.\s*/, "")}</li>
-            ))}
-          </ol>
-        );
-      }
-
-      return (
-        <p key={idx} className="text-base sm:text-lg text-slate-700 leading-relaxed my-4">
-          {trimmed}
-        </p>
-      );
-    });
+    const blocks = parseContent(contentStr);
+    return <BlockRenderer blocks={blocks.length ? blocks : parseContent(post.excerpt)} />;
   };
 
   return (

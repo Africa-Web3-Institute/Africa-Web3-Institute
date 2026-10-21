@@ -307,7 +307,7 @@ export default function News() {
         item.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [newsList, activeCategory, searchQuery]);
 
   const featuredNews = filteredNews.find((item) => item.featured);
   const regularNews = filteredNews.filter((item) => !item.featured);
