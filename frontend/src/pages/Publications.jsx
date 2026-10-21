@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
+import { publicationsApi, newsletterApi } from "../api/api";
+import { useEffect } from "react";
 import { t } from "../lib/translations";
 
 const PUBLICATIONS = [
@@ -15,18 +17,9 @@ const PUBLICATIONS = [
     downloadUrl: "https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf",
     available: true,
   },
+
   {
     id: 2,
-    category: "State of Web3 Africa",
-    title: "State of Web3 Africa 2025 — Annual Report",
-    description: "Full-year review of Africa's Web3 landscape covering regulatory shifts, market growth, and ecosystem milestones across the continent.",
-    date: "December 2025",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: true,
-  },
-  {
-    id: 3,
     category: "State of Web3 Africa",
     title: "State of Web3 Africa 2026 — Q2 Report",
     description: "Quarterly intelligence on stablecoin adoption, regulatory changes, and capital flows across African Web3 markets.",
@@ -35,38 +28,29 @@ const PUBLICATIONS = [
     downloadUrl: "#",
     available: false,
   },
-  {
-    id: 4,
-    category: "Monthly African Stablecoin Adoption Report",
-    title: "African Stablecoin Adoption Report — May 2026",
-    description: "Monthly tracking of stablecoin transaction volumes, P2P adoption rates, merchant integration, and regulatory developments across Africa.",
-    date: "May 2026",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: false,
-  },
+  //{
+  //  id: 3,
+  //  category: "Monthly African Stablecoin Adoption Report",
+  //  title: "African Stablecoin Adoption Report — May 2026",
+  //  description: "Monthly tracking of stablecoin transaction volumes, P2P adoption rates, merchant integration, and regulatory developments across Africa.",
+  //  date: "May 2026",
+  //  author: "AWI Research Team",
+  //  downloadUrl: "#",
+  //  available: false,
+//  },
+
+ // {
+  //  id: 4,
+  //  category: "Monthly African Stablecoin Adoption Report",
+  //  title: "African Stablecoin Adoption Report — March 2026",
+   // description: "March 2026 stablecoin data including cross-border settlement volumes, remittance corridors, and CBDC pilot updates.",
+   // date: "March 2026",
+  //  author: "AWI Research Team",
+  //  downloadUrl: "#",
+ //   available: true,
+ // },
   {
     id: 5,
-    category: "Monthly African Stablecoin Adoption Report",
-    title: "African Stablecoin Adoption Report — April 2026",
-    description: "April 2026 monthly data on stablecoin flows, USDT P2P volumes, and regulatory signals across key African markets.",
-    date: "April 2026",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  {
-    id: 6,
-    category: "Monthly African Stablecoin Adoption Report",
-    title: "African Stablecoin Adoption Report — March 2026",
-    description: "March 2026 stablecoin data including cross-border settlement volumes, remittance corridors, and CBDC pilot updates.",
-    date: "March 2026",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: true,
-  },
-  {
-    id: 7,
     category: "Policy Brief",
     title: "VASP Licensing Frameworks in Anglophone Africa",
     description: "Comparative analysis of virtual asset service provider licensing requirements across Nigeria, South Africa, Kenya, Ghana, and Rwanda.",
@@ -76,7 +60,7 @@ const PUBLICATIONS = [
     available: false,
   },
   {
-    id: 8,
+    id: 6,
     category: "Policy Brief",
     title: "Stablecoin Regulation in Francophone Africa",
     description: "Policy brief examining the BCEAO and BEAC regional frameworks and their implications for stablecoin adoption across Francophone African nations.",
@@ -86,7 +70,7 @@ const PUBLICATIONS = [
     available: false,
   },
   {
-    id: 9,
+    id: 7,
     category: "Policy Brief",
     title: "CBDCs and Financial Inclusion in Sub-Saharan Africa",
     description: "Analysis of active and pilot CBDC programmes across Sub-Saharan Africa and their potential to accelerate financial inclusion.",
@@ -96,7 +80,7 @@ const PUBLICATIONS = [
     available: false,
   },
   {
-    id: 10,
+    id: 8,
     category: "Policy Brief",
     title: "AML/CFT Compliance for African VASPs",
     description: "Guidance brief on FATF Travel Rule implementation and AML/CFT obligations for virtual asset service providers operating in African jurisdictions.",
@@ -106,7 +90,7 @@ const PUBLICATIONS = [
     available: false,
   },
   {
-    id: 11,
+    id: 9,
     category: "Published Articles",
     title: "Why Africa Needs Its Own Web3 Policy Framework",
     description: "Op-ed examining why African nations must develop indigenous Web3 regulatory frameworks rather than adopting Western models wholesale.",
@@ -116,7 +100,7 @@ const PUBLICATIONS = [
     available: true,
   },
   {
-    id: 12,
+    id: 10,
     category: "Published Articles",
     title: "The Stablecoin Revolution in African Cross-Border Trade",
     description: "Analysis of how stablecoins are reshaping intra-African trade settlement and what it means for the AfCFTA digital payment infrastructure.",
@@ -126,7 +110,7 @@ const PUBLICATIONS = [
     available: true,
   },
   {
-    id: 13,
+    id: 11,
     category: "Published Articles",
     title: "Binance vs Nigeria: What It Means for African Crypto Regulation",
     description: "In-depth analysis of the Nigeria-Binance regulatory standoff and its implications for VASP regulation across the continent.",
@@ -136,7 +120,7 @@ const PUBLICATIONS = [
     available: true,
   },
   {
-    id: 14,
+    id: 12,
     category: "Published Research",
     title: "Africa Web3 Policy & Innovation Index (AWPII) 2025",
     description: "The definitive annual ranking of 18+ African nations on Web3 policy readiness, blockchain innovation activity, and digital asset adoption metrics.",
@@ -146,7 +130,7 @@ const PUBLICATIONS = [
     available: true,
   },
   {
-    id: 15,
+    id: 13,
     category: "Published Research",
     title: "Blockchain for Agricultural Supply Chains in Africa",
     description: "Research paper examining blockchain implementations in African agricultural supply chains with case studies from Kenya, Ghana, and Ethiopia.",
@@ -156,7 +140,7 @@ const PUBLICATIONS = [
     available: false,
   },
   {
-    id: 16,
+    id: 14,
     category: "Published Research",
     title: "DeFi Adoption Patterns in Sub-Saharan Africa",
     description: "Empirical research on decentralised finance usage patterns, barriers to adoption, and opportunities across Sub-Saharan African markets.",
@@ -222,10 +206,35 @@ function PublicationCard({ pub, T }) {
 export default function Publications() {
   const { language } = useLanguage();
   const T = t[language].publicationsPage;
+  const [publicationsList, setPublicationsList] = useState(PUBLICATIONS);
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    publicationsApi
+      .getAll()
+      .then((res) => {
+        if (!mounted) return;
+        const list = res?.data || (Array.isArray(res) ? res : []);
+        if (list && list.length > 0) {
+          const formatted = list.map((p) => ({
+            ...p,
+            available: p.available === undefined ? true : Boolean(p.available),
+          }));
+          setPublicationsList(formatted);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not load publications from API, using fallback data:", err);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const TABS = [
     { key: "all",        label: T.tabAll },
@@ -237,7 +246,7 @@ export default function Publications() {
   ];
 
   const filtered = useMemo(() => {
-    return PUBLICATIONS.filter(p => {
+    return publicationsList.filter(p => {
       if (activeTab !== "all" && p.category !== activeTab) return false;
       if (search.trim()) {
         const q = search.toLowerCase();
@@ -247,12 +256,11 @@ export default function Publications() {
       }
       return true;
     });
-  }, [activeTab, search]);
+  }, [publicationsList, activeTab, search]);
 
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }`}</style>
-      <title>Publications | Africa Web3 Institute</title>
 
       {/* Hero */}
       <section style={{ backgroundColor: "#0B1437" }} className="py-12 lg:py-18">
@@ -313,7 +321,7 @@ export default function Publications() {
             />
           </div>
           <p className="text-[0.8125rem] text-muted-foreground">
-            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {PUBLICATIONS.length} {T.publications}
+            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {publicationsList.length} {T.publications}
           </p>
           {(search || activeTab !== "all") && (
             <button

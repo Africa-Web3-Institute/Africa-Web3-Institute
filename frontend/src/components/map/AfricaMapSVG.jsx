@@ -4,24 +4,75 @@ import { MapContainer, GeoJSON, ZoomControl,CircleMarker,Tooltip } from "react-l
 import "leaflet/dist/leaflet.css";
 import awpiiData from "../../data/awpiiData";
 
+
+
 const EMOJI_TO_ISO = {
-  "🇳🇬": "ng", "🇿🇦": "za", "🇰🇪": "ke", "🇷🇼": "rw",
-  "🇬🇭": "gh", "🇪🇬": "eg", "🇪🇹": "et", "🇸🇳": "sn",
-  "🇹🇿": "tz", "🇲🇦": "ma", "🇨🇲": "cm", "🇨🇮": "ci",
-  "🇿🇼": "zw", "🇿🇲": "zm", "🇩🇿": "dz", "🇺🇬": "ug",
-  "🇹🇳": "tn", "🇧🇼": "bw", "🇲🇺": "mu", "🇸🇨": "sc",
-  "🇳🇦": "na", "🇸🇱": "sl", "🇸🇸": "ss", "🇸🇩": "sd",
-  "🇸🇴": "so", "🇨🇻": "cv", "🇰🇲": "km", "🇸🇹": "st",
-  "🇲🇬": "mg",
+// All 54 African Union member states, A-Z
+  "🇩🇿": "dz", // Algeria
+  "🇦🇴": "ao", // Angola
+  "🇧🇯": "bj", // Benin
+  "🇧🇼": "bw", // Botswana
+  "🇧🇫": "bf", // Burkina Faso
+  "🇧🇮": "bi", // Burundi
+  "🇨🇻": "cv", // Cabo Verde
+  "🇨🇲": "cm", // Cameroon
+  "🇨🇫": "cf", // Central African Republic
+  "🇹🇩": "td", // Chad
+  "🇰🇲": "km", // Comoros
+  "🇨🇬": "cg", // Congo (the)
+  "🇨🇩": "cd", // Congo (the Democratic Republic of the)
+  "🇨🇮": "ci", // Cote d'Ivoire
+  "🇩🇯": "dj", // Djibouti
+  "🇪🇬": "eg", // Egypt
+  "🇬🇶": "gq", // Equatorial Guinea
+  "🇪🇷": "er", // Eritrea
+  "🇸🇿": "sz", // Eswatini
+  "🇪🇹": "et", // Ethiopia
+  "🇬🇦": "ga", // Gabon
+  "🇬🇲": "gm", // Gambia
+  "🇬🇭": "gh", // Ghana
+  "🇬🇳": "gn", // Guinea
+  "🇬🇼": "gw", // Guinea-Bissau
+  "🇰🇪": "ke", // Kenya
+  "🇱🇸": "ls", // Lesotho
+  "🇱🇷": "lr", // Liberia
+  "🇱🇾": "ly", // Libya
+  "🇲🇬": "mg", // Madagascar
+  "🇲🇼": "mw", // Malawi
+  "🇲🇱": "ml", // Mali
+  "🇲🇷": "mr", // Mauritania
+  "🇲🇺": "mu", // Mauritius
+  "🇲🇦": "ma", // Morocco
+  "🇲🇿": "mz", // Mozambique
+  "🇳🇦": "na", // Namibia
+  "🇳🇪": "ne", // Niger
+  "🇳🇬": "ng", // Nigeria
+  "🇷🇼": "rw", // Rwanda
+  "🇸🇹": "st", // Sao Tome and Principe
+  "🇸🇳": "sn", // Senegal
+  "🇸🇨": "sc", // Seychelles
+  "🇸🇱": "sl", // Sierra Leone
+  "🇸🇴": "so", // Somalia
+  "🇿🇦": "za", // South Africa
+  "🇸🇸": "ss", // South Sudan
+  "🇸🇩": "sd", // Sudan
+  "🇹🇿": "tz", // Tanzania
+  "🇹🇬": "tg", // Togo
+  "🇹🇳": "tn", // Tunisia
+  "🇺🇬": "ug", // Uganda
+  "🇿🇲": "zm", // Zambia
+  "🇿🇼": "zw", // Zimbabwe
 };
 
 function flagImg(emoji) {
   const iso = EMOJI_TO_ISO[emoji];
   if (!iso) return "";
-  return `<img 
+  return `<img
     src="https://flagcdn.com/20x15/${iso}.png"
     srcset="https://flagcdn.com/40x30/${iso}.png 2x"
     width="20" height="15"
+    loading="lazy"
+    decoding="async"
     style="border-radius:2px;vertical-align:middle;margin-right:6px;display:inline-block;"
     alt="${iso.toUpperCase()}"
   />`;
@@ -65,6 +116,23 @@ const GEO_NAME_TO_KEY = {
   "eSwatini": "eswatini",
 };
 
+
+// ----- FIX: Override display names for problematic casing -----
+const DISPLAY_NAME_OVERRIDES = {
+  southsudan: "South Sudan",
+  eswatini: "Eswatini",
+  Comoros: "Comoros",
+  "Côte d'Ivoire": "Côte d'Ivoire",
+  "São Tomé and Principe": "São Tomé and Principe",
+  "S. Sudan": "South Sudan",
+  "eSwatini": "Eswatini",
+  "Cabo Verde": "Cabo Verde",
+  "Seychelles": "Seychelles",
+  "Mauritius": "Mauritius",
+  
+  // Add more if needed, e.g. "cotedivoire": "Côte d'Ivoire",
+};
+
 // Centroids for islands too small to see/click at low zoom
 const SMALL_ISLAND_CENTROIDS = {
   "Cabo Verde": [16.0, -24.0],
@@ -86,12 +154,12 @@ function getShadingColor(key) {
   const country = awpiiData.find(c => c.key === key);
   if (!country) return "#9CA3AF"; // Undefined grey
   
-  const grade = country.grade;
-  if (grade === "AA+") return "#14532d"; // Dark Green (emerald-900)
-  if (["AA-", "A+", "A"].includes(grade)) return "#166534"; // Medium Green (emerald-800)
-  if (grade === "A-") return "#22c55e"; // Light Green (emerald-500)
-  if (["BBB+", "BBB-", "BB+", "BB"].includes(grade)) return "#eab308"; // Yellow (yellow-500)
-  return "#dc2626"; // Red (red-600)
+   const grade = country.grade;
+  if (grade === "AA+") return "#1F7A3A";
+  if (["AA-", "A+", "A", "A-"].includes(grade)) return "#1F7A3A";
+
+  if (["BBB+", "BBB-", "BB+", "BB"].includes(grade)) return "#D4A017";
+  return "#dc2626";
 }
 
 function countryStyle(feature, hoveredKey) {
@@ -121,7 +189,7 @@ export default function AfricaMapSVG({ onCountryClick = null, interactive = fals
     fetch(AFRICA_GEOJSON_URL)
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
      .then(data => {
-        const AFRICAN_ISLAND_FALLBACKS = new Set(["Seychelles", "Mauritius"]);
+        const AFRICAN_ISLAND_FALLBACKS = new Set(["Seychelles", "Mauritius", "Comoros", "Cabo Verde", "São Tomé and Principe"]);
         const africaOnly = {
           ...data,
         features: data.features.filter(f => {
@@ -238,7 +306,7 @@ export default function AfricaMapSVG({ onCountryClick = null, interactive = fals
         minZoom={2}
         maxZoom={7}
         zoomControl={false}
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
         style={{ width: "100%", height: "600px", borderRadius: "12px" }}
         maxBounds={[[-40, -30], [40, 60]]}
       >

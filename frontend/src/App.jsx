@@ -2,7 +2,7 @@ import { Toaster } from "./components/ui/toaster";
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import PageNotFound from './lib/PageNotFound';
+//import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
 import UserNotRegisteredError from './components/UserNotRegisteredError';
@@ -11,10 +11,12 @@ import AWPII from './pages/AWPII';
 import AfricaBlockchainAwards from './pages/AfricaBlockchainAwards';
 import SiteLayout from './components/layout/SiteLayout';
 import About from './pages/About';
+import Team from './pages/Team';
+import Board from './pages/Board';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import FrancophopeNetwork from './pages/FrancophoneNetwork';
 import TermsOfUse from './pages/TermsOfUse';
-import CountryTracker from './pages/CountryTracker';
+import RegulatoryTracker from './pages/RegulatoryTracker';
 import Publications from './pages/Publications';
 import CountryProfile from './pages/CountryProfile';
 import EnforcementWatch from './pages/EnforcementWatch';
@@ -24,6 +26,17 @@ import ScrollToHash from './components/ScrollToHash';
 import IndabaSeries from './pages/IndabaSeries';
 import { useTracker } from './hooks/useTracker';
 import StablecoinTracker from './pages/StablecoinTracker';
+import NewsletterLanding from "./pages/NewsletterLanding";
+import Newsletters from "./pages/NewsletterArchive";
+import ProgramsEvents from './pages/ProgramsEvents';
+import Contact from './pages/Contact';
+import EventsPage from './pages/EventsPage';
+import Careers from './pages/Careers'
+import News from './pages/News'
+import NewsArticle from "./pages/NewsArticle";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import RegulatoryTrackerMethodology from "./pages/RegulatoryTrackerMethodology";
 
 
 // Admin
@@ -36,12 +49,14 @@ import Events from "./admin/pages/Events";
 import Analytics from "./admin/pages/Analytics"
 import AdminPolicyTracker from "./admin/pages/AdminPolicyTracker";
 import AWPIIData from "./admin/pages/AWPIIData";
-import RegulatoryTracker from "./admin/pages/RegulatoryTracker";
+import AdminRegulatoryTracker from "./admin/pages/AdminRegulatoryTracker";
 import AdminEnforcementWatch from "./admin/pages/EnforcementWatch";
 import Users from "./admin/pages/Users";
 import Settings from "./admin/pages/Settings";
 import AdminLayout from "./admin/Layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { NavDropdownProvider } from "./lib/NavDropdownContext";
+
 
 
 const AuthenticatedApp = () => {
@@ -82,19 +97,34 @@ return (
       <Route path="/" element={<Home />} />
       <Route path="/awpii" element={<AWPII />} />
       <Route path="/africa-blockchain-awards" element={<AfricaBlockchainAwards />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/about"  element={<About/>}/>
+      <Route path="/team" element={<Team />} />
+<Route path="/board" element={<Board />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-use" element={<TermsOfUse />} />
       <Route path="/francophone-network" element={<FrancophopeNetwork />} />
-      <Route path="/country-tracker" element={<CountryTracker />} />
+      <Route path="/regulatory-tracker" element={<RegulatoryTracker />} />
+      <Route path="/regulatory-tracker/methodology" element={<RegulatoryTrackerMethodology />} />
       <Route path="/publications" element={<Publications />} />
-      <Route path="/country-tracker/:country" element={<CountryProfile />} />
+      <Route path="/regulatory-tracker/:country" element={<CountryProfile />} />
       <Route path="/enforcement-watch" element={<EnforcementWatch />} />
       <Route path="/capacity-building" element={<CapacityBuilding />} />
       <Route path="/stablecoin-tracker" element={<StablecoinTracker />} />
-     
+
       <Route path="/indaba-series" element={<IndabaSeries />} />
+      
+      <Route path="/programs-events" element={<ProgramsEvents />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/events" element={<EventsPage />} />
+      <Route path="/careers" element={<Careers/>}/>
+      <Route path="/news" element={<News/>}/>
+      <Route path="/news/:slug" element={<NewsArticle />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
     
+<Route path="/newsletter" element={<NewsletterLanding />} />
+<Route path="/newsletters/archive" element={<Newsletters />} />
+
     </Route>
 
     {/* =========================
@@ -118,7 +148,7 @@ return (
     <Route path="analytics" element={<Analytics />} />
     <Route path="awpii" element={<AWPIIData />} />
     <Route path="policy-tracker" element={<AdminPolicyTracker />} />
-    <Route path="tracker" element={<RegulatoryTracker />} />
+    <Route path="tracker" element={<AdminRegulatoryTracker />} />
     <Route path="enforcement" element={<AdminEnforcementWatch />} />
     <Route path="users" element={<Users />} />
     <Route path="settings" element={<Settings />} />
@@ -135,11 +165,13 @@ function App() {
     <LanguageProvider>
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
+          <NavDropdownProvider>
           <Router>
             <ScrollToHash />
               <AnalyticsTracker />
             <AuthenticatedApp />
           </Router>
+          </NavDropdownProvider>
           <Toaster />
         </QueryClientProvider>
       </AuthProvider>

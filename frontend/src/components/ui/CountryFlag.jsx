@@ -85,6 +85,7 @@ export default function CountryFlag({ name, size = 24, className = "" }) {
       className={`inline-block object-cover rounded-sm shrink-0 ${className}`}
       style={{ aspectRatio: "3/2" }}
       loading="lazy"
+      decoding="async"
     />
   );
 }
