@@ -256,7 +256,7 @@ export default function Publications() {
       }
       return true;
     });
-  }, [activeTab, search]);
+  }, [publicationsList, activeTab, search]);
 
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
@@ -321,7 +321,7 @@ export default function Publications() {
             />
           </div>
           <p className="text-[0.8125rem] text-muted-foreground">
-            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {PUBLICATIONS.length} {T.publications}
+            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {publicationsList.length} {T.publications}
           </p>
           {(search || activeTab !== "all") && (
             <button

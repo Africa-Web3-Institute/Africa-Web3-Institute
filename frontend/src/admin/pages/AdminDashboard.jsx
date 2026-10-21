@@ -79,11 +79,7 @@ export default function AdminDashboard() {
 
   const fmt = (n) => (n === null ? "—" : String(n));
 
-  // Stats we can back with a real endpoint right now. Articles Published,
-  // Report Downloads, and Active Users don't have a matching function in
-  // api.js yet -- rather than guess at an endpoint/response shape (which
-  // is exactly how the tracker/awpii bugs happened), they're marked as
-  // not connected instead of showing a fabricated number.
+  
   const STATS = [
     {
       label: "Total Publications",

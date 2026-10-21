@@ -66,7 +66,7 @@ export default function Login() {
         {/* Logo + Brand */}
         <div className="text-center mb-8">
           <img
-            src="../../../public/awi-logo.png"
+            src="/frontend/public/logos/awi-logo.png"
             alt="AWI Logo"
             className="h-12 w-auto mx-auto mb-4"
           />

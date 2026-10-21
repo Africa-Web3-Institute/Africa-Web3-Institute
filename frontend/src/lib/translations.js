@@ -211,6 +211,13 @@ export const t = {
         location: "Kempinski, Accra",
         ctas: [{ label: "Institutional Participation", variant: "primary" }],
       },
+       {
+        title: "VASP Policy Workshop for Journalists",
+        country: "Ghana",
+        date: "2-3 December 2026",
+        location: "Alisa Hotel, Accra",
+        ctas: [{ label: "Request Invitation", variant: "primary" }],
+      },
       {
         title: "Web3 Policy Breakfast",
         country: "South Sudan",
@@ -218,13 +225,7 @@ export const t = {
         location: "Radisson Blu, Juba",
         ctas: [{ label: "Engage as Stakeholder", variant: "primary" }],
       },
-     {
-        title: "VASP Policy Workshop for Journalists",
-        country: "Ghana",
-        date: "2-3 December 2026",
-        location: "Alisa Hotel, Accra",
-        ctas: [{ label: "Request Invitation", variant: "primary" }],
-      },
+    
     ],
   },
 ]
