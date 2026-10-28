@@ -38,6 +38,8 @@ export default function AdvisoryBoardCard({ member }) {
             src={member.photo}
             alt={member.name}
             className="w-full h-full object-cover object-top"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "#0B1437" }}>
