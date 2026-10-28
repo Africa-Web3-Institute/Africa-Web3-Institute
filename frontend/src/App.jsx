@@ -44,7 +44,7 @@ import Login from "./admin/pages/Login";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import AdminPublications from "./admin/pages/AdminPublications";
 import Articles from "./admin/pages/Articles";
-import Reports from "./admin/pages/Reports";
+
 import Events from "./admin/pages/Events";
 import Analytics from "./admin/pages/Analytics"
 import AdminPolicyTracker from "./admin/pages/AdminPolicyTracker";
@@ -143,7 +143,7 @@ return (
     <Route index element={<AdminDashboard />} />
     <Route path="adminpublications" element={<AdminPublications />} />
     <Route path="articles" element={<Articles/>}/>
-    <Route path="reports" element={<Reports/>}/>
+  
     <Route path="events" element={<Events/>}/>
     <Route path="analytics" element={<Analytics />} />
     <Route path="awpii" element={<AWPIIData />} />

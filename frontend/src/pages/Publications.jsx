@@ -5,6 +5,7 @@ import { useLanguage } from "../lib/LanguageContext";
 import { publicationsApi, newsletterApi } from "../api/api";
 import { useEffect } from "react";
 import { t } from "../lib/translations";
+import { trackDownload } from "../api/publicContent";
 
 const PUBLICATIONS = [
   {
@@ -169,7 +170,7 @@ function CategoryPill({ category }) {
   );
 }
 
-function PublicationCard({ pub, T }) {
+function PublicationCard({ pub, T, track }) {
   return (
     <div className="bg-white border border-border rounded-lg p-6 flex flex-col gap-3 hover:shadow-md transition-shadow h-full">
       <CategoryPill category={pub.category} />
@@ -180,17 +181,18 @@ function PublicationCard({ pub, T }) {
           <p className="text-[0.75rem] text-muted-foreground">{pub.date}</p>
           <p className="text-[0.6875rem] text-muted-foreground/70">{pub.author}</p>
         </div>
-        {pub.available ? (
+        {pub.available && pub.downloadUrl && pub.downloadUrl !== "#" ? (
           <a
             href={pub.downloadUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track && trackDownload(pub.id)}
             className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold px-4 py-2 rounded-md flex-shrink-0 transition-colors"
             style={{ backgroundColor: "#D4A017", color: "#fff" }}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
           >
-            {pub.downloadUrl !== "#" ? T.downloadBtn : T.readBtn}
+            {/\.pdf($|\?)/i.test(pub.downloadUrl) ? T.downloadBtn : T.readBtn}
           </a>
         ) : (
           <span className="inline-flex items-center text-[0.75rem] font-medium px-3 py-1.5 rounded-md flex-shrink-0"
@@ -207,6 +209,7 @@ export default function Publications() {
   const { language } = useLanguage();
   const T = t[language].publicationsPage;
   const [publicationsList, setPublicationsList] = useState(PUBLICATIONS);
+  const [fromApi, setFromApi] = useState(false); // the built-in list has no real database ids, so it is not counted
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const [email, setEmail] = useState("");
@@ -220,11 +223,17 @@ export default function Publications() {
         if (!mounted) return;
         const list = res?.data || (Array.isArray(res) ? res : []);
         if (list && list.length > 0) {
-          const formatted = list.map((p) => ({
-            ...p,
-            available: p.available === undefined ? true : Boolean(p.available),
-          }));
+          // Show published items only (drafts / "Review" stay private), whatever the capitalisation.
+          const formatted = list
+            .filter((p) => String(p.status || "published").toLowerCase() === "published")
+            .map((p) => ({
+              ...p,
+              description: p.description || "",
+              author: p.author || "",
+              available: p.available === undefined ? true : Boolean(Number(p.available)),
+            }));
           setPublicationsList(formatted);
+          setFromApi(true);
         }
       })
       .catch((err) => {
@@ -344,7 +353,7 @@ export default function Publications() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(pub => (
-              <PublicationCard key={pub.id} pub={pub} T={T} />
+              <PublicationCard key={pub.id} pub={pub} T={T} track={fromApi} />
             ))}
           </div>
         )}

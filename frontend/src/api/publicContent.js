@@ -52,3 +52,25 @@ export const publicContentApi = {
     return null;
   },
 };
+
+// Tells the backend a visitor clicked Download (it increments publications.downloads).
+// Fire-and-forget: it must never block or break the download itself.
+const sessionId = () => {
+  try {
+    let id = sessionStorage.getItem("awi_sid");
+    if (!id) {
+      id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sessionStorage.setItem("awi_sid", id);
+    }
+    return id;
+  } catch {
+    return "anonymous";
+  }
+};
+export const trackDownload = (id) => {
+  try {
+    fetch(`${API_BASE}/publications/${encodeURIComponent(id)}/download?sessionId=${sessionId()}`, { keepalive: true }).catch(() => {});
+  } catch {
+    /* ignore */
+  }
+};

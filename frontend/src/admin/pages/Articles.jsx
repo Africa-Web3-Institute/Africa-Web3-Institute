@@ -50,7 +50,7 @@ function Editor({ kind, item, onClose, onSaved }) {
           authorRole: item.authorRole || "",
           excerpt: item.excerpt || "",
           image: item.image || item.coverImage || "",
-          date: (item.date || today()).slice(0, 10),
+          date: (item.date || item.publishedAt || today()).slice(0, 10),
           readTime: item.readTime || "",
           featured: Boolean(Number(item.featured)),
           published: isLive(kind, item),
@@ -192,10 +192,12 @@ function Editor({ kind, item, onClose, onSaved }) {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls} htmlFor="f-date">Date</label>
-                <input id="f-date" type="date" value={form.date} onChange={(e) => set({ date: e.target.value })} className={inputCls} />
-              </div>
+              {kind !== "blogs" && (
+                <div>
+                  <label className={labelCls} htmlFor="f-date">Date</label>
+                  <input id="f-date" type="date" value={form.date} onChange={(e) => set({ date: e.target.value })} className={inputCls} />
+                </div>
+              )}
               <div>
                 <label className={labelCls} htmlFor="f-rt">Read time</label>
                 <input id="f-rt" value={form.readTime} onChange={(e) => set({ readTime: e.target.value })} placeholder={estimateReadTime(blocks)} className={inputCls} />
@@ -315,7 +317,7 @@ export default function Articles() {
                     <td className="px-6 py-4"><p className="text-slate-100 font-semibold">{i.title}</p><p className="text-xs text-gray-400 font-mono">/{tab === "blogs" ? "blog" : "news"}/{i.slug}</p></td>
                     <td className="px-6 py-4 text-gray-300 text-xs">{i.category || "—"}</td>
                     <td className="px-6 py-4 text-gray-300 text-xs">{i.author || "—"}</td>
-                    <td className="px-6 py-4 text-gray-400 text-xs">{(i.date || "").slice(0, 10)}</td>
+                    <td className="px-6 py-4 text-gray-400 text-xs">{(i.date || i.publishedAt || i.createdAt || "").slice(0, 10)}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-0.5 rounded text-xs font-bold ${isLive(tab, i) ? "bg-green-950 text-green-400" : "bg-gray-700 text-gray-300"}`}>{isLive(tab, i) ? "Published" : "Draft"}</span>
                     </td>

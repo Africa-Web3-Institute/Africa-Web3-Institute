@@ -30,52 +30,8 @@ import { blogsApi } from "../api/api";
 import BlockRenderer from "../components/BlockRenderer";
 import { parseContent } from "../lib/blocks";
 
-const FALLBACK_BLOGS = {
-  "rise-of-stablecoins-african-cross-border-trade": {
-    id: 1,
-    title: "The Rise of Stablecoins in African Trade: Beyond the Hype",
-    slug: "rise-of-stablecoins-african-cross-border-trade",
-    category: "Stablecoins",
-    tag: "Trade & Payments",
-    author: "Dr. Kwame Mensah",
-    authorTitle: "Senior Research Fellow, Macroeconomics & Payments",
-    date: "2026-08-14",
-    readTime: "7 min read",
-    image: "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    excerpt: "How USD-pegged tokens have quietly replaced correspondent banking corridors across Lagos, Nairobi, and Johannesburg, and what policymakers need to do next.",
-    content: `## The Quiet Shift in African Wholesale Liquidity
-
-While global crypto discourse remains fixated on speculative retail cycles and token volatility, African commercial enterprises have enacted a profound infrastructural pivot. Across major trade corridors—connecting Lagos with Guangzhou, Nairobi with Dubai, and Johannesburg with regional Southern African Development Community (SADC) partners—commercial importers and trade intermediaries are actively routing transactions through USD-backed stablecoins.
-
-This is not ideological adoption; it is an acute, pragmatic response to structural frictions within traditional correspondent banking:
-
-1. **Foreign Exchange Rationing:** Central bank rationing and restricted allocations of physical US Dollars force legitimate import-export businesses onto parallel markets where delays extend into weeks.
-2. **Punitive FX Spreads:** Correspondent bank routing often extracts between 4% and 9% in layered transfer fees and currency conversions across multiple jurisdictions.
-3. **Settlement Latency:** Conventional SWIFT transfers across intra-African borders frequently take 3 to 7 business days to finalize.
-
-By contrast, asset-backed stablecoins settle across low-cost Layer-2 and Layer-1 protocols in sub-second timeframes with predictable nominal fees.
-
----
-
-## The Policy Dilemma: Capital Flight vs. Trade Efficiency
-
-Central banks across the continent face an unprecedented balancing act. On one hand, uncontrolled stablecoin outflows reduce national visibility over capital accounts and challenge the efficacy of monetary policy transmission. On the other hand, heavy-handed blanket prohibitions do not eliminate stablecoin velocity; they merely push transaction flows underground into peer-to-peer (P2P) desks and informal OTC networks, depriving authorities of tax revenues and compliance oversight.
-
-> "A regulatory framework that attempts to prohibit private stablecoins without addressing the underlying correspondent banking deficit is treating the symptom while exacerbating the illness." — AWI Macro Research Group
-
-### Three Strategic Imperatives for African Regulators:
-
-* **Tiered VASP Licensing:** Establish clear, risk-proportionate licensing criteria for Virtual Asset Service Providers (VASPs) facilitating trade remittances, mandating 1:1 verified reserve auditing.
-* **Interoperability with National Fast Payment Systems:** Central banks should facilitate regulated fiat gateways connecting local instant-payment switches (e.g., NIBSS in Nigeria, TIPS/PesaLink in East Africa) to compliant digital asset on-ramps.
-* **Empirical On-Chain Monitoring:** Transition from post-facto reporting to automated, continuous on-chain intelligence tools that distinguish between speculative transfers and genuine commercial trade flows.
-
----
-
-## Conclusion: The Path Forward
-
-Africa does not need to copy European or American regulatory models verbatim. By constructing bespoke, forward-looking frameworks that acknowledge stablecoins as supplementary trade liquidity instruments while safeguarding sovereign reserves, African policymakers can position their jurisdictions as global pioneers in institutional digital finance.`
-  }
-};
+// No built-in sample posts: everything shown here comes from the admin (blogs table).
+const FALLBACK_BLOGS = {};
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
@@ -254,7 +210,7 @@ export default function BlogPost() {
                 {post.author}
               </p>
               <p className="text-xs text-slate-500">
-                {post.authorTitle || "Research Fellow, Africa Web3 Institute"}
+                {post.authorRole || post.authorTitle || "Research Fellow, Africa Web3 Institute"}
               </p>
             </div>
           </div>
@@ -262,7 +218,7 @@ export default function BlogPost() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-400 flex items-center gap-1 mr-2">
               <Calendar className="w-3.5 h-3.5" />
-              {formatDate(post.date)}
+              {formatDate(post.date || post.publishedAt || post.createdAt)}
             </span>
 
             {/* Social Share buttons */}
@@ -317,10 +273,7 @@ export default function BlogPost() {
               {post.author}
             </h4>
             <p className="text-xs text-[#b8891a] font-semibold mb-2">
-              {post.authorTitle || "Africa Web3 Institute Fellow"}
-            </p>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Contributing research and sovereign economic analysis across decentralized finance, CBDCs, and regulatory modernization in Africa.
+              {post.authorRole || post.authorTitle || "Africa Web3 Institute Fellow"}
             </p>
           </div>
         </div>
