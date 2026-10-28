@@ -7,7 +7,7 @@ const PAGE_TITLES = {
   "/admin/adminpublications": "Publications",
   "/admin/analytics": "Analytics",
   "/admin/articles": "Articles",
-  "/admin/reports": "Reports",
+ 
   "/admin/events": "Events",
   "/admin/awpii": "AWPII Data",
   "/admin/tracker": "Regulatory Tracker",

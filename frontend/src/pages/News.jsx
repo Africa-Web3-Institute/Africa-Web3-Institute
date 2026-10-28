@@ -54,94 +54,10 @@ const AnimatedSection = ({ children, className = "", delay = 0 }) => {
   );
 };
 
-// ─── Sample News Data ──────────────────────────────────────────────────────
-// TODO: Replace this with data from your CMS or API
-export const NEWS_DATA = [
-  {
-    id: 1,
-    title: "Africa Web3 Institute Launches Groundbreaking Policy Index",
-    excerpt:
-      "The AWPII (Africa Web3 Policy & Innovation Index) is the first comprehensive framework for evaluating Web3 readiness across 18+ African nations.",
-    category: "Research",
-    type: "article",
-    date: "2026-07-20",
-    readTime: "5 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    slug: "awpii-launch",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Delivering Policy Recommendations at the AU Summit",
-    excerpt:
-      "Our team presented key findings on digital asset regulation to the African Union's digital economy working group.",
-    category: "Policy",
-    type: "article",
-    date: "2026-07-15",
-    readTime: "4 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    slug: "au-summit-2026",
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "Web3 Capacity Building Workshop for Central Banks",
-    excerpt:
-      "AWI facilitated a two-day intensive workshop for 12 central bank officials on stablecoin regulation and CBDC implications.",
-    category: "Education",
-    type: "article",
-    date: "2026-07-10",
-    readTime: "3 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    slug: "central-bank-workshop",
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "AWI Executive Director Speaks at Binance Blockchain Week",
-    excerpt:
-      "Afrikanus Kofi Akosah Adusei shared the stage with global leaders to discuss Africa's role in the future of decentralized finance.",
-    category: "Events",
-    type: "video",
-    date: "2026-07-05",
-    readTime: "2 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    slug: "binance-blockchain-week",
-    featured: false,
-  },
-  {
-    id: 5,
-    title: "The Indaba Series: Inaugural Policy Dialogue in Nairobi",
-    excerpt:
-      "AWI's flagship policy engagement programme brought together regulators, industry leaders, and academics for a landmark dialogue.",
-    category: "Events",
-    type: "article",
-    date: "2026-06-28",
-    readTime: "6 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    slug: "indaba-series-nairobi",
-    featured: false,
-  },
-  {
-    id: 6,
-    title: "Francophone Web3 Student Network Launches in Abidjan",
-    excerpt:
-      "The new network aims to connect French-speaking African students and young professionals with opportunities in the Web3 ecosystem.",
-    category: "Community",
-    type: "article",
-    date: "2026-06-20",
-    readTime: "4 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    slug: "francophone-network-launch",
-    featured: false,
-  },
-];
+// ─── News data ──────────────────────────────────────────────────────────────
+// No built-in sample items: everything shown here comes from the admin (articles table).
+// Kept as an export because NewsArticle.jsx imports it.
+export const NEWS_DATA = [];
 
 // ─── Helper Functions ──────────────────────────────────────────────────────
 const formatDate = (dateString) => {
@@ -182,12 +98,16 @@ const NewsCard = ({ item, featured = false }) => {
           featured ? "md:w-2/5 md:shrink-0" : "w-full aspect-[16/9]"
         }`}
       >
-        <img
-          src={item.image}
-          alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full min-h-[180px] bg-gradient-to-br from-[#0B1437] to-[#1E3A8A]" />
+        )}
         <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm text-white text-[0.65rem] font-medium">
           {typeIcon}
           <span className="capitalize">{item.type}</span>
@@ -303,8 +223,8 @@ export default function News() {
       const matchesCategory =
         activeCategory === "All" || item.category === activeCategory;
       const matchesSearch =
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+        (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.excerpt || "").toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [newsList, activeCategory, searchQuery]);
@@ -460,7 +380,16 @@ export default function News() {
       {/* ─── NEWS GRID ────────────────────────────────────────────────────── */}
       <section className="py-12 bg-[#F8F9FB]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {filteredNews.length === 0 ? (
+          {loading && newsList.length === 0 ? (
+            <div className="flex justify-center py-20">
+              <div className="w-10 h-10 border-4 border-slate-200 border-t-[#D4A017] rounded-full animate-spin" />
+            </div>
+          ) : newsList.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-xl font-semibold text-secondary mb-2">No news yet</p>
+              <p className="text-muted-foreground">Check back soon for announcements and updates.</p>
+            </div>
+          ) : filteredNews.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-lg text-muted-foreground">
                 No articles found matching your criteria.

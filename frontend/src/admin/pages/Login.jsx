@@ -66,14 +66,14 @@ export default function Login() {
         {/* Logo + Brand */}
         <div className="text-center mb-8">
           <img
-            src="/frontend/public/logos/awi-logo.png"
+            src="/logos/awi-logo.png"
             alt="AWI Logo"
-            className="h-12 w-auto mx-auto mb-4"
+            className="h-32 w-auto mx-auto mb-4"
           />
-          <h1 className="text-white text-xl font-bold">
+          {/*<h1 className="text-white text-sm font-bold">
             Africa Web3 Institute
-          </h1>
-          <p className="text-gray-400 text-sm mt-1">Admin Portal</p>
+          </h1>*/}
+          <p className="text-gray-400 text-lg mt-1">Admin Portal</p>
         </div>
 
         {/* Card */}

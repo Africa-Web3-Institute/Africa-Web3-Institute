@@ -14,7 +14,7 @@ const isFutureDate = (dateStr) => {
     Feb: 1, February: 1,
     Mar: 2, March: 2,
     Apr: 3, April: 3,
-    May: 4, May: 4,
+    May: 4, 
     Jun: 5, June: 5,
     Jul: 6, July: 6,
     Aug: 7, August: 7,

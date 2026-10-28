@@ -17,88 +17,8 @@ import {
 import { useLanguage } from "../lib/LanguageContext";
 import { blogsApi, newsletterApi } from "../api/api";
 
-const FALLBACK_BLOGS = [
-  {
-    id: 1,
-    title: "The Rise of Stablecoins in African Trade: Beyond the Hype",
-    slug: "rise-of-stablecoins-african-cross-border-trade",
-    excerpt:
-      "How USD-pegged tokens have quietly replaced correspondent banking corridors across Lagos, Nairobi, and Johannesburg, and what policymakers need to do next.",
-    category: "Stablecoins",
-    tag: "Trade & Payments",
-    author: "Dr. Kwame Mensah",
-    authorTitle: "Senior Research Fellow, Macroeconomics",
-    date: "2026-08-14",
-    readTime: "7 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Why Western Crypto Frameworks Fail in African Markets",
-    slug: "why-western-crypto-frameworks-fail-in-africa",
-    excerpt:
-      "Transplanting MiCA or SEC-style compliance directly into Sub-Saharan jurisdictions overlooks informal economies, mobile-money rails, and high inflation drivers.",
-    category: "Policy & Law",
-    tag: "Regulation",
-    author: "Amina Diallo, LL.M",
-    authorTitle: "Lead Legal Analyst",
-    date: "2026-08-08",
-    readTime: "9 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "DeFi and Agricultural Hedging in Sub-Saharan Africa",
-    slug: "defi-agricultural-hedging-sub-saharan-africa",
-    excerpt:
-      "How decentralized commodity vaults and weather-indexed smart contracts are providing smallholders in Kenya and Ghana with affordable crop insurance.",
-    category: "Real-World Assets",
-    tag: "Agriculture & DeFi",
-    author: "Kofi Asante",
-    authorTitle: "Fintech & Agritech Fellow",
-    date: "2026-07-28",
-    readTime: "6 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "Central Bank Digital Currencies vs. Private Stablecoins: The Battle for African Liquidity",
-    slug: "cbdcs-vs-stablecoins-african-liquidity-battle",
-    excerpt:
-      "From Nigeria's eNaira to Ghana's eCedi pilot, central banks are racing to modernize national currencies while private stablecoins surge in everyday commerce.",
-    category: "Central Banking",
-    tag: "Monetary Policy",
-    author: "Dr. Fatima Al-Hassan",
-    authorTitle: "Director of Monetary Research",
-    date: "2026-07-15",
-    readTime: "8 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    featured: false,
-  },
-  {
-    id: 5,
-    title: "AI and Smart Contracts in Francophone African Governance",
-    slug: "ai-smart-contracts-francophone-africa-governance",
-    excerpt:
-      "Exploring how civil registries, land tenure, and public procurement in Côte d'Ivoire and Senegal can leverage tamper-proof distributed ledgers and LLMs.",
-    category: "Governance & Tech",
-    tag: "Francophone Network",
-    author: "Jean-Baptiste Touré",
-    authorTitle: "Head of Francophone Initiatives",
-    date: "2026-07-02",
-    readTime: "5 min read",
-    image:
-      "https://media.base44.com/images/public/69f0c79c7957f32b49dcc978/1d0e1310d_African_Web3_Think_Tank.png",
-    featured: false,
-  },
-];
+// No built-in sample posts: everything shown here comes from the admin (blogs table).
+const FALLBACK_BLOGS = [];
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
@@ -258,22 +178,14 @@ export default function Blog() {
                 : "In-depth essays, regulatory commentaries, and empirical field insights authored by Africa Web3 Institute fellows to guide central banks, policymakers, and builders."}
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-300">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#D4A017]" />
-                {blogs.length} {isFr ? "Analyses publiées" : "Published Policy Essays"}
-              </span>
-              <span className="text-slate-600">•</span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#D4A017]" />
-                {isFr ? "20+ Pays couverts" : "20+ African Jurisdictions"}
-              </span>
-              <span className="text-slate-600">•</span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#D4A017]" />
-                {isFr ? "Accès Libre & Indépendant" : "Peer-Reviewed & Independent"}
-              </span>
-            </div>
+            {blogs.length > 0 && (
+              <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-300">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#D4A017]" />
+                  {blogs.length} {isFr ? "Analyses publiées" : blogs.length === 1 ? "Published Essay" : "Published Essays"}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -301,7 +213,7 @@ export default function Blog() {
             </div>
 
             {/* Search Input */}
-            <div className="relative w-full md:w-72 shrink-0">
+            <div className="relative w-full md:w-72 flex-shrink-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
@@ -337,14 +249,18 @@ export default function Blog() {
             <div className="text-center py-20 bg-slate-50 rounded-2xl border border-slate-200">
               <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <h3 className="text-lg font-bold text-slate-800 mb-1">
-                {isFr ? "Aucun article trouvé" : "No articles found"}
+                {blogs.length === 0
+                  ? isFr ? "Aucune analyse pour le moment" : "No essays yet"
+                  : isFr ? "Aucun article trouvé" : "No articles found"}
               </h3>
               <p className="text-sm text-slate-500 mb-4">
-                {isFr
+                {blogs.length === 0
+                  ? isFr ? "Revenez bientôt : de nouvelles analyses seront publiées ici." : "Check back soon: new essays will be published here."
+                  : isFr
                   ? "Essayez de modifier vos termes de recherche ou de réinitialiser le filtre."
                   : "Try adjusting your search criteria or resetting the category filter."}
               </p>
-              <button
+              {blogs.length > 0 && (<button
                 onClick={() => {
                   setActiveCategory("All");
                   setSearch("");
@@ -352,7 +268,7 @@ export default function Blog() {
                 className="px-4 py-2 rounded-full bg-[#0B1437] text-white text-xs font-semibold hover:bg-[#D4A017] hover:text-[#0B1437] transition-all"
               >
                 {isFr ? "Réinitialiser" : "Reset Filters"}
-              </button>
+              </button>)}
             </div>
           ) : (
             <div className="space-y-12">
@@ -392,7 +308,7 @@ export default function Blog() {
                               {featuredPost.author}
                             </p>
                             <p className="text-xs text-slate-500">
-                              {featuredPost.authorTitle || "AWI Research Fellow"}
+                              {featuredPost.authorRole || featuredPost.authorTitle || "AWI Research Fellow"}
                             </p>
                           </div>
                         </div>
@@ -400,7 +316,7 @@ export default function Blog() {
                         <div className="flex items-center gap-4 text-xs text-slate-500">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
-                            {formatDate(featuredPost.date)}
+                            {formatDate(featuredPost.date || featuredPost.publishedAt || featuredPost.createdAt)}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
@@ -417,10 +333,10 @@ export default function Blog() {
                       </div>
                     </div>
 
-                    <div className="lg:col-span-5 bg-linear-to-br from-[#0B1437] to-[#1E3A8A] p-8 flex flex-col justify-between text-white relative min-h-[260px]">
+                    <div className="lg:col-span-5 bg-gradient-to-br from-[#0B1437] to-[#1E3A8A] p-8 flex flex-col justify-between text-white relative min-h-[260px]">
                       <div className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
                         style={{
-                          backgroundImage: `url("${featuredPost.image || "/Awi_Website_pics.jpg"}")`,
+                          backgroundImage: `url("${featuredPost.image || featuredPost.coverImage || "/Awi_Website_pics.jpg"}")`,
                         }}
                       />
                       <div className="relative z-10 flex justify-between items-start">
@@ -483,7 +399,7 @@ export default function Blog() {
                                 {post.author}
                               </p>
                               <p className="text-[11px] text-slate-400">
-                                {formatDate(post.date)}
+                                {formatDate(post.date || post.publishedAt || post.createdAt)}
                               </p>
                             </div>
 
@@ -517,8 +433,8 @@ export default function Blog() {
           </h2>
           <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-8">
             {isFr
-              ? "Rejoignez de 12 000 régulateurs, chercheurs et bâtisseurs Web3 recevant nos décryptages directement dans leur boîte mail."
-              : "Join the various regulators, researchers, and financial executives receiving our exclusive briefings directly in their inbox."}
+              ? "Recevez nos décryptages et briefings directement dans votre boîte mail."
+              : "Get our latest briefings and analysis directly in your inbox."}
           </p>
 
           {newsletterSubscribed ? (

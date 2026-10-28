@@ -1,28 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Plus, Search, Edit2, Trash2,
-  Download, Eye, X, ChevronDown, FileText,
-  BookOpen, BarChart2, TrendingUp, Calendar,
+  Download, X, ChevronDown, FileText,
+  BookOpen, BarChart2, TrendingUp, Calendar, Loader2, Upload,
 } from "lucide-react";
+import { publicationsApi } from "../../api/api";
 
-// ─── Mock data ──────────────────────────────────────────────────────────────
-const MOCK_PUBLICATIONS = [
-  { id: 1, title: "State of Web3 Africa 2026 — Q1 Report", category: "State of Web3 Africa", status: "Published", date: "March 2026", author: "AWI Research Team", available: true, downloads: 487 },
-  { id: 2, title: "State of Web3 Africa 2025 — Annual Report", category: "State of Web3 Africa", status: "Published", date: "December 2025", author: "AWI Research Team", available: true, downloads: 1240 },
-  { id: 3, title: "State of Web3 Africa 2026 — Q2 Report", category: "State of Web3 Africa", status: "Draft", date: "June 2026", author: "AWI Research Team", available: false, downloads: 0 },
-  { id: 4, title: "African Stablecoin Adoption Report — May 2026", category: "Monthly Stablecoin Report", status: "Draft", date: "May 2026", author: "AWI Research Team", available: false, downloads: 0 },
-  { id: 5, title: "African Stablecoin Adoption Report — March 2026", category: "Monthly Stablecoin Report", status: "Published", date: "March 2026", author: "AWI Research Team", available: true, downloads: 312 },
-  { id: 6, title: "VASP Licensing Frameworks in Anglophone Africa", category: "Policy Brief", status: "Review", date: "April 2026", author: "AWI Policy Team", available: false, downloads: 0 },
-  { id: 7, title: "Stablecoin Regulation in Francophone Africa", category: "Policy Brief", status: "Review", date: "March 2026", author: "AWI Policy Team", available: false, downloads: 0 },
-  { id: 8, title: "CBDCs and Financial Inclusion in Sub-Saharan Africa", category: "Policy Brief", status: "Published", date: "February 2026", author: "AWI Policy Team", available: true, downloads: 198 },
-  { id: 9, title: "Why Africa Needs Its Own Web3 Policy Framework", category: "Published Articles", status: "Published", date: "April 2026", author: "AWI Executive Director", available: true, downloads: 0 },
-  { id: 10, title: "Africa Web3 Policy & Innovation Index (AWPII) 2025", category: "Published Research", status: "Published", date: "December 2025", author: "AWI Research Team", available: true, downloads: 876 },
+// ─── Listings currently built into the public Publications page ───────────
+// Used only by the "Import current website listings" button, which saves them to the
+// database once so they can be edited here. Status "Published" + available:false keeps them
+// looking exactly as they do today ("Coming soon" card).
+const L = (category, title, description, date, author, downloadUrl, available) =>
+  ({ category, title, description, date, author, downloadUrl, available, status: "Published" });
+const LEGACY_LISTINGS = [
+  L("State of Web3 Africa", "State of Web3 Africa 2026 — Q1 Report", "A comprehensive review of blockchain adoption, policy developments, and ecosystem growth across 18+ African nations in Q1 2026.", "March 2026", "AWI Research Team", "https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf", true),
+  L("State of Web3 Africa", "State of Web3 Africa 2026 — Q2 Report", "Quarterly intelligence on stablecoin adoption, regulatory changes, and capital flows across African Web3 markets.", "June 2026", "AWI Research Team", "", false),
+  L("Policy Brief", "VASP Licensing Frameworks in Anglophone Africa", "Comparative analysis of virtual asset service provider licensing requirements across Nigeria, South Africa, Kenya, Ghana, and Rwanda.", "April 2026", "AWI Policy Team", "", false),
+  L("Policy Brief", "Stablecoin Regulation in Francophone Africa", "Policy brief examining the BCEAO and BEAC regional frameworks and their implications for stablecoin adoption across Francophone African nations.", "March 2026", "AWI Policy Team", "", false),
+  L("Policy Brief", "CBDCs and Financial Inclusion in Sub-Saharan Africa", "Analysis of active and pilot CBDC programmes across Sub-Saharan Africa and their potential to accelerate financial inclusion.", "February 2026", "AWI Policy Team", "", false),
+  L("Policy Brief", "AML/CFT Compliance for African VASPs", "Guidance brief on FATF Travel Rule implementation and AML/CFT obligations for virtual asset service providers operating in African jurisdictions.", "January 2026", "AWI Policy Team", "", false),
+  L("Published Articles", "Why Africa Needs Its Own Web3 Policy Framework", "Op-ed examining why African nations must develop indigenous Web3 regulatory frameworks rather than adopting Western models wholesale.", "April 2026", "AWI Executive Director", "", false),
+  L("Published Articles", "The Stablecoin Revolution in African Cross-Border Trade", "Analysis of how stablecoins are reshaping intra-African trade settlement and what it means for the AfCFTA digital payment infrastructure.", "March 2026", "AWI Research Team", "", false),
+  L("Published Articles", "Binance vs Nigeria: What It Means for African Crypto Regulation", "In-depth analysis of the Nigeria-Binance regulatory standoff and its implications for VASP regulation across the continent.", "January 2026", "AWI Policy Team", "", false),
+  L("Published Research", "Africa Web3 Policy & Innovation Index (AWPII) 2025", "The definitive annual ranking of 18+ African nations on Web3 policy readiness, blockchain innovation activity, and digital asset adoption metrics.", "December 2025", "AWI Research Team", "", false),
+  L("Published Research", "Blockchain for Agricultural Supply Chains in Africa", "Research paper examining blockchain implementations in African agricultural supply chains with case studies from Kenya, Ghana, and Ethiopia.", "November 2025", "AWI Research Team", "", false),
+  L("Published Research", "DeFi Adoption Patterns in Sub-Saharan Africa", "Empirical research on decentralised finance usage patterns, barriers to adoption, and opportunities across Sub-Saharan African markets.", "October 2025", "AWI Research Team", "", false),
 ];
+
+// The database stores whatever it was given; show a consistent shape.
+const STATUS_LIST = ["Published", "Draft", "Review"];
+const normStatus = (v) => STATUS_LIST.find((x) => x.toLowerCase() === String(v || "published").toLowerCase()) || "Published";
+const norm = (p) => ({
+  ...p,
+  title: p.title || "",
+  author: p.author || "",
+  category: p.category || "",
+  date: p.date || "",
+  description: p.description || "",
+  downloadUrl: p.downloadUrl || "",
+  status: normStatus(p.status),
+  available: Boolean(Number(p.available)),
+  downloads: Number(p.downloads) || 0, // counted by the backend when visitors click Download
+});
+const hasLink = (p) => p.downloadUrl && p.downloadUrl !== "#";
 
 const CATEGORIES = [
   "All Categories",
   "State of Web3 Africa",
-  "Monthly Stablecoin Report",
+  "Monthly African Stablecoin Adoption Report",
   "Policy Brief",
   "Published Articles",
   "Published Research",
@@ -38,14 +63,14 @@ const STATUS_STYLES = {
 
 const CATEGORY_ICONS = {
   "State of Web3 Africa":    BarChart2,
-  "Monthly Stablecoin Report": TrendingUp,
+  "Monthly African Stablecoin Adoption Report": TrendingUp,
   "Policy Brief":            FileText,
   "Published Articles":      BookOpen,
   "Published Research":      FileText,
 };
 
 // ─── Modal ─────────────────────────────────────────────────────────────────
-function PublicationModal({ publication, onClose, onSave }) {
+function PublicationModal({ publication, onClose, onSave, saving, error }) {
   const isEdit = !!publication?.id;
   const [form, setForm] = useState({
     title: publication?.title || "",
@@ -62,7 +87,7 @@ function PublicationModal({ publication, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...publication, ...form, id: publication?.id || Date.now() });
+    onSave({ ...publication, ...form });
   };
 
   return (
@@ -188,7 +213,7 @@ function PublicationModal({ publication, onClose, onSave }) {
             <input
               value={form.downloadUrl}
               onChange={e => set("downloadUrl", e.target.value)}
-              placeholder="https://... or leave empty"
+              placeholder="https://... (PDF or page). Leave empty if not ready"
               className="w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-600"
             />
           </div>
@@ -212,6 +237,12 @@ function PublicationModal({ publication, onClose, onSave }) {
             </button>
           </div>
 
+          {error && (
+            <div role="alert" className="rounded-lg border border-red-800 bg-red-950/50 text-red-300 text-sm px-4 py-3">
+              {error}
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
@@ -223,12 +254,13 @@ function PublicationModal({ publication, onClose, onSave }) {
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
+              disabled={saving}
+              className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-60"
               style={{ backgroundColor: "#D4A017" }}
               onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
               onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
             >
-              {isEdit ? "Save Changes" : "Add Publication"}
+              {saving ? "Saving…" : isEdit ? "Save Changes" : "Add Publication"}
             </button>
           </div>
         </form>
@@ -238,7 +270,7 @@ function PublicationModal({ publication, onClose, onSave }) {
 }
 
 // ─── Delete Confirm ────────────────────────────────────────────────────────
-function DeleteConfirm({ publication, onClose, onConfirm }) {
+function DeleteConfirm({ publication, onClose, onConfirm, error }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -256,6 +288,7 @@ function DeleteConfirm({ publication, onClose, onConfirm }) {
         <p className="text-gray-400 text-sm text-center mb-6">
           Are you sure you want to delete <span className="text-white font-medium">"{publication.title}"</span>? This action cannot be undone.
         </p>
+        {error && <p role="alert" className="text-red-400 text-xs text-center mb-4">{error}</p>}
         <div className="flex gap-3">
           <button
             onClick={onClose}
@@ -276,7 +309,7 @@ function DeleteConfirm({ publication, onClose, onConfirm }) {
 }
 
 // ─── Publication Card (mobile) ───────────────────────────────────────────
-function PublicationCard({ pub, onEdit, onDelete, onPreview }) {
+function PublicationCard({ pub, onEdit, onDelete }) {
   const ss = STATUS_STYLES[pub.status] || STATUS_STYLES.Draft;
   const Icon = CATEGORY_ICONS[pub.category] || FileText;
 
@@ -316,7 +349,7 @@ function PublicationCard({ pub, onEdit, onDelete, onPreview }) {
 
       <div className="flex items-center justify-between pt-1 border-t border-gray-700/50">
         <div className="flex items-center gap-1 text-gray-400 text-xs">
-          {pub.available ? (
+          {pub.available && hasLink(pub) ? (
             <>
               <Download size={12} />
               <span>{pub.downloads.toLocaleString()}</span>
@@ -334,13 +367,6 @@ function PublicationCard({ pub, onEdit, onDelete, onPreview }) {
             <Edit2 size={14} />
           </button>
           <button
-            onClick={() => onPreview(pub)}
-            className="p-1.5 rounded-md text-gray-500 hover:text-blue-400 hover:bg-gray-700 transition-colors"
-            title="Preview"
-          >
-            <Eye size={14} />
-          </button>
-          <button
             onClick={() => onDelete(pub)}
             className="p-1.5 rounded-md text-gray-500 hover:text-red-400 hover:bg-gray-700 transition-colors"
             title="Delete"
@@ -355,12 +381,34 @@ function PublicationCard({ pub, onEdit, onDelete, onPreview }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function AdminPublications() {
-  const [publications, setPublications] = useState(MOCK_PUBLICATIONS);
+  const [publications, setPublications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [modal, setModal] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [importing, setImporting] = useState(false);
+
+  const listFrom = (res) => (Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []);
+  const load = async () => {
+    try {
+      const res = await publicationsApi.getAll();
+      setPublications(listFrom(res).map(norm));
+      setLoadError("");
+    } catch (err) {
+      setLoadError(err.message || "Could not load publications.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    load();
+  }, []);
 
   // Filter
   const filtered = publications.filter(p => {
@@ -376,20 +424,72 @@ export default function AdminPublications() {
   const published = publications.filter(p => p.status === "Published").length;
   const drafts = publications.filter(p => p.status === "Draft").length;
   const inReview = publications.filter(p => p.status === "Review").length;
-  const totalDownloads = publications.reduce((sum, p) => sum + p.downloads, 0);
 
-  const handleSave = (pub) => {
-    setPublications(prev =>
-      pub.id && prev.find(p => p.id === pub.id)
-        ? prev.map(p => p.id === pub.id ? pub : p)
-        : [...prev, { ...pub, id: Date.now(), downloads: 0 }]
-    );
-    setModal(null);
+  const payloadOf = (pub) => ({
+    title: pub.title.trim(),
+    description: pub.description || "",
+    category: pub.category,
+    author: pub.author || "",
+    status: pub.status,
+    date: pub.date || "",
+    available: pub.available ? 1 : 0,
+    downloadUrl: (pub.downloadUrl || "").trim(),
+  });
+
+  const handleSave = async (pub) => {
+    setFormError("");
+    if (!pub.title.trim()) return setFormError("Please add a title.");
+    const url = (pub.downloadUrl || "").trim();
+    if (url && !/^(https?:\/\/|\/)/i.test(url) && url !== "#") return setFormError("The download address must start with https:// (or /).");
+    setSaving(true);
+    try {
+      if (pub.id) {
+        await publicationsApi.update(pub.id, payloadOf(pub));
+        setPublications(prev => prev.map(p => (p.id === pub.id ? norm({ ...p, ...payloadOf(pub) }) : p)));
+      } else {
+        await publicationsApi.create(payloadOf(pub));
+        await load(); // the server does not return the new row, so reload to get its id
+      }
+      setModal(null);
+    } catch (err) {
+      setFormError(err.message || "Could not save. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = (id) => {
-    setPublications(prev => prev.filter(p => p.id !== id));
-    setDeleteTarget(null);
+  const handleDelete = async (id) => {
+    setFormError("");
+    try {
+      await publicationsApi.remove(id);
+      setPublications(prev => prev.filter(p => p.id !== id));
+      setDeleteTarget(null);
+    } catch (err) {
+      setFormError((err.message || "Could not delete.") + " (Only super-admins can delete.)");
+    }
+  };
+
+  // One-time: save the listings currently built into the public page, skipping any already present.
+  const handleImport = async () => {
+    const have = new Set(publications.map(p => p.title.trim().toLowerCase()));
+    const todo = LEGACY_LISTINGS.filter(l => !have.has(l.title.toLowerCase()));
+    if (!todo.length) return setNotice("Everything is already imported.");
+    if (!window.confirm(`Save ${todo.length} listings from the current website into the database?`)) return;
+    setImporting(true);
+    setNotice("");
+    let done = 0;
+    try {
+      for (const l of todo) {
+        await publicationsApi.create(payloadOf(l));
+        done += 1;
+      }
+      setNotice(`Imported ${done} listings. Review them below, then ask to remove the built-in list from the website code.`);
+    } catch (err) {
+      setNotice(`Stopped after ${done} of ${todo.length}: ${err.message || "error"}`);
+    } finally {
+      setImporting(false);
+      await load();
+    }
   };
 
   return (
@@ -403,8 +503,18 @@ export default function AdminPublications() {
             Manage all AWI publications, reports, and research documents
           </p>
         </div>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <button
-          onClick={() => setModal({ mode: "add" })}
+          onClick={handleImport}
+          disabled={importing || loading}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-300 border border-gray-700 hover:border-gray-500 transition-colors disabled:opacity-50"
+          title="Save the listings currently built into the public page, so you can edit them here"
+        >
+          <Upload size={16} />
+          {importing ? "Importing…" : "Import current website listings"}
+        </button>
+        <button
+          onClick={() => { setFormError(""); setModal({ mode: "add" }); }}
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors w-full sm:w-auto"
           style={{ backgroundColor: "#D4A017" }}
           onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
@@ -413,7 +523,15 @@ export default function AdminPublications() {
           <Plus size={16} />
           Add Publication
         </button>
+        </div>
       </div>
+
+      {notice && (
+        <div role="status" className="rounded-lg border border-gray-700 bg-gray-900 text-gray-300 text-sm px-4 py-3">{notice}</div>
+      )}
+      {loadError && (
+        <div role="alert" className="rounded-lg border border-red-800 bg-red-950/50 text-red-300 text-sm px-4 py-3">{loadError}</div>
+      )}
 
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -421,7 +539,7 @@ export default function AdminPublications() {
           { label: "Published", value: published, color: "#10b981" },
           { label: "In Review", value: inReview, color: "#D4A017" },
           { label: "Drafts", value: drafts, color: "#6b7280" },
-          { label: "Total Downloads", value: totalDownloads.toLocaleString(), color: "#3b82f6" },
+          { label: "Total Downloads", value: publications.reduce((sum, p) => sum + p.downloads, 0).toLocaleString(), color: "#3b82f6" },
         ].map(s => (
           <div
             key={s.label}
@@ -505,7 +623,7 @@ export default function AdminPublications() {
               {filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-16 text-center text-gray-500 text-sm">
-                    No publications match your filters.
+                    {loading ? "Loading…" : publications.length ? "No publications match your filters." : "No publications yet. Click “Add Publication”, or import the current website listings."}
                   </td>
                 </tr>
               ) : (
@@ -564,7 +682,7 @@ export default function AdminPublications() {
 
                       {/* Downloads */}
                       <td className="px-5 py-4 text-center">
-                        {pub.available ? (
+                        {pub.available && hasLink(pub) ? (
                           <div className="flex items-center justify-center gap-1 text-gray-400 text-xs">
                             <Download size={11} />
                             {pub.downloads.toLocaleString()}
@@ -578,20 +696,16 @@ export default function AdminPublications() {
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-1">
                           <button
-                            onClick={() => setModal({ mode: "edit", data: pub })}
+                            onClick={() => { setFormError(""); setModal({ mode: "edit", data: pub }); }}
+                            aria-label={`Edit ${pub.title}`}
                             className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-gray-700 transition-colors"
                             title="Edit"
                           >
                             <Edit2 size={14} />
                           </button>
                           <button
-                            className="p-1.5 rounded-md text-gray-500 hover:text-blue-400 hover:bg-gray-700 transition-colors"
-                            title="Preview"
-                          >
-                            <Eye size={14} />
-                          </button>
-                          <button
-                            onClick={() => setDeleteTarget(pub)}
+                            onClick={() => { setFormError(""); setDeleteTarget(pub); }}
+                            aria-label={`Delete ${pub.title}`}
                             className="p-1.5 rounded-md text-gray-500 hover:text-red-400 hover:bg-gray-700 transition-colors"
                             title="Delete"
                           >
@@ -612,16 +726,15 @@ export default function AdminPublications() {
       <div className="md:hidden space-y-3">
         {filtered.length === 0 ? (
           <div className="text-center py-12 text-gray-500 text-sm">
-            No publications match your filters.
+            {loading ? "Loading…" : "No publications match your filters."}
           </div>
         ) : (
           filtered.map(pub => (
             <PublicationCard
               key={pub.id}
               pub={pub}
-              onEdit={pub => setModal({ mode: "edit", data: pub })}
+              onEdit={pub => { setFormError(""); setModal({ mode: "edit", data: pub }); }}
               onDelete={setDeleteTarget}
-              onPreview={() => {}}
             />
           ))
         )}
@@ -636,6 +749,8 @@ export default function AdminPublications() {
           publication={modal.data}
           onClose={() => setModal(null)}
           onSave={handleSave}
+          saving={saving}
+          error={formError}
         />
       )}
       {deleteTarget && (
@@ -643,6 +758,7 @@ export default function AdminPublications() {
           publication={deleteTarget}
           onClose={() => setDeleteTarget(null)}
           onConfirm={handleDelete}
+          error={formError}
         />
       )}
     </div>
