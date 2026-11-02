@@ -40,9 +40,9 @@ export default function CountryDeepDive({ selectedCountry, language }) {
         <div className="flex items-center gap-3">
           <CountryFlag emoji={selectedCountry.flag} size={20} />
           <div>
-            <h3 className="font-bold text-secondary text-2xl tracking-tight leading-none mb-1.5">{selectedCountry.content[language].name}</h3>
+            <h3 className="font-bold dark:text-accent-foreground text-xl tracking-tight leading-none mb-1.5">{selectedCountry.content[language].name}</h3>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground font-medium">Rank #{selectedCountry.rank}</span>
+              <span className="text-xs text-foreground dark:text-muted-foreground font-medium">Rank #{selectedCountry.rank}</span>
               <span className={`text-xs font-bold px-2 py-0.5 rounded ${getGradeBadgeClass(selectedCountry.grade)}`}>
                 {selectedCountry.grade}
               </span>
@@ -51,8 +51,8 @@ export default function CountryDeepDive({ selectedCountry, language }) {
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <div className="bg-slate-50 dark:bg-slate-950 px-4 py-2 rounded-lg border border-slate-100 dark:border-slate-800 text-right">
-            <span className="block text-[0.6875rem] font-bold text-muted-foreground uppercase tracking-wider">Overall Score</span>
-            <span className="text-3xl font-extrabold text-secondary leading-none">{selectedCountry.overall_score}</span>
+            <span className="block text-[0.6875rem] font-bold text-foreground dark:text-muted-foreground uppercase tracking-wider">Overall Score</span>
+            <span className="text-3xl font-extrabol text-foreground dark:text-accent-foreground leading-none">{selectedCountry.overall_score}</span>
           </div>
           <Link
             to={`/country-tracker/${selectedCountry.key}`}
@@ -77,11 +77,11 @@ export default function CountryDeepDive({ selectedCountry, language }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-6">
             <div className="flex flex-col items-center w-full">
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Pillar Distribution</h4>
-              <div className="w-full min-h-[260px] h-[260px]">
+              <div className="w-full min-h-[260px] h-[260px] ">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
                     <PolarGrid stroke="#e2e8f0" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: 'hsl(var(--foreground))', fontSize: 11, fontWeight: 600 }} />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#ffffff', fontSize: 11, fontWeight: 600 }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                     <Radar name={selectedCountry.name} dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
                   </RadarChart>
@@ -118,10 +118,10 @@ export default function CountryDeepDive({ selectedCountry, language }) {
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Recent Policy Events</h4>
               <div className="space-y-2.5">
                 {recentEvents.map((event, idx) => (
-                  <div key={idx} className="flex gap-3 items-start">
+                  <div key={idx} className="flex gap-3 items-start ">
                     <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${SEVERITY_DOT[event.severity] || "bg-slate-400"}`} />
                     <div>
-                      <span className="text-xs font-semibold text-foreground">{event.content?.[language]?.title || event.title}</span>
+                      <span className="text-xs font-semibold text-gray-800 dark:text-accent-foreground">{event.content?.[language]?.title || event.title}</span>
                       <span className="text-xs text-muted-foreground ml-2">{event.date}</span>
                     </div>
                   </div>
@@ -137,7 +137,7 @@ export default function CountryDeepDive({ selectedCountry, language }) {
               ? "Les scores détaillés des piliers et SWOT sont publiés pour le Top 10 des pays leaders."
               : "Detailed SWOT analyses and pillar scores are published for the Top 10 leading countries."}
           </p>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
             {language === "fr"
               ? "Les profils complets des marchés émergents seront étendus dans les prochaines mises à jour."
               : "Full emerging market profiles will be expanded in the next quarterly snapshots."}
@@ -147,10 +147,10 @@ export default function CountryDeepDive({ selectedCountry, language }) {
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Recent Policy Events</h4>
               <div className="space-y-2.5">
                 {recentEvents.map((event, idx) => (
-                  <div key={idx} className="flex gap-3 items-start">
+                  <div key={idx} className="flex gap-3 items-start ">
                     <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${SEVERITY_DOT[event.severity] || "bg-slate-400"}`} />
                     <div>
-                      <span className="text-xs font-semibold text-foreground">{event.content?.[language]?.title || event.title}</span>
+                      <span className="text-xs font-semibold text-accent-foreground">{event.content?.[language]?.title || event.title}</span>
                       <span className="text-xs text-muted-foreground ml-2">{event.date}</span>
                     </div>
                   </div>

@@ -1,11 +1,16 @@
-import { MAP_COLORS, STATUS } from "../../data/trackerCountries";
+import { COUNTRIES, MAP_COLORS, STATUS, AFRICA_ISOS } from "../../data/trackerCountries";
 
-const items = [
-  { key: "live" },
-  { key: "proposed" },
-  { key: "review" },
-  { key: "none" },
-];
+const LEGEND_ORDER = ["live", "proposed", "draft", "review", "none"];
+
+function isAfrican(c) {
+  return (c.iso || []).some((code) => AFRICA_ISOS.has(code));
+}
+
+// Only show swatches for statuses that actually appear among African
+// countries -- avoids a legend entry (e.g. "Proposed") that never shows
+// up anywhere on the map.
+const availableStatuses = new Set(COUNTRIES.filter(isAfrican).map((c) => c.status));
+const items = LEGEND_ORDER.filter((key) => availableStatuses.has(key)).map((key) => ({ key }));
 
 export default function MapLegend() {
   return (

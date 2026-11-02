@@ -4,8 +4,6 @@ import { Link } from "react-router-dom";
 export default function TermsOfUse() {
   return (
     <div className="bg-background text-foreground">
-      <title>Terms of Use | Africa Web3 Institute</title>
-
       {/* Hero */}
       <section className="py-16 border-b border-border" style={{ background: "linear-gradient(135deg, hsl(220 20% 8%) 0%, hsl(224 82% 14%) 100%)" }}>
         <div className="max-w-4xl mx-auto px-6 lg:px-8">

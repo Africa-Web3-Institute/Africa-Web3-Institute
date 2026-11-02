@@ -9,24 +9,20 @@ import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import CountryFlag from "../components/CountryFlag";
 
-//const PILLAR_ICONS = [Building2, BarChart3, Users, Globe];
-
 function CTAButton({ children, primary = false, href = null, onClick = null }) {
-   const base = "inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 cursor-pointer";
+  const base = "inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 cursor-pointer";
   const style = primary
     ? `${base} bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm hover:shadow-md`
     : `${base} border border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground`;
-  
-  if (href) return <a href={href} className={style}>{children}</a>;
-  return <button onClick={onClick} className={style}>{children}</button>;
 
+  if (href) return <a href={href} className={style}>{children}</a>;
+  return <button type="button" onClick={onClick} className={style}>{children}</button>;
 }
 
 export default function AWPII() {
   const { language } = useLanguage();
   const T = t[language].awpii;
-  
-  // State for the selected country in the dashboard
+
   const [selectedCountryKey, setSelectedCountryKey] = useState("southafrica");
 
   const scrollToDashboard = () => {
@@ -36,10 +32,8 @@ export default function AWPII() {
     document.querySelector("#awpii-contact")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Find currently selected country data
   const selectedCountry = awpiiData.find(c => c.key === selectedCountryKey) || awpiiData[0];
 
-  // Momentum bar chart data (Top 10)
   const momentumData = awpiiData.slice(0, 10).map(c => ({
     name: c.content[language].name,
     score: c.overall_score,
@@ -57,49 +51,49 @@ export default function AWPII() {
   return (
     <div className="bg-background text-foreground">
 
-      {/* Hero */}
-     <section className="relative bg-secondary overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+      {/* Hero – single H1, trimmed copy, clear CTA hierarchy */}
+      <section className="relative bg-secondary overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "32px 32px"
+          }}
+        />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-        
-            <h1 className="text-[2.5rem] lg:text-[2.5rem] font-bold text-white leading-[1.1] tracking-tight mb-6">
-              {T.heroTitle}
-            </h1>
-            <p className="text-[1.25rem] lg:text-[1.0rem] font-medium mb-8 leading-snug" style={{ color: "hsl(40 78% 50%)" }}>
-              {T.heroSubtitle}
-            </p>
-              <p className="text-[1.25rem] lg:text-[1.0rem] font-medium mb-8 leading-snug" style={{ color: "hsl(40 78% 50%)" }}>
-              {T.heroSubtitle1}
-            </p>
-              <div className="w-16 h-px bg-accent mb-8" />
-            <p className="text-[1rem] text-white/80 leading-[1.85] mb-4 max-w-2xl">
-              {T.heroPara1}
-            </p>
-            <p className="text-[1rem] text-white/80 leading-[1.85] mb-4 max-w-2xl font-semibold">
-              {T.heroPara2}
-            </p>
-            <p className="text-[1rem] text-white/70 leading-[1.85] mb-10 max-w-2xl">
-              {T.heroPara3}
-            </p>
-            
-          
-            <div className="flex flex-wrap gap-4">
-              <CTAButton primary onClick={scrollToDashboard}>
-                {T.heroCtaPrimary} <ArrowRight className="w-4 h-4" />
-              </CTAButton>
-              <a
-                href="https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf"
-                target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 border border-white/80 text-white/80 hover:bg-white/10 hover:text-white"
-              >
-                <Download className="w-4 h-4" /> {T.heroCtaSecondary}
-              </a>
-            </div>
-          </div>
-       
-      </section>
+          <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
+            Africa Web3 Institute
+          </p>
 
+          <h1 className="text-[1.75rem] sm:text-[2.25rem] lg:text-[2.75rem] font-bold text-white leading-tight mb-4 max-w-3xl">
+            {T.pageTitle}
+          </h1>
+
+          <p className="text-[1.125rem] lg:text-[1.25rem] font-medium mb-6 leading-snug max-w-2xl" style={{ color: "hsl(40 78% 50%)" }}>
+            {T.heroSubtitle}
+          </p>
+
+          <div className="w-16 h-px bg-accent mb-8" />
+
+          <p className="text-[1rem] text-white/80 leading-[1.85] mb-10 max-w-2xl">
+            {T.heroPara1}
+          </p>
+
+          <div className="flex flex-wrap gap-4">
+            <CTAButton primary onClick={scrollToDashboard}>
+              {T.heroCtaPrimary} <ArrowRight className="w-4 h-4" />
+            </CTAButton>
+            <a
+              href="/reports/AWI_Q1Report.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-6 py-3 rounded-lg transition-all duration-200 border border-white/80 text-white/80 hover:bg-white/10 hover:text-white"
+            >
+              <Download className="w-4 h-4" /> {T.heroCtaSecondary}
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Stats Strip */}
       <section className="border-b border-border bg-muted/40">
@@ -115,11 +109,21 @@ export default function AWPII() {
         </div>
       </section>
 
-      {/* Unified May 2026 Interactive Dashboard */}
+      {/* Dashboard intro strip — orients the user before the dense UI below */}
+      <section className="bg-accent/10 border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-5">
+          <p className="text-[0.875rem] text-secondary flex items-center gap-2">
+            <Info className="w-4 h-4 text-accent shrink-0" />
+            {language === "fr"
+              ? "Explorez ci-dessous : cliquez sur un pays sur la carte ou dans le classement pour voir son analyse détaillée."
+              : "Explore below: click any country on the map or in the rankings to see its detailed breakdown."}
+          </p>
+        </div>
+      </section>
+
+      {/* Unified May 2026 Interactive Dashboard – revised layout */}
       <section id="dashboard" className="py-24 lg:py-32 border-b border-border bg-slate-50/50 dark:bg-slate-900/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          
-          {/* Section Header */}
           <div className="max-w-3xl mb-16">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">
               {language === "fr" ? "Tableau de Bord Interactif" : "Interactive Dashboard"}
@@ -134,12 +138,9 @@ export default function AWPII() {
             </p>
           </div>
 
+          {/* Selection area: map + rankings side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
-            {/* Left/Middle Column (Map + Deep Dive) */}
-            <div className="lg:col-span-2 space-y-8">
-              
-              {/* Map Card */}
+            <div className="lg:col-span-2">
               <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-secondary text-lg">
@@ -150,37 +151,30 @@ export default function AWPII() {
                     <span>{language === "fr" ? "Cliquez sur un pays" : "Click a country to select"}</span>
                   </div>
                 </div>
-                <AfricaMapInteractive 
+                <AfricaMapInteractive
                   onCountrySelect={setSelectedCountryKey}
                   language={language}
                 />
               </div>
-
-              {/* Country Deep Dive */}
-              <CountryDeepDive selectedCountry={selectedCountry} language={language} />
-
             </div>
 
-            {/* Right Column (Rankings List + Momentum Tracker) */}
-            <div className="space-y-8">
-              
-              {/* Rankings List Card */}
+            <div className="lg:col-span-1">
               <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm flex flex-col">
                 <div className="mb-4">
-                  <h3 className="font-bold text-secondary text-lg mb-1">
+                  <h3 className="font-bold text-secondary dark:text-accent text-lg mb-1">
                     {language === "fr" ? "Classement Complet" : "Full Top 20 Rankings"}
                   </h3>
                   <p className="text-xs text-muted-foreground">
                     {language === "fr" ? "Cliquez sur un pays pour voir les détails" : "Click a country to view details"}
                   </p>
                 </div>
-                
                 <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
                   {awpiiData.map((country) => (
                     <button
+                    type="button"
                       key={country.id}
                       onClick={() => setSelectedCountryKey(country.key)}
-                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all text-left border ${
+                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all  dark:text-muted-foreground border ${
                         selectedCountryKey === country.key
                           ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-850 dark:border-slate-700 shadow-sm font-semibold scale-[1.01]"
                           : "bg-slate-50/50 hover:bg-slate-50 border-slate-100 dark:bg-slate-950/40 dark:border-slate-850 dark:hover:bg-slate-950/80 text-foreground"
@@ -190,7 +184,7 @@ export default function AWPII() {
                         <span className={`text-xs font-bold w-5 shrink-0 ${selectedCountryKey === country.key ? "text-accent" : "text-muted-foreground"}`}>
                           #{country.rank}
                         </span>
-                       <CountryFlag emoji={country.flag} size={20} />
+                        <CountryFlag emoji={country.flag} size={20} />
                         <span className="text-sm truncate max-w-[120px]">{country.content[language].name}</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -203,76 +197,82 @@ export default function AWPII() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Momentum Tracker Card */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm">
-                <div className="mb-3">
-                  <h3 className="font-bold text-secondary text-lg mb-1 flex items-center gap-1.5">
-                    <TrendingUp className="w-4 h-4 text-accent" />
-                    {T.momentumTitle}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {T.momentumDesc}
-                  </p>
-                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
-                    <span className="font-semibold text-foreground">{T.momentumHelper}</span>
-                  </div>
+          {/* Country detail – full width below the selection area */}
+          <div className="mt-8">
+            <CountryDeepDive selectedCountry={selectedCountry} language={language} />
+          </div>
+
+          {/* Momentum chart – full width below the detail */}
+          <div className="mt-8">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+              <div className="mb-3">
+                <h3 className="font-bold text-secondary dark:text-accent text-lg mb-1 flex items-center gap-1.5">
+                  <TrendingUp className="w-4 h-4 text-accent" />
+                  {T.momentumTitle}
+                </h3>
+                <p className="text-xs text-muted-foreground mb-2">{T.momentumDesc}</p>
+                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-2 text-[11px] text-foreground dark:text-accent-foreground leading-relaxed">
+                  <span className="font-semibold text-foreground dark:text-muted-foreground">{T.momentumHelper}</span>
                 </div>
-
-                <div className="w-full h-[280px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
+              </div>
+              <div className="w-full h-[280px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
                     layout="vertical"
                     data={momentumData}
-                    margin={{ top: 0, right: 10, left: -25, bottom: 0 }}
+                    margin={{ top: 0, right: 10, left: -15, bottom: 0 }}
                     style={{ cursor: 'pointer' }}
                     onClick={(d) => {
                       if (d?.activePayload?.length) {
-                        const found = awpiiData.find(c => c.name === d.activePayload[0].payload.name);
+                        const found = awpiiData.find(c => c.content[language].name === d.activePayload[0].payload.name);
                         if (found) setSelectedCountryKey(found.key);
                       }
                     }}
-                    >
-                      <XAxis type="number" domain={[50, 100]} hide />
-                      <YAxis
-                        type="category"
-                        dataKey="name"
-                        tick={{ fill: 'hsl(var(--foreground))', fontSize: 10, fontWeight: 600 }}
-                        width={90}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip
-                        cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const data = payload[0].payload;
-                            return (
-                              <div className="bg-slate-900 text-white p-2 rounded shadow text-xs border border-white/10">
-                                <p className="font-bold">{data.name}</p>
-                                <p>{T.momentumScoreLabel}: {data.score}</p>
-                                <p>{data.momentum}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Bar dataKey="score" radius={[0, 4, 4, 0]} barSize={12}>
-                        {momentumData.map((entry, index) => {
-                          const isUpward = entry.momentum.includes("Upward");
-                          const isStable = entry.momentum.includes("Stable");
-                          const fill = isUpward ? "#16a34a" : isStable ? "#ca8a04" : "#dc2626";
-                          return <Cell key={`cell-${index}`} fill={fill} />;
-                        })}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+                  >
+                    <XAxis type="number" domain={[50, 100]} hide />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      tick={{
+                        fill: 'var(--color-muted-foreground)',
+                        fontSize: 10,
+                        fontWeight: 600,
+                      }}
+                      width={90}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(0,0,0,0.02)' }}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-slate-900 text-white p-2 rounded shadow text-xs border border-white/10">
+                              <p className="font-bold">{data.name}</p>
+                              <p>{T.momentumScoreLabel}: {data.score}</p>
+                              <p>{data.momentum}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Bar dataKey="score" radius={[0, 4, 4, 0]} barSize={12}>
+                      {momentumData.map((entry, index) => {
+                        const isUpward = entry.momentum.includes("Upward");
+                        const isStable = entry.momentum.includes("Stable");
+                        const fill = isUpward ? "#16a34a" : isStable ? "#ca8a04" : "#dc2626";
+                        return <Cell key={`cell-${index}`} fill={fill} />;
+                      })}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-
             </div>
-
           </div>
         </div>
       </section>
@@ -320,8 +320,13 @@ export default function AWPII() {
 
       {/* Why It Matters */}
       <section className="py-24 lg:py-32 bg-secondary border-b border-border relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "40px 40px"
+          }}
+        />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.whyEyebrow}</p>
@@ -336,7 +341,7 @@ export default function AWPII() {
             <div className="space-y-px bg-white/10">
               {T.questions.map((q, i) => (
                 <div key={i} className="bg-secondary px-8 py-5 flex items-start gap-5 border border-white/10">
-                  <span className="text-accent font-bold text-[0.75rem] mt-0.5 flex-shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-accent font-bold text-[0.75rem] mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
                   <p className="text-[0.9375rem] text-white/80 leading-snug">{q}</p>
                 </div>
               ))}
@@ -389,7 +394,7 @@ export default function AWPII() {
             <div className="space-y-px bg-border">
               {T.deliverables.map((d) => (
                 <div key={d.title} className="bg-background p-7 flex items-start gap-4">
-                  <Zap className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
+                  <Zap className="w-4 h-4 text-accent mt-1 shrink-0" />
                   <div>
                     <p className="text-[0.9375rem] font-semibold text-secondary mb-1.5">{d.title}</p>
                     <p className="text-[0.875rem] text-muted-foreground leading-snug">{d.description}</p>
@@ -401,7 +406,7 @@ export default function AWPII() {
         </div>
       </section>
 
-      {/* Market in Motion */}
+      {/* Market in Motion — CTAs collapsed to one primary + one secondary */}
       <section className="py-24 lg:py-32 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-3xl">
@@ -414,31 +419,29 @@ export default function AWPII() {
                 {T.marketCta1} <ArrowRight className="w-4 h-4" />
               </CTAButton>
               <CTAButton onClick={scrollToContact}>{T.marketCta2}</CTAButton>
-              <CTAButton onClick={scrollToContact}>{T.marketCta3}</CTAButton>
-              <CTAButton onClick={scrollToContact}>{T.marketCta4}</CTAButton>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Institutional Collaboration */}
-      <section id="awpii-contact" className="py-24 lg:py-32 bg-secondary relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-accent mb-4">{T.contactEyebrow}</p>
-            <h2 className="text-[1.75rem] lg:text-[2rem] font-bold text-white leading-snug mb-6">{T.contactHeading}</h2>
-            <p className="text-[1rem] text-white/70 leading-[1.85] mb-4">{T.contactPara1}</p>
-            <p className="text-[1rem] text-white/70 leading-[1.85] mb-8">{T.contactPara2}</p>
-            <a
-              href="mailto:info@africaweb3institute.org"
-              className="inline-flex items-center gap-3 text-[0.9375rem] font-semibold text-white border-b border-accent pb-1 hover:text-accent transition-colors"
-            >
-              <Mail className="w-4 h-4 text-accent" />
-              info@africaweb3institute.org
-            </a>
-          </div>
+      {/* Contact strip — lightweight, no longer a full duplicate section */}
+      <section id="awpii-contact" className="py-12 bg-secondary relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "40px 40px"
+          }}
+        />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <p className="text-[1rem] text-white/80 max-w-xl">{T.contactPara1}</p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-3 text-[0.9375rem] font-semibold text-white border-b border-accent pb-1 hover:text-accent transition-colors whitespace-nowrap"
+          >
+            <Mail className="w-4 h-4 text-accent" />
+            Contact Us
+          </Link>
         </div>
       </section>
 

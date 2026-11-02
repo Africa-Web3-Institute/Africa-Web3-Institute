@@ -7,7 +7,7 @@ const PAGE_TITLES = {
   "/admin/dashboard": "Dashboard",
   "/admin/publications": "Publications",
   "/admin/articles": "Articles",
-  "/admin/reports": "Reports",
+  
   "/admin/events": "Events",
   "/admin/awpii": "AWPII Data",
   "/admin/analytics": "Regulatory Tracker",
@@ -20,7 +20,7 @@ const PAGE_ICONS = {
   "/admin/dashboard": "📊",
   "/admin/publications": "📚",
   "/admin/articles": "📝",
-  "/admin/reports": "📈",
+ 
   "/admin/events": "📅",
   "/admin/awpii": "📊",
   "/admin/analytics": "📍",

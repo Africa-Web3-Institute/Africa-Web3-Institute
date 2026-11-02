@@ -151,13 +151,72 @@ const initializeTables = async () => {
       description TEXT,
       category TEXT,
       author TEXT,
-      status TEXT DEFAULT 'draft',
+      status TEXT DEFAULT "published",
       date TEXT,
       available BOOLEAN DEFAULT 0,
       downloadUrl TEXT,
       downloads INTEGER DEFAULT 0,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS blogs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      excerpt TEXT,
+      content TEXT NOT NULL,
+      category TEXT NOT NULL,
+      author TEXT NOT NULL,
+      authorRole TEXT,
+      coverImage TEXT,
+      tags TEXT,
+      readTime TEXT DEFAULT "5 min read",
+      publishedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      isPublished BOOLEAN DEFAULT 1,
+      featured BOOLEAN DEFAULT 0,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS articles (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE,
+      excerpt TEXT,
+      content TEXT,
+      category TEXT NOT NULL,
+      type TEXT DEFAULT "article",
+      author TEXT NOT NULL,
+      authorRole TEXT,
+      date TEXT,
+      readTime TEXT DEFAULT "4 min read",
+      image TEXT,
+      downloadUrl TEXT,
+      available BOOLEAN DEFAULT 1,
+      featured BOOLEAN DEFAULT 0,
+      status TEXT DEFAULT "published",
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT,
+      status TEXT DEFAULT "active",
+      source TEXT DEFAULT "website",
+      subscribedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS newsletters (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      edition INTEGER,
+      date TEXT NOT NULL,
+      description TEXT,
+      content TEXT,
+      readTime TEXT DEFAULT "4 min read",
+      url TEXT,
+      status TEXT DEFAULT "sent",
+      sentAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
     `CREATE TABLE IF NOT EXISTS enforcements (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -186,7 +245,110 @@ const initializeTables = async () => {
     `CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
       value TEXT
+    )`,
+    `CREATE TABLE IF NOT EXISTS visualizations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      category TEXT,
+      type TEXT NOT NULL,
+      description TEXT,
+      config TEXT,
+      data TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS subscribers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT,
+      segment TEXT DEFAULT 'general',
+      status TEXT DEFAULT 'active',
+      subscribedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      lastEngagedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS newsletter_campaigns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      segment TEXT DEFAULT 'all',
+      sentAt DATETIME,
+      totalSent INTEGER DEFAULT 0,
+      opens INTEGER DEFAULT 0,
+      clicks INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'draft',
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS newsletter_opens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      campaignId INTEGER,
+      subscriberId INTEGER,
+      openedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      userAgent TEXT,
+      ip TEXT
+    )`,
+    `CREATE TABLE IF NOT EXISTS newsletter_clicks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      campaignId INTEGER,
+      subscriberId INTEGER,
+      targetUrl TEXT,
+      clickedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      userAgent TEXT,
+      ip TEXT
+    )`,
+    `CREATE TABLE IF NOT EXISTS ecosystem_metrics (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL,
+      indicator TEXT NOT NULL,
+      value REAL NOT NULL,
+      unit TEXT,
+      country TEXT,
+      year INTEGER,
+      growthRate REAL,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS web3_startups (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      country TEXT NOT NULL,
+      category TEXT NOT NULL,
+      fundingStage TEXT,
+      fundingTotalUsd REAL,
+      foundedYear INTEGER,
+      description TEXT,
+      website TEXT,
+      activeUsers INTEGER,
+      metricsJson TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS citations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      publicationId INTEGER NOT NULL,
+      citationSource TEXT NOT NULL,
+      sourceType TEXT DEFAULT 'academic',
+      citationDate TEXT,
+      citationUrl TEXT,
+      quote TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS research_downloads (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      publicationId INTEGER NOT NULL,
+      sessionId TEXT,
+      userCountry TEXT,
+      downloadedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS contact_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      organization TEXT,
+      subject TEXT,
+      message TEXT NOT NULL,
+      status TEXT DEFAULT 'unread',
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`
+
   ];
 
   for (const query of tables) {

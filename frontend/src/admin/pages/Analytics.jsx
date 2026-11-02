@@ -8,7 +8,7 @@ import {
   Database, Network, Send, Cpu, Server, MapPin, AlertTriangle
 } from 'lucide-react';
 
-//URLs for analytics API
+// URLs for analytics API
 const ANALYTICS_BASE = import.meta.env.VITE_ANALYTICS_URL || 'http://localhost:3001';
 const SSE_URL = `${ANALYTICS_BASE}/api/live`;
 const INGEST_URL = `${ANALYTICS_BASE}/api/event`;
@@ -35,7 +35,7 @@ export default function Analytics() {
   const [simPage, setSimPage] = useState('/');
   const [simEvent, setSimEvent] = useState('pageview');
 
-  // Connect to SSE stream — bounded retries, no infinite console spam
+  // ─── Connect to SSE stream ──────────────────────────────────────────────
   useEffect(() => {
     const connect = () => {
       let es;
@@ -118,7 +118,6 @@ export default function Analytics() {
     };
   };
 
-  // Animate particles along SVG blueprint paths when an event is received
   const triggerBlueprintParticles = (event) => {
     const newParticles = [];
     const baseId = particleIdRef.current;
@@ -144,7 +143,6 @@ export default function Analytics() {
     }, 2800);
   };
 
-  // Trigger simulated event
   const handleSimulate = async () => {
     const fakeSessionId = 'sim_' + Math.random().toString(36).substring(2, 8);
 
@@ -177,7 +175,7 @@ export default function Analytics() {
         body: JSON.stringify(payload)
       });
     } catch {
-      // backend not running — silently ignore, connectionFailed banner already communicates this
+      // backend not running — silently ignore
     }
   };
 
@@ -192,13 +190,13 @@ export default function Analytics() {
   const countryData = metrics ? Object.entries(metrics.countries).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0, 5) : [];
 
   return (
-    <div className="bg-slate-950 text-white min-h-[calc(100vh-3.75rem)] p-6 lg:p-8 font-sans">
+    <div className="bg-slate-950 text-white min-h-[calc(100vh-3.75rem)] p-4 sm:p-6 lg:p-8 font-sans">
 
-      {/* Page Header */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      {/* ─── Page Header ─────────────────────────────────────────────────── */}
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Zap className="text-yellow-500 fill-yellow-500/20 w-7 h-7" />
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <Zap className="text-yellow-500 fill-yellow-500/20 w-6 h-6" />
             Real-Time Data Pipeline Blueprint
           </h1>
           <p className="text-slate-400 text-sm mt-1">
@@ -206,7 +204,7 @@ export default function Analytics() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${
             connected
               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
@@ -215,48 +213,48 @@ export default function Analytics() {
               : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
           }`}>
             <span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400 animate-pulse' : connectionFailed ? 'bg-slate-500' : 'bg-rose-400'}`} />
-            {connected ? 'Pipeline Connected' : connectionFailed ? 'Not Connected' : 'Connecting to Server...'}
+            {connected ? 'Pipeline Connected' : connectionFailed ? 'Not Connected' : 'Connecting...'}
           </div>
 
           <a
-           href={`${ANALYTICS_BASE}/api/export`}
+            href={`${ANALYTICS_BASE}/api/export`}
             download
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium rounded-lg transition-all"
           >
-            <Database className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10" />
-            Tableau CSV Export
+            <Database className="w-3.5 h-3.5 text-amber-500" />
+            <span className="hidden sm:inline">CSV Export</span>
+            <span className="sm:hidden">Export</span>
           </a>
 
           <div className="flex bg-slate-900 border border-slate-800 rounded-lg p-1">
             <button
               onClick={() => setActiveTab('blueprint')}
-              className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${
+              className={`px-3 sm:px-4 py-1.5 text-xs font-medium rounded-md transition-all ${
                 activeTab === 'blueprint' ? 'bg-amber-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Pipeline Blueprint
+              Blueprint
             </button>
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${
+              className={`px-3 sm:px-4 py-1.5 text-xs font-medium rounded-md transition-all ${
                 activeTab === 'dashboard' ? 'bg-amber-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Analytics Dashboard
+              Dashboard
             </button>
           </div>
         </div>
       </div>
 
-      {/* Disconnected banner */}
+      {/* ─── Disconnected banner ────────────────────────────────────────── */}
       {connectionFailed && (
         <div className="max-w-7xl mx-auto mb-6">
-          <div className="flex items-center justify-between gap-4 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs px-4 py-3 rounded-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs px-4 py-3 rounded-lg">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-              <span>
+              <span className="break-words">
                 Analytics backend isn't running at <code className="bg-black/20 px-1 py-0.5 rounded">{ANALYTICS_BASE}</code>.
-                Start the analytics server, or set <code className="bg-black/20 px-1 py-0.5 rounded">VITE_ANALYTICS_URL</code> in your <code className="bg-black/20 px-1 py-0.5 rounded">.env</code>.
               </span>
             </div>
             <button
@@ -269,15 +267,15 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Main Grid */}
+      {/* ─── Main Grid – responsive layout ──────────────────────────────── */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        {/* Left Side: Interactive Simulator Panel */}
+        {/* Left Side: Interactive Simulator Panel (full width on mobile) */}
         <div className="lg:col-span-1 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 rounded-xl p-5 flex flex-col justify-between shadow-xl">
           <div>
             <h2 className="text-md font-semibold text-slate-200 border-b border-slate-800 pb-3 flex items-center gap-2">
               <Cpu className="text-amber-500 w-4 h-4" />
-              Traffic Ingestion Simulator
+              Traffic Simulator
             </h2>
             <p className="text-xs text-slate-400 my-4 leading-relaxed">
               Manually ingest raw tracking payloads into the system to verify the pipeline's end-to-end telemetry logic.
@@ -342,15 +340,15 @@ export default function Analytics() {
           </button>
         </div>
 
-        {/* Center/Right Area */}
+        {/* Right Content (3 cols on lg) */}
         <div className="lg:col-span-3 space-y-6">
 
-          {/* Real-time Status Metric Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* ─── Stats cards ─────────────────────────────────────────────── */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="bg-slate-900/40 border border-slate-850 rounded-xl p-4 flex items-center justify-between">
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Active Visitors</p>
-                <h3 className="text-2xl font-bold mt-1 text-emerald-400 animate-pulse">
+                <h3 className="text-xl sm:text-2xl font-bold mt-1 text-emerald-400 animate-pulse">
                   {metrics ? metrics.activeUsers : 0}
                 </h3>
               </div>
@@ -360,7 +358,7 @@ export default function Analytics() {
             <div className="bg-slate-900/40 border border-slate-850 rounded-xl p-4 flex items-center justify-between">
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Views</p>
-                <h3 className="text-2xl font-bold mt-1 text-slate-100">
+                <h3 className="text-xl sm:text-2xl font-bold mt-1 text-slate-100">
                   {metrics ? metrics.totalPageViews : 0}
                 </h3>
               </div>
@@ -370,7 +368,7 @@ export default function Analytics() {
             <div className="bg-slate-900/40 border border-slate-850 rounded-xl p-4 flex items-center justify-between">
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Avg Session</p>
-                <h3 className="text-2xl font-bold mt-1 text-slate-100">
+                <h3 className="text-xl sm:text-2xl font-bold mt-1 text-slate-100">
                   {metrics ? formatDuration(metrics.avgSessionDuration) : '0s'}
                 </h3>
               </div>
@@ -380,7 +378,7 @@ export default function Analytics() {
             <div className="bg-slate-900/40 border border-slate-850 rounded-xl p-4 flex items-center justify-between">
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Bounce Rate</p>
-                <h3 className="text-2xl font-bold mt-1 text-slate-100">
+                <h3 className="text-xl sm:text-2xl font-bold mt-1 text-slate-100">
                   {metrics ? `${metrics.bounceRate}%` : '0%'}
                 </h3>
               </div>
@@ -388,20 +386,20 @@ export default function Analytics() {
             </div>
           </div>
 
-          {/* Tab Content 1: Pipeline Blueprint Visualizer */}
+          {/* ─── Tab content ─────────────────────────────────────────────── */}
           {activeTab === 'blueprint' && (
             <div className="space-y-6">
-
-              <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 shadow-xl relative overflow-hidden">
+              <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
                 <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-4 flex items-center gap-1.5">
                   <Network className="text-amber-500 w-4 h-4" />
                   Live Event Traversal Node Graph
                 </h3>
 
-                <div className="relative w-full overflow-x-auto">
+                {/* ── Scrollable SVG ── */}
+                <div className="overflow-x-auto">
                   <svg
                     viewBox="0 0 900 260"
-                    className="w-full min-w-[800px] h-[260px]"
+                    className="w-full min-w-[700px] h-[260px]"
                     style={{ background: 'rgba(2, 6, 23, 0.5)', borderRadius: '10px' }}
                   >
                     <defs>
@@ -414,6 +412,7 @@ export default function Analytics() {
                       </linearGradient>
                     </defs>
 
+                    {/* Paths */}
                     <path d="M 70 130 L 230 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
                     <path d="M 230 130 L 390 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
                     <path d="M 390 130 C 430 130, 470 70, 550 70" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
@@ -422,6 +421,7 @@ export default function Analytics() {
                     <path d="M 550 190 C 630 190, 670 130, 710 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
                     <path d="M 710 130 L 830 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
 
+                    {/* Animated particles */}
                     {particles.map(p => (
                       <circle key={p.id} r="5" fill={p.color} className="filter drop-shadow-[0_0_4px_currentColor]">
                         <animateMotion
@@ -505,15 +505,13 @@ export default function Analytics() {
                 </div>
               </div>
 
-              {/* Server Diagnostics & Live Log Split */}
+              {/* ─── Diagnostics & Logs ──────────────────────────────────── */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                 <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 shadow-lg">
                   <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-4 flex items-center gap-1.5">
                     <Server className="text-amber-500 w-4 h-4" />
                     In-Memory Pipeline Diagnostics
                   </h3>
-
                   <div className="space-y-4 text-sm">
                     <div className="flex justify-between border-b border-slate-850 pb-2">
                       <span className="text-slate-400">Total Packets Ingested</span>
@@ -545,14 +543,13 @@ export default function Analytics() {
                     <Activity className="text-amber-500 w-4 h-4" />
                     Live Event Stream Logs
                   </h3>
-
                   <div className="h-[155px] overflow-y-auto font-mono text-[11px] space-y-2.5 pr-2 scrollbar-thin scrollbar-thumb-slate-800">
                     {history.length === 0 ? (
                       <div className="text-slate-500 text-center py-10">Waiting for live data...</div>
                     ) : (
                       history.map((evt) => (
                         <div key={evt.id} className="p-2 bg-slate-950/70 border-l-2 border-amber-500 rounded flex flex-col sm:flex-row sm:items-center justify-between gap-2 animate-fadeIn">
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span className="text-[9px] bg-slate-800 text-slate-400 px-1 rounded">
                               {new Date(evt.timestamp).toLocaleTimeString()}
                             </span>
@@ -563,35 +560,32 @@ export default function Analytics() {
                             }`}>
                               {evt.eventName}
                             </span>
-                            <span className="text-slate-300 font-semibold text-[10px]">{evt.path}</span>
+                            <span className="text-slate-300 font-semibold text-[10px] truncate max-w-[120px]">{evt.path}</span>
                           </div>
                           <div className="text-slate-400 text-[10px] flex items-center gap-1.5 self-end sm:self-auto">
                             <span className="bg-slate-900 px-1.5 py-0.5 rounded text-slate-400 font-semibold flex items-center gap-1">
                               <MapPin className="w-2.5 h-2.5" />
                               {evt.country}
                             </span>
-                            <span className="text-slate-500 text-[9px]">({evt.browser} / {evt.os})</span>
+                            <span className="text-slate-500 text-[9px] hidden sm:inline">({evt.browser} / {evt.os})</span>
                           </div>
                         </div>
                       ))
                     )}
                   </div>
                 </div>
-
               </div>
-
             </div>
           )}
 
-          {/* Tab Content 2: Analytics Dashboard */}
+          {/* ─── Dashboard Tab ───────────────────────────────────────────── */}
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
-
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 shadow-lg">
                 <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-4">
                   Ingestion Timeline (Pageviews / Hour)
                 </h3>
-                <div className="h-64">
+                <div className="h-48 sm:h-64">
                   {metrics && metrics.hourlyStats ? (
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={metrics.hourlyStats}>
@@ -623,17 +617,16 @@ export default function Analytics() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                 <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
                   <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-4">
                     Top Visited Destinations
                   </h3>
-                  <div className="h-44">
+                  <div className="h-40 sm:h-44">
                     {pageViewsData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={pageViewsData} layout="vertical">
                           <XAxis type="number" stroke="#64748b" fontSize={9} />
-                          <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={9} width={80} />
+                          <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={9} width={60} />
                           <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} />
                           <Bar dataKey="pv" fill="#D4A017" radius={[0, 4, 4, 0]} />
                         </BarChart>
@@ -648,7 +641,7 @@ export default function Analytics() {
                   <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-4">
                     Traffic by African Nation
                   </h3>
-                  <div className="h-44 flex items-center justify-center relative">
+                  <div className="h-40 sm:h-44 flex items-center justify-center relative">
                     {countryData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -656,8 +649,8 @@ export default function Analytics() {
                             data={countryData}
                             cx="50%"
                             cy="50%"
-                            innerRadius={38}
-                            outerRadius={56}
+                            innerRadius={30}
+                            outerRadius={45}
                             paddingAngle={3}
                             dataKey="value"
                           >
@@ -671,7 +664,7 @@ export default function Analytics() {
                     ) : (
                       <div className="text-slate-500 text-xs">No metrics yet</div>
                     )}
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-1 text-[9px] max-w-[100px] overflow-hidden">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-1 text-[9px] max-w-[80px] overflow-hidden">
                       {countryData.map((entry, idx) => (
                         <div key={entry.name} className="flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
@@ -686,7 +679,7 @@ export default function Analytics() {
                   <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-4">
                     Traffic Acquisition Channels
                   </h3>
-                  <div className="h-44">
+                  <div className="h-40 sm:h-44">
                     {referralData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={referralData}>
@@ -701,14 +694,11 @@ export default function Analytics() {
                     )}
                   </div>
                 </div>
-
               </div>
-
             </div>
           )}
 
         </div>
-
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import AfricaMapSVG from "./AfricaMapSVG";
 import { STATUS_COLORS, STATUS, STATUS_LABELS } from "../../data/countryData";
 import { useLanguage } from "../../lib/LanguageContext";
+import Reveal from "../common/Reveal";
 
 const LEGEND_EN = [
   { status: STATUS.REGULATED },
@@ -18,7 +19,7 @@ export default function AfricaMapTeaser() {
     <section className="py-20 lg:py-28 border-b border-border" style={{ backgroundColor: "#0B1437" }}>
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <Reveal className="text-center mb-12">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-4" style={{ color: "#D4A017" }}>
             {language === "fr" ? "Paysage Web3 Africain" : "Africa's Web3 Landscape"}
           </p>
@@ -30,12 +31,12 @@ export default function AfricaMapTeaser() {
               ? "Découvrez comment les nations africaines progressent dans la réglementation Web3 et l'adoption de la blockchain"
               : "See how African nations are progressing on Web3 regulation and blockchain adoption"}
           </p>
-        </div>
+        </Reveal>
 
         {/* Map */}
-        <div className="max-w-[700px] mx-auto">
+        <Reveal delay={0.1} className="max-w-[700px] mx-auto">
           <AfricaMapSVG interactive={false} />
-        </div>
+        </Reveal>
 
         {/* Legend */}
         <div className="flex flex-wrap justify-center gap-6 mt-8 mb-10">

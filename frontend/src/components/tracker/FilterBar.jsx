@@ -1,11 +1,28 @@
-import { STATUS } from "../../data/trackerCountries";
+import { COUNTRIES, STATUS, AFRICA_ISOS } from "../../data/trackerCountries";
+
+const FILTER_ORDER = ["live", "proposed", "draft", "review", "none"];
+const FILTER_LABELS = {
+  live: "Live",
+  proposed: "Proposed",
+  draft: "Draft",
+  review: "In Review",
+  none: "No Framework",
+};
+
+function isAfrican(c) {
+  return (c.iso || []).some((code) => AFRICA_ISOS.has(code));
+}
+
+// Only offer filters for statuses that actually exist among African
+// countries in the data -- avoids a pill that always returns zero rows.
+const availableStatuses = new Set(COUNTRIES.filter(isAfrican).map((c) => c.status));
 
 const FILTERS = [
   { key: "all", label: "All" },
-  { key: "live", label: "Live" },
-  { key: "proposed", label: "Proposed" },
-  { key: "review", label: "In Review" },
-  { key: "none", label: "No Framework" },
+  ...FILTER_ORDER.filter((key) => availableStatuses.has(key)).map((key) => ({
+    key,
+    label: FILTER_LABELS[key],
+  })),
 ];
 
 export default function FilterBar({ active, onChange }) {

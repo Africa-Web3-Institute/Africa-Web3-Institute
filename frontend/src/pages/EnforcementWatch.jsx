@@ -21,7 +21,7 @@ function TypeBadge({ type, label }) {
 
 function SevDot({ severity }) {
   const m = SEV_META[severity] || SEV_META.Low;
-  return <span className="w-2 h-2 rounded-full flex-shrink-0 inline-block" style={{ backgroundColor: m.color }} />;
+  return <span className="w-2 h-2 rounded-full shrink-0 inline-block" style={{ backgroundColor: m.color }} />;
 }
 
 export default function EnforcementWatch() {
@@ -122,10 +122,9 @@ export default function EnforcementWatch() {
   return (
     <div className="bg-background text-foreground" style={{ animation: "fadeIn 0.4s ease" }}>
       <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <title>{T.pageTitle} | Africa Web3 Institute</title>
 
       {/* Hero */}
-      <section style={{ backgroundColor: "#1A1F36" }} className="pt-12 pb-0">
+      <section   style={{ backgroundColor: "#0B1437" }} className="pt-12 pb-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 pb-10">
           <span className="inline-block text-[0.6875rem] font-bold tracking-[0.18em] uppercase px-3 py-1 rounded-full mb-4" style={{ backgroundColor: "rgba(212,160,23,0.15)", color: "#D4A017", border: "1px solid rgba(212,160,23,0.3)" }}>
             {T.liveIntelligence}
@@ -211,10 +210,25 @@ export default function EnforcementWatch() {
 
     {/* Timeline */}
       <section className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-        {filtered.length === 0 ? (
-          <div className="py-20 text-center text-muted-foreground">
-            {T.noResults}
-          </div>
+       {filtered.length === 0 ? (
+  <div className="py-16 text-center bg-white border border-border rounded-lg shadow-sm max-w-2xl mx-auto px-8">
+    <p className="text-lg font-semibold text-secondary mb-2">
+      {T.noResultsTitle || "No enforcement actions found"}
+    </p>
+    <p className="text-muted-foreground mb-4">
+      {T.noResultsDesc || "Try adjusting your filters or search terms."}
+    </p>
+    <button
+    type="button"
+      onClick={resetFilters}
+      className="text-sm font-semibold transition-colors"
+      style={{ color: "#D4A017" }}
+      onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
+      onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}
+    >
+      {T.resetFilters}
+    </button>
+  </div>
         ) : (
           <div className="relative">
             {/* Vertical line — hidden on mobile */}
@@ -236,11 +250,11 @@ export default function EnforcementWatch() {
                 {group.events.map(ev => (
                   <div key={ev.id} className="relative flex gap-0 lg:gap-0 mb-5 items-start">
                     {/* Date column (desktop) */}
-                    <div className="hidden lg:flex items-start justify-end flex-shrink-0 pt-4" style={{ width: "128px" }}>
+                    <div className="hidden lg:flex items-start justify-end shrink-0 pt-4" style={{ width: "128px" }}>
                       <span className="text-[0.75rem] font-bold text-right pr-3" style={{ color: "#D4A017" }}>{ev.date}</span>
                     </div>
                     {/* Dot on line */}
-                    <div className="hidden lg:flex items-start pt-4 flex-shrink-0" style={{ width: "24px" }}>
+                    <div className="hidden lg:flex items-start pt-4 shrink-0" style={{ width: "24px" }}>
                       <SevDot severity={ev.severity} />
                     </div>
                     {/* Card */}
