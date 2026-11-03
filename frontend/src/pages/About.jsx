@@ -83,6 +83,8 @@ export default function About() {
           }}
         />
         <div className="absolute inset-0 bg-linear-to-r from-[#0B1437] via-[#0B1437]/80 to-transparent" />
+        {/* On narrow screens the text spans the full width, so darken the whole image for legibility */}
+        <div className="absolute inset-0 bg-[#0B1437]/55 md:hidden" />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 w-full">
           <AnimatedSection className="max-w-2xl">
             <p className="inline-block text-xs font-semibold tracking-[0.18em] uppercase mb-4 px-4 py-1.5 border border-[#D4A017]/30 rounded-full text-[#D4A017] bg-[#D4A017]/10">

@@ -165,7 +165,7 @@ export default function HeroSection() {
 
       {/* ── Main content ──────────────────────────────────── */}
       <div className="relative z-10 flex-1 flex items-start">
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 w-full pt-44 lg:pt-48 pb-16 lg:pb-20">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 w-full pt-32 sm:pt-44 lg:pt-48 pb-12 sm:pb-16 lg:pb-20">
           <motion.div
             className="max-w-3xl"
             variants={container}
@@ -173,9 +173,9 @@ export default function HeroSection() {
             animate="show"
           >
             {/* Established badge */}
-            <motion.div variants={item} className="inline-flex items-center gap-2.5 mb-8">
+            <motion.div variants={item} className="flex flex-wrap items-center gap-2.5 mb-6 sm:mb-8 max-w-full">
               <span
-                className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase px-3.5 py-1.5"
+                className="text-[0.625rem] sm:text-[0.6875rem] font-bold tracking-[0.12em] sm:tracking-[0.22em] leading-relaxed uppercase px-3 sm:px-3.5 py-1.5 max-w-full"
                 style={{
                   backgroundColor: "rgba(212,160,23,0.14)",
                   color: "#D4A017",
@@ -208,17 +208,17 @@ export default function HeroSection() {
             {/* Intro paragraph */}
             <motion.p
               variants={item}
-              className="text-[1.0625rem] leading-[1.82] mb-11 max-w-[520px]"
+              className="text-[1rem] sm:text-[1.0625rem] leading-[1.7] sm:leading-[1.82] mb-8 sm:mb-11 max-w-[520px]"
               style={{ color: "rgba(255,255,255,0.68)" }}
             >
               {T.intro}
             </motion.p>
 
             {/* CTA buttons */}
-            <motion.div variants={item} className="flex flex-wrap gap-4">
+            <motion.div variants={item} className="flex flex-wrap gap-3 sm:gap-4">
               <motion.button
                 onClick={handleIntelligenceClick} // ✅ now opens dropdown
-                className="inline-flex items-center gap-2.5 text-[0.9375rem] font-semibold px-8 py-3.5"
+                className="inline-flex items-center gap-2.5 text-[0.9375rem] font-semibold px-6 sm:px-8 py-3.5"
                 style={{ backgroundColor: "#D4A017", color: "#0B1437" }}
                 whileHover={{ scale: 1.03, backgroundColor: "#b8891a" }}
                 whileTap={{ scale: 0.97 }}
@@ -228,7 +228,7 @@ export default function HeroSection() {
               </motion.button>
               <motion.button
                 onClick={() => navigate("/contact")}
-                className="inline-flex items-center gap-2 text-[0.9375rem] font-medium px-8 py-3.5"
+                className="inline-flex items-center gap-2 text-[0.9375rem] font-medium px-6 sm:px-8 py-3.5"
                 style={{ border: "1px solid rgba(255,255,255,0.32)", color: "rgba(255,255,255,0.88)" }}
                 whileHover={{ scale: 1.03, backgroundColor: "rgba(255,255,255,0.09)" }}
                 whileTap={{ scale: 0.97 }}
@@ -250,25 +250,25 @@ export default function HeroSection() {
           backdropFilter: "blur(12px)",
         }}
       >
-        <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-1 sm:grid-cols-3 divide-x divide-white/10">
+        <div className="max-w-[1600px] mx-auto px-2 sm:px-6 lg:px-12">
+          <div className="grid grid-cols-3 divide-x divide-white/10">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
-                className="px-6 py-5 text-center group cursor-default"
+                className="px-2 sm:px-6 py-4 sm:py-5 text-center group cursor-default"
                 custom={i}
                 variants={statItem}
                 initial="hidden"
                 animate="show"
               >
                 <p
-                  className="text-[1.75rem] font-bold leading-none mb-1"
+                  className="text-[1.375rem] sm:text-[1.75rem] font-bold leading-none mb-1"
                   style={{ color: "#D4A017" }}
                 >
                   {s.value}
                 </p>
                 <p
-                  className="text-[0.6875rem] font-semibold tracking-[0.15em] uppercase"
+                  className="text-[0.5625rem] sm:text-[0.6875rem] font-semibold tracking-[0.1em] sm:tracking-[0.15em] uppercase"
                   style={{ color: "rgba(255,255,255,0.48)" }}
                 >
                   {s.label}

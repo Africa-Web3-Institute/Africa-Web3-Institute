@@ -331,12 +331,10 @@ export default function Partners() {
                       max-h-full
                       max-w-full
                       object-contain
-                      grayscale-[0.2]
-                      brightness-[0.95]
+                      rounded-md
                       transition
                       duration-300
-                      group-hover:grayscale-0
-                      group-hover:brightness-100
+                      group-hover:scale-105
                       pointer-events-none
                     "
                     loading="lazy"

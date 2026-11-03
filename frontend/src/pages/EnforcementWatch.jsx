@@ -171,8 +171,8 @@ export default function EnforcementWatch() {
         </div>
       </section>
 
-      {/* Sticky Filter Bar */}
-      <div className="sticky top-[3.75rem] z-40 bg-white border-b border-border shadow-sm">
+      {/* Filter Bar — sticky below the floating navbar on desktop only (it wraps to several rows on mobile) */}
+      <div className="lg:sticky lg:top-[5.5rem] z-40 bg-white border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-3">
           <div className="flex flex-wrap gap-2 items-center">
             <div className="relative flex-1 min-w-[180px] max-w-[220px]">
@@ -274,7 +274,7 @@ export default function EnforcementWatch() {
                       <p className="text-[0.875rem] text-muted-foreground leading-relaxed mb-3">{ev.content?.[language]?.desc || ev.description}</p>
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="text-[0.75rem] text-muted-foreground/60">{T.source}: {ev.content?.[language]?.source || ev.source}</span>
-                         <Link to={`/country-tracker/${toSlug(ev.country)}`}
+                         <Link to={`/regulatory-tracker/${toSlug(ev.country)}`}
                           className="text-[0.8125rem] font-semibold transition-colors" style={{ color: "#D4A017" }}
                           onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
                           onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}>
@@ -299,7 +299,7 @@ export default function EnforcementWatch() {
             {countryActions.map(d => {
               const c = heatColor(d);
               return (
-                <Link key={d.name} to={`/country-tracker/${toSlug(d.name)}`}
+                <Link key={d.name} to={`/regulatory-tracker/${toSlug(d.name)}`}
                   className="flex flex-col items-center text-center p-4 rounded-lg border border-border transition-all hover:shadow-sm"
                   style={{ backgroundColor: c.bg }}>
                   <span className="text-[1.5rem] mb-1">{flagMap[d.name] || "🌍"}</span>
@@ -378,7 +378,7 @@ export default function EnforcementWatch() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { icon: "📊", label: T.relatedTracker, to: "/country-tracker" },
+              { icon: "📊", label: T.relatedTracker, to: "/regulatory-tracker" },
               { icon: "🗺️", label: T.relatedMap, to: "/awpii" },
               { icon: "📥", label: T.relatedReport, to: "/awpii" },
             ].map(c => (

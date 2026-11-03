@@ -322,7 +322,7 @@ export default function Analytics() {
                   <option value="/">Home Page</option>
                   <option value="/about">About Us</option>
                   <option value="/awpii">AWPII Policy Index</option>
-                  <option value="/country-tracker">Regulatory Tracker</option>
+                  <option value="/regulatory-tracker">Regulatory Tracker</option>
                   <option value="/publications">Publications</option>
                   <option value="/enforcement-watch">Enforcement Watch</option>
                 </select>

@@ -68,6 +68,7 @@ export default function NewsletterStrip() {
 
         {/* Right: form or success */}
         <motion.div
+          className="w-full sm:w-auto"
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -89,14 +90,14 @@ export default function NewsletterStrip() {
             ) : (
               <motion.div
                 key="form"
-                className="flex flex-col gap-1.5 items-end"
+                className="flex flex-col gap-1.5 items-stretch sm:items-end"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <form onSubmit={handleSubmit} className="flex gap-2">
+                <form onSubmit={handleSubmit} className="flex gap-2 w-full sm:w-auto">
                   <motion.div
-                    className="relative"
+                    className="relative flex-1 sm:flex-none min-w-0"
                     animate={{ scale: focused ? 1.01 : 1 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -107,7 +108,7 @@ export default function NewsletterStrip() {
                       onFocus={() => setFocused(true)}
                       onBlur={() => setFocused(false)}
                       placeholder={C.placeholder}
-                      className="text-[0.8125rem] px-4 py-2.5 outline-none w-52 lg:w-68 text-white placeholder:text-white/35"
+                      className="text-[0.8125rem] px-4 py-2.5 outline-none w-full sm:w-52 lg:w-68 text-white placeholder:text-white/35"
                       style={{
                         border: `1px solid ${error ? "#EF4444" : focused ? "rgba(212,160,23,0.7)" : "rgba(255,255,255,0.18)"}`,
                         backgroundColor: "rgba(255,255,255,0.07)",

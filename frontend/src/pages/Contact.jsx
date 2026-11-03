@@ -41,14 +41,15 @@ function ContactCard({ c, T }) {
   };
 
   return (
-    <div className="group bg-white rounded-2xl border border-border/60 p-8 flex flex-col items-center text-center transition-all duration-300 hover:shadow-xl hover:border-[#D4A017]/30 hover:-translate-y-1">
+    <div className="group bg-white rounded-2xl border border-border/60 p-6 sm:p-8 flex flex-col items-center text-center transition-all duration-300 hover:shadow-xl hover:border-[#D4A017]/30 hover:-translate-y-1">
       <div className="w-16 h-16 rounded-full bg-[#D4A017]/10 flex items-center justify-center text-3xl mb-5 group-hover:bg-[#D4A017]/20 transition-colors">
         {c.icon}
       </div>
       <p className="text-[1rem] font-bold text-secondary mb-1.5">{T[c.labelKey]}</p>
       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{c.description}</p>
-      <p className="text-[0.875rem] font-medium text-secondary bg-[#F8F9FB] px-4 py-2 rounded-full border border-border/40 mb-5 break-all">
-        {c.email}
+      {/* Allow a line break only after the "@" so addresses never split mid-word */}
+      <p className="text-[0.8125rem] sm:text-[0.875rem] font-medium text-secondary bg-[#F8F9FB] px-3 sm:px-4 py-2 rounded-full border border-border/40 mb-5 max-w-full">
+        {c.email.split("@")[0]}@<wbr />{c.email.split("@")[1]}
       </p>
 
       <div className="flex items-center gap-3">
