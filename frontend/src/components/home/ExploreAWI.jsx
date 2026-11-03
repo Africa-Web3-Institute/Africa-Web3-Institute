@@ -19,9 +19,9 @@ import { t } from "../../lib/translations";
 import Reveal from "../common/Reveal";
 
 const CARD_META = [
-  { icon: BookOpen, href: "/intelligence", image: "/images/moments/speaker-session.jpg" },
-  { icon: CalendarDays, href: "/programs-events", image: "/images/moments/policy-convening.jpg" },
-  { icon: Users, href: "/about", image: "/images/moments/roundtable-briefing.jpg" },
+  { icon: BookOpen, href: "/intelligence", image: "/images/moments/roundtable-briefing.jpg" },
+  { icon: CalendarDays, href: "/programs-events", image: "/images/moments/classroom-training.jpg" },
+  { icon: Users, href: "/about", image: "/images/moments/speaker-session.jpg" },
   { icon: Mail, href: "/contact", image: "/images/moments/workshop-group.jpg" },
 ];
 
