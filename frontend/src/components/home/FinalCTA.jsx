@@ -36,7 +36,7 @@ export default function FinalCTA() {
     <section className="py-28 lg:py-36 relative overflow-hidden" style={{ backgroundColor: "#0B1437" }}>
       {/* Background photo */}
       <img
-        src="/images/moments/workshop-group.jpg"
+        src="/images/moments/policy-convening.jpg"
         alt=""
         className="absolute inset-0 w-full h-full object-cover animate-kb"
         aria-hidden="true"
