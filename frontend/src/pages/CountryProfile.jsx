@@ -110,7 +110,7 @@ export default function CountryProfile() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-6">
         <p className="text-[1.5rem] font-bold text-secondary">{T.notFound}</p>
-        <Link to="/country-tracker" className="text-[0.9375rem] font-semibold" style={{ color: "#D4A017" }}>
+        <Link to="/regulatory-tracker" className="text-[0.9375rem] font-semibold" style={{ color: "#D4A017" }}>
           {T.notFoundCta}
         </Link>
       </div>
@@ -128,7 +128,7 @@ export default function CountryProfile() {
           <nav className="flex items-center gap-2 text-[0.75rem] text-white/40 mb-6">
             <Link to="/" className="hover:text-white/70 transition-colors">{T.breadcrumbHome}</Link>
             <span>/</span>
-            <Link to="/country-tracker" className="hover:text-white/70 transition-colors">{T.breadcrumbTracker}</Link>
+            <Link to="/regulatory-tracker" className="hover:text-white/70 transition-colors">{T.breadcrumbTracker}</Link>
             <span>/</span>
             <span className="text-white/70">{profile.name}</span>
           </nav>
@@ -150,7 +150,7 @@ export default function CountryProfile() {
                 </div>
               </div>
               <p className="text-[0.8125rem] text-white/40">{T.lastUpdated}: {profile.lastUpdated}</p>
-              <Link to="/country-tracker" className="inline-flex items-center gap-1.5 text-[0.8125rem] text-white/50 hover:text-white/80 transition-colors mt-4">
+              <Link to="/regulatory-tracker" className="inline-flex items-center gap-1.5 text-[0.8125rem] text-white/50 hover:text-white/80 transition-colors mt-4">
                 <ArrowLeft className="w-3.5 h-3.5" /> {T.backToTracker}
               </Link>
             </div>
@@ -321,7 +321,7 @@ export default function CountryProfile() {
               {relatedCountries.map(c => (
                 <Link
                   key={c.name}
-                  to={`/country-tracker/${c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  to={`/regulatory-tracker/${c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                   className="bg-white border border-border rounded-lg p-6 flex flex-col gap-3 hover:border-accent transition-colors"
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 >
@@ -363,7 +363,7 @@ export default function CountryProfile() {
   <Download className="w-4 h-4" /> {T.ctaButton}
 </a>
       <Link
-        to="/country-tracker"
+        to="/regulatory-tracker"
         className="inline-flex items-center text-[0.8125rem] font-semibold px-5 py-2.5 border transition-colors"
         style={{ borderColor: "rgba(255,255,255,0.3)", color: "#fff" }}
         onMouseEnter={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)"; }}

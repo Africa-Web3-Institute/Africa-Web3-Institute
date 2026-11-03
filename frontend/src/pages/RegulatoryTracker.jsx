@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Search, ShieldCheck, FileDown, ExternalLink, AlertCircle } from "lucide-react";
+import { Search, ShieldCheck, FileDown, ExternalLink, AlertCircle, SlidersHorizontal } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import {
@@ -76,8 +76,17 @@ export default function RegulatoryTracker() {
   const [dateRange, setDateRange] = useState("All Dates");
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const { language } = useLanguage();
   const T = t[language].tracker;
+
+  const activeFilterCount = [
+    region !== "All Regions",
+    category !== "All Categories",
+    statusFilter !== "All Statuses",
+    confidenceFilter !== "All Confidence Levels",
+    dateRange !== "All Dates",
+  ].filter(Boolean).length;
 
   const filtered = useMemo(() => {
     const now = new Date();
@@ -171,7 +180,7 @@ export default function RegulatoryTracker() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0 lg:ml-auto w-full sm:w-auto">
-              <Link to="/country-tracker/methodology"
+              <Link to="/regulatory-tracker/methodology"
                 className="inline-flex items-center justify-center gap-2 text-[0.8125rem] font-semibold px-5 py-2.5 rounded-md transition-colors"
                 style={{ backgroundColor: "#D4A017", color: "#fff" }}
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
@@ -190,10 +199,10 @@ export default function RegulatoryTracker() {
         </div>
       </section>
 
-      {/* Sticky Filter Bar */}
-      <div className="sticky top-[3.75rem] z-40 bg-white border-b border-border shadow-sm">
+      {/* Filter Bar — sticky below the floating navbar on desktop; collapsible on mobile */}
+      <div className="lg:sticky lg:top-[5.5rem] z-40 bg-white border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-3">
+          <div className="flex gap-2.5 sm:gap-3 items-center">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <input
@@ -204,9 +213,29 @@ export default function RegulatoryTracker() {
               />
             </div>
             <button
+              type="button"
+              onClick={() => setShowFilters(v => !v)}
+              aria-expanded={showFilters}
+              className="lg:hidden inline-flex items-center gap-1.5 shrink-0 text-[0.8125rem] font-semibold px-3 py-2 rounded-md border transition-colors"
+              style={{
+                borderColor: showFilters || activeFilterCount ? "#0B1437" : "var(--color-border)",
+                backgroundColor: showFilters ? "#0B1437" : "#fff",
+                color: showFilters ? "#fff" : "#0B1437",
+              }}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              {language === "fr" ? "Filtres" : "Filters"}
+              {activeFilterCount > 0 && (
+                <span className="ml-0.5 min-w-[1.125rem] h-[1.125rem] px-1 rounded-full text-[0.6875rem] leading-[1.125rem] text-center"
+                  style={{ backgroundColor: "#D4A017", color: "#0B1437" }}>
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+            <button
             type="button"
               onClick={resetFilters}
-              className="text-[0.8125rem] font-semibold transition-colors shrink-0 text-left sm:text-center"
+              className="hidden lg:block text-[0.8125rem] font-semibold transition-colors shrink-0"
               style={{ color: "#D4A017" }}
               onMouseEnter={e => e.currentTarget.style.color = "#b8891a"}
               onMouseLeave={e => e.currentTarget.style.color = "#D4A017"}
@@ -215,7 +244,7 @@ export default function RegulatoryTracker() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+          <div className={`${showFilters ? "grid" : "hidden"} lg:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mt-3`}>
             <select value={region} onChange={e => setRegion(e.target.value)}
               className="w-full text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent">
               {REGIONS.map(r => <option key={r} value={r}>{T.regions?.[r] || r}</option>)}
@@ -238,8 +267,19 @@ export default function RegulatoryTracker() {
             </select>
           </div>
 
+          {showFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="lg:hidden mt-3 text-[0.8125rem] font-semibold"
+              style={{ color: "#D4A017" }}
+            >
+              {T.resetFilters}
+            </button>
+          )}
+
           {dateRange === "Custom range" && (
-            <div className="flex flex-wrap gap-2.5 mt-2.5">
+            <div className={`${showFilters ? "flex" : "hidden"} lg:flex flex-wrap gap-2.5 mt-2.5`}>
               <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)}
                 className="text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent" />
               <span className="self-center text-[0.8125rem] text-muted-foreground">{language === "fr" ? "à" : "to"}</span>
@@ -247,21 +287,22 @@ export default function RegulatoryTracker() {
                 className="text-[0.8125rem] border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-accent" />
             </div>
           )}
-
-          <p className="text-[0.75rem] text-muted-foreground mt-3">
-            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {REGULATORY_UPDATES.length} {T.updates}
-          </p>
-          <p className="text-[0.7rem] text-muted-foreground/80 mt-1">
-            {T.methodologyReferenceNote || "Status and confidence labels follow the AWI Regulatory Tracker Methodology."}{" "}
-            <Link to="/country-tracker/methodology" className="font-semibold underline underline-offset-2" style={{ color: "#D4A017" }}>
-              {T.methodologyReferenceLink || "Understand the labels →"}
-            </Link>
-          </p>
         </div>
       </div>
 
       {/* Result cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 ">
+        <div className="mb-5">
+          <p className="text-[0.75rem] text-muted-foreground">
+            {T.showing} <strong className="text-foreground">{filtered.length}</strong> {T.of} {REGULATORY_UPDATES.length} {T.updates}
+          </p>
+          <p className="text-[0.7rem] text-muted-foreground/80 mt-1">
+            {T.methodologyReferenceNote || "Status and confidence labels follow the AWI Regulatory Tracker Methodology."}{" "}
+            <Link to="/regulatory-tracker/methodology" className="font-semibold underline underline-offset-2" style={{ color: "#D4A017" }}>
+              {T.methodologyReferenceLink || "Understand the labels →"}
+            </Link>
+          </p>
+        </div>
         {filtered.length === 0 ? (
           <div className="px-6 py-16 text-center text-muted-foreground text-[0.9375rem]">
             {T.noResults}
@@ -306,7 +347,7 @@ export default function RegulatoryTracker() {
 
                   <div className="flex items-center justify-between pt-2 mt-1 border-t border-border/60">
                     <Link
-                      to={`/country-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                      to={`/regulatory-tracker/${u.country.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                       className="text-[0.8125rem] font-semibold shrink-0"
                       style={{ color: "#D4A017" }}
                     >

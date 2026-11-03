@@ -1,7 +1,7 @@
 import { Toaster } from "./components/ui/toaster";
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 //import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
@@ -29,13 +29,15 @@ import StablecoinTracker from './pages/StablecoinTracker';
 import NewsletterLanding from "./pages/NewsletterLanding";
 import Newsletters from "./pages/NewsletterArchive";
 import ProgramsEvents from './pages/ProgramsEvents';
+import Intelligence from './pages/Intelligence';
 import Contact from './pages/Contact';
 import EventsPage from './pages/EventsPage';
 import Careers from './pages/Careers'
-import News from './pages/News'
-import NewsArticle from "./pages/NewsArticle";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
+// News & Blog pages temporarily disabled
+// import News from './pages/News'
+// import NewsArticle from "./pages/NewsArticle";
+// import Blog from "./pages/Blog";
+// import BlogPost from "./pages/BlogPost";
 import RegulatoryTrackerMethodology from "./pages/RegulatoryTrackerMethodology";
 
 
@@ -58,6 +60,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { NavDropdownProvider } from "./lib/NavDropdownContext";
 
 
+
+// /country-tracker/... → /regulatory-tracker/... (same sub-path and query string)
+const LegacyTrackerRedirect = () => {
+  const { pathname, search } = useLocation();
+  return <Navigate to={pathname.replace(/^\/country-tracker/, "/regulatory-tracker") + search} replace />;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -114,13 +122,18 @@ return (
       <Route path="/indaba-series" element={<IndabaSeries />} />
       
       <Route path="/programs-events" element={<ProgramsEvents />} />
+      <Route path="/intelligence" element={<Intelligence />} />
+      {/* The tracker moved from /country-tracker to /regulatory-tracker — keep old shared links working */}
+      <Route path="/country-tracker/*" element={<LegacyTrackerRedirect />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/events" element={<EventsPage />} />
       <Route path="/careers" element={<Careers/>}/>
+      {/* News & Blog pages temporarily disabled
       <Route path="/news" element={<News/>}/>
       <Route path="/news/:slug" element={<NewsArticle />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
+      */}
     
 <Route path="/newsletter" element={<NewsletterLanding />} />
 <Route path="/newsletters/archive" element={<Newsletters />} />

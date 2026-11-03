@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { t } from "../lib/translations";
 import { trackDownload } from "../api/publicContent";
 
-const PUBLICATIONS = [
+export const PUBLICATIONS = [
   {
     id: 1,
     category: "State of Web3 Africa",
@@ -296,10 +296,13 @@ export default function Publications() {
         </div>
       </section>
 
-      {/* Sticky Tabs */}
-      <div className="sticky top-[3.75rem] z-40 bg-white border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex gap-0 overflow-x-auto scrollbar-hide">
+      {/* Sticky Tabs — offset clears the floating navbar (76px mobile, 88px sm+) */}
+      <div className="sticky top-[4.75rem] sm:top-[5.5rem] z-40 bg-white border-b border-border shadow-sm">
+        <div className="relative max-w-7xl mx-auto lg:px-8">
+          {/* Right-edge fade hints that more tabs scroll into view on small screens */}
+          <div className="lg:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-10"
+            style={{ background: "linear-gradient(to left, #fff, rgba(255,255,255,0))" }} />
+          <div className="flex gap-0 overflow-x-auto scrollbar-hide px-2 sm:px-4 lg:px-0">
             {TABS.map(tab => (
               <button
                 key={tab.key}

@@ -55,7 +55,7 @@ export default function CountryDeepDive({ selectedCountry, language }) {
             <span className="text-3xl font-extrabol text-foreground dark:text-accent-foreground leading-none">{selectedCountry.overall_score}</span>
           </div>
           <Link
-            to={`/country-tracker/${selectedCountry.key}`}
+            to={`/regulatory-tracker/${selectedCountry.key}`}
             className="flex items-center gap-1.5 text-xs font-semibold text-accent border border-accent/40 hover:bg-accent hover:text-white px-3 py-2.5 rounded-lg transition-all whitespace-nowrap"
           >
             Full Profile <ArrowRight className="w-3.5 h-3.5" />
@@ -77,13 +77,14 @@ export default function CountryDeepDive({ selectedCountry, language }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-6">
             <div className="flex flex-col items-center w-full">
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Pillar Distribution</h4>
-              <div className="w-full min-h-[260px] h-[260px] ">
+              {/* overflow-visible lets the side labels ("Policy Support") extend into the card padding on narrow screens */}
+              <div className="w-full min-h-[260px] h-[260px] [&_svg]:overflow-visible">
                 <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                  <RadarChart cx="50%" cy="50%" outerRadius="55%" data={radarData}>
                     <PolarGrid stroke="#e2e8f0" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#ffffff', fontSize: 11, fontWeight: 600 }} />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--color-secondary)', fontSize: 11, fontWeight: 600 }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                    <Radar name={selectedCountry.name} dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
+                    <Radar name={selectedCountry.name} dataKey="value" stroke="var(--color-primary)" fill="var(--color-primary)" fillOpacity={0.25} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>

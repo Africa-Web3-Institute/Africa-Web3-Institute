@@ -4,6 +4,19 @@
 
 @import "tailwindcss";
 
+/* Only apply `dark:` styles under a .dark class, not the OS setting —
+   the site is designed light, and partial dark styling broke contrast. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Horizontal scrollers (tab bars, carousels) without a visible scrollbar */
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @theme {
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Playfair Display', serif;
