@@ -11,13 +11,13 @@ export default function Home() {
     <>
       <HeroSection />
 
-      {/* What we do → why it matters → proof → stay in touch → who trusts us → get involved */}
+      {/* What we do → why it matters → proof → who trusts us → get involved → stay in touch */}
       <ExploreAWI />
       <WhyAfrica />
       <LatestFromAWI />
-      <NewsletterStrip />
       <Partners />
       <FinalCTA />
+      <NewsletterStrip />
     </>
   );
 }
