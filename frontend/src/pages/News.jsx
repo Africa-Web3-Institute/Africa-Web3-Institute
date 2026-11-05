@@ -106,7 +106,7 @@ const NewsCard = ({ item, featured = false }) => {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full min-h-[180px] bg-gradient-to-br from-[#0B1437] to-[#1E3A8A]" />
+          <div className="w-full h-full min-h-[180px] bg-linear-to-br from-[#0B1437] to-[#1E3A8A]" />
         )}
         <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm text-white text-[0.65rem] font-medium">
           {typeIcon}

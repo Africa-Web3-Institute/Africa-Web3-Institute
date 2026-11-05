@@ -5,13 +5,12 @@ import {
   ArrowLeft,
   Calendar,
   Clock,
-  User,
-  Share2,
+  
   Copy,
   Check,
   BookOpen,
   ChevronRight,
-  Sparkles,
+  
 } from "lucide-react";
 
 const XIcon = ({ className = "w-4 h-4" }) => (
@@ -265,7 +264,7 @@ export default function BlogPost() {
 
         {/* Author Bio Box */}
         <div className="mt-14 p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-          <div className="w-14 h-14 rounded-full bg-[#0B1437] text-white flex-shrink-0 flex items-center justify-center font-bold text-xl">
+          <div className="w-14 h-14 rounded-full bg-[#0B1437] text-white shrink-0 flex items-center justify-center font-bold text-xl">
             {post.author ? post.author.charAt(0) : "A"}
           </div>
           <div>

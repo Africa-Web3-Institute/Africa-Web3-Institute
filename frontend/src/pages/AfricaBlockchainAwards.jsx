@@ -18,9 +18,7 @@ import {
   Info,
   Newspaper,
   Send,
-  Calendar,
-  Users,
-  MapPin,
+
 } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
@@ -241,7 +239,7 @@ export default function AfricaBlockchainAwards() {
                     <div className="divide-y divide-border">
                       {cat.awards.map((award) => (
                         <div key={award.name} className="px-6 py-4 flex items-start gap-4 hover:bg-[#F8F9FB] transition-colors">
-                          <Award className="w-4 h-4 text-[#D4A017] mt-0.5 flex-shrink-0" />
+                          <Award className="w-4 h-4 text-[#D4A017] mt-0.5 shrink-0" />
                           <div>
                             <p className="text-sm font-semibold text-secondary">
                               {award.name}
@@ -288,7 +286,7 @@ export default function AfricaBlockchainAwards() {
                     key={m.title}
                     className="bg-white p-5 rounded-xl border border-border flex items-start gap-4 hover:shadow-md transition-shadow"
                   >
-                    <span className="text-sm font-bold text-[#D4A017] mt-0.5 flex-shrink-0">
+                    <span className="text-sm font-bold text-[#D4A017] mt-0.5 shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div>
@@ -467,7 +465,7 @@ export default function AfricaBlockchainAwards() {
                     key={i}
                     className="bg-white p-4 rounded-xl border border-border flex items-start gap-3 hover:shadow-md transition-shadow"
                   >
-                    <ChevronRight className="w-4 h-4 text-[#D4A017] mt-0.5 flex-shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-[#D4A017] mt-0.5 shrink-0" />
                     <p className="text-sm text-foreground leading-relaxed">{a}</p>
                   </div>
                 ))}
@@ -523,7 +521,7 @@ export default function AfricaBlockchainAwards() {
                 {T.mediaPara}
               </p>
               <div className="flex items-center gap-4 bg-[#F8F9FB] p-5 rounded-xl border border-border">
-                <Mail className="w-5 h-5 text-[#D4A017] flex-shrink-0" />
+                <Mail className="w-5 h-5 text-[#D4A017] shrink-0" />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-0.5">
                     {T.mediaDirectorLabel}

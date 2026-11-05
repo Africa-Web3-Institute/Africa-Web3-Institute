@@ -178,7 +178,7 @@ export default function About() {
             backgroundPosition: "center",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B1437]/95 to-[#0B1437]/90" />
+        <div className="absolute inset-0 bg-linear-to-b from-[#0B1437]/95 to-[#0B1437]/90" />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection className="text-center mb-12">
             <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3 text-[#D4A017]">

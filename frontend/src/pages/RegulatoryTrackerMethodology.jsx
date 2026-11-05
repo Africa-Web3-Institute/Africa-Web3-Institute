@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ShieldCheck, FileDown, Flag, Mail } from "lucide-react";
+import { ArrowLeft, FileDown, Flag, Mail } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 

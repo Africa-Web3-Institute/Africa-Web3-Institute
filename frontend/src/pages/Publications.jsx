@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
-import { publicationsApi, newsletterApi } from "../api/api";
+import { publicationsApi } from "../api/api";
 import { useEffect } from "react";
 import { t } from "../lib/translations";
 import { trackDownload } from "../api/publicContent";
@@ -19,137 +19,27 @@ export const PUBLICATIONS = [
     available: true,
   },
 
-  {
-    id: 2,
-    category: "State of Web3 Africa",
-    title: "State of Web3 Africa 2026 — Q2 Report",
-    description: "Quarterly intelligence on stablecoin adoption, regulatory changes, and capital flows across African Web3 markets.",
-    date: "June 2026",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  //{
-  //  id: 3,
-  //  category: "Monthly African Stablecoin Adoption Report",
-  //  title: "African Stablecoin Adoption Report — May 2026",
-  //  description: "Monthly tracking of stablecoin transaction volumes, P2P adoption rates, merchant integration, and regulatory developments across Africa.",
-  //  date: "May 2026",
-  //  author: "AWI Research Team",
-  //  downloadUrl: "#",
-  //  available: false,
-//  },
-
  // {
-  //  id: 4,
-  //  category: "Monthly African Stablecoin Adoption Report",
-  //  title: "African Stablecoin Adoption Report — March 2026",
-   // description: "March 2026 stablecoin data including cross-border settlement volumes, remittance corridors, and CBDC pilot updates.",
-   // date: "March 2026",
-  //  author: "AWI Research Team",
-  //  downloadUrl: "#",
- //   available: true,
+  //  id: 2,
+  //  category: "State of Web3 Africa",
+  ////  title: "State of Web3 Africa 2026 — Q2 Report",
+  ////  description: "Quarterly intelligence on stablecoin adoption, regulatory changes, and capital flows across African Web3 markets.",
+  //  date: "June 2026",
+    //author: "AWI Research Team",
+    //downloadUrl: "#",
+    //available: false,
  // },
   {
-    id: 5,
+    id: 4,
     category: "Policy Brief",
-    title: "VASP Licensing Frameworks in Anglophone Africa",
-    description: "Comparative analysis of virtual asset service provider licensing requirements across Nigeria, South Africa, Kenya, Ghana, and Rwanda.",
-    date: "April 2026",
+    title: "Binance Breach: Lessons for African Regulators",
+    description: "On 29 October 2026, about $6.3 billion left Binance's wallets. This brief sets out what is reported so far and five requirements African regulators can place on platforms serving their markets: segregated and audited reserves, published withdrawal terms, incident reporting, a freeze-order process, and independent reconciliation.",
+    date: "2 November 2026",
     author: "AWI Policy Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  {
-    id: 6,
-    category: "Policy Brief",
-    title: "Stablecoin Regulation in Francophone Africa",
-    description: "Policy brief examining the BCEAO and BEAC regional frameworks and their implications for stablecoin adoption across Francophone African nations.",
-    date: "March 2026",
-    author: "AWI Policy Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  {
-    id: 7,
-    category: "Policy Brief",
-    title: "CBDCs and Financial Inclusion in Sub-Saharan Africa",
-    description: "Analysis of active and pilot CBDC programmes across Sub-Saharan Africa and their potential to accelerate financial inclusion.",
-    date: "February 2026",
-    author: "AWI Policy Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  {
-    id: 8,
-    category: "Policy Brief",
-    title: "AML/CFT Compliance for African VASPs",
-    description: "Guidance brief on FATF Travel Rule implementation and AML/CFT obligations for virtual asset service providers operating in African jurisdictions.",
-    date: "January 2026",
-    author: "AWI Policy Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  {
-    id: 9,
-    category: "Published Articles",
-    title: "Why Africa Needs Its Own Web3 Policy Framework",
-    description: "Op-ed examining why African nations must develop indigenous Web3 regulatory frameworks rather than adopting Western models wholesale.",
-    date: "April 2026",
-    author: "AWI Executive Director",
-    downloadUrl: "#",
+    downloadUrl: "/reports/AWI_Policy_Brief_Binance_Breach_02_Nov_2026.pdf",
     available: true,
   },
-  {
-    id: 10,
-    category: "Published Articles",
-    title: "The Stablecoin Revolution in African Cross-Border Trade",
-    description: "Analysis of how stablecoins are reshaping intra-African trade settlement and what it means for the AfCFTA digital payment infrastructure.",
-    date: "March 2026",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: true,
-  },
-  {
-    id: 11,
-    category: "Published Articles",
-    title: "Binance vs Nigeria: What It Means for African Crypto Regulation",
-    description: "In-depth analysis of the Nigeria-Binance regulatory standoff and its implications for VASP regulation across the continent.",
-    date: "January 2026",
-    author: "AWI Policy Team",
-    downloadUrl: "#",
-    available: true,
-  },
-  {
-    id: 12,
-    category: "Published Research",
-    title: "Africa Web3 Policy & Innovation Index (AWPII) 2025",
-    description: "The definitive annual ranking of 18+ African nations on Web3 policy readiness, blockchain innovation activity, and digital asset adoption metrics.",
-    date: "December 2025",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: true,
-  },
-  {
-    id: 13,
-    category: "Published Research",
-    title: "Blockchain for Agricultural Supply Chains in Africa",
-    description: "Research paper examining blockchain implementations in African agricultural supply chains with case studies from Kenya, Ghana, and Ethiopia.",
-    date: "November 2025",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: false,
-  },
-  {
-    id: 14,
-    category: "Published Research",
-    title: "DeFi Adoption Patterns in Sub-Saharan Africa",
-    description: "Empirical research on decentralised finance usage patterns, barriers to adoption, and opportunities across Sub-Saharan African markets.",
-    date: "October 2025",
-    author: "AWI Research Team",
-    downloadUrl: "#",
-    available: false,
-  },
+  // Older entries (ids 3, 5-14) removed while the backend is down; restore from version history.
 ];
 
 const CATEGORY_STYLES = {
@@ -187,7 +77,7 @@ function PublicationCard({ pub, T, track }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track && trackDownload(pub.id)}
-            className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold px-4 py-2 rounded-md flex-shrink-0 transition-colors"
+            className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold px-4 py-2 rounded-md shrink-0 transition-colors"
             style={{ backgroundColor: "#D4A017", color: "#fff" }}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
@@ -195,7 +85,7 @@ function PublicationCard({ pub, T, track }) {
             {/\.pdf($|\?)/i.test(pub.downloadUrl) ? T.downloadBtn : T.readBtn}
           </a>
         ) : (
-          <span className="inline-flex items-center text-[0.75rem] font-medium px-3 py-1.5 rounded-md flex-shrink-0"
+          <span className="inline-flex items-center text-[0.75rem] font-medium px-3 py-1.5 rounded-md shrink-0"
             style={{ backgroundColor: "#f3f4f6", color: "#9ca3af" }}>
             {T.comingSoon}
           </span>
@@ -372,7 +262,7 @@ export default function Publications() {
           </div>
           <a
             href="mailto:research@africaweb3institute.org"
-            className="inline-flex items-center text-[0.875rem] font-semibold px-5 py-2.5 rounded-md flex-shrink-0 transition-colors"
+            className="inline-flex items-center text-[0.875rem] font-semibold px-5 py-2.5 rounded-md shrink-0 transition-colors"
             style={{ backgroundColor: "#0B1437", color: "#fff" }}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#D4A017"}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = "#0B1437"}
@@ -412,7 +302,7 @@ export default function Publications() {
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 text-[0.875rem] font-semibold flex-shrink-0 transition-colors"
+                className="px-5 py-2.5 text-[0.875rem] font-semibold shrink-0 transition-colors"
                 style={{ backgroundColor: "#D4A017", color: "#fff" }}
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
                 onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
