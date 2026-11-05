@@ -71,7 +71,7 @@ export const t = {
       body: "AWI's core knowledge assets — indexes, live regulatory tracking, and research on Africa's Web3 economy.",
       items: [
         { title: "AWPII", description: "Africa Web3 Policy & Innovation Index", href: "/awpii", icon: "🗺️" },
-        { title: "Regulatory Tracker", description: "Live regulatory updates across 18+ African nations", href: "/country-tracker", icon: "📊" },
+        { title: "Regulatory Tracker", description: "Live regulatory updates across 18+ African nations", href: "/regulatory-tracker", icon: "📊" },
         { title: "Stablecoin Tracker", description: "Stablecoin regulatory frameworks across 200+ countries", href: "/stablecoin-tracker", icon: "🪙" },
         { title: "Enforcement Watch", description: "Track regulatory crackdowns and enforcement actions", href: "/enforcement-watch", icon: "⚖️" },
         { title: "Publications", description: "Policy briefs, research reports, and market analysis", href: "/publications", icon: "📄" },
@@ -961,7 +961,7 @@ newsletterLanding: {
       body: "Les principales ressources de l'AWI — indices, suivi réglementaire en temps réel et recherche sur l'économie Web3 africaine.",
       items: [
         { title: "AWPII", description: "Indice Africain des Politiques & de l'Innovation Web3", href: "/awpii", icon: "🗺️" },
-        { title: "Suivi Réglementaire", description: "Mises à jour réglementaires en temps réel sur 18+ nations", href: "/country-tracker", icon: "📊" },
+        { title: "Suivi Réglementaire", description: "Mises à jour réglementaires en temps réel sur 18+ nations", href: "/regulatory-tracker", icon: "📊" },
         { title: "Suivi Stablecoin", description: "Cadres réglementaires des stablecoins dans 200+ pays", href: "/stablecoin-tracker", icon: "🪙" },
         { title: "Surveillance des Sanctions", description: "Suivre les répressions réglementaires et actions coercitives", href: "/enforcement-watch", icon: "⚖️" },
         { title: "Publications", description: "Notes de politique, rapports de recherche et analyses de marché", href: "/publications", icon: "📄" },

@@ -25,7 +25,7 @@ export default function AdvisoryBoardCard({ member }) {
       }}
       className="bg-white flex flex-col items-center text-center transition-all duration-200 overflow-hidden"
       style={{
-        border: hovered ? "1.5px solid #D4A017" : "1.5px solid hsl(var(--border))",
+        border: hovered ? "1.5px solid #D4A017" : "1.5px solid var(--color-border)",
         transform: hovered ? "translateY(-4px)" : "none",
         boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.08)" : "none",
       }}
@@ -76,9 +76,9 @@ export default function AdvisoryBoardCard({ member }) {
             rel="noopener noreferrer"
             aria-label={`${member.name} on LinkedIn`}
             className="mt-auto w-9 h-9 flex items-center justify-center rounded-full transition-colors"
-            style={{ border: "1px solid hsl(var(--border))", color: "hsl(var(--muted-foreground))" }}
+            style={{ border: "1px solid var(--color-border)", color: "var(--color-muted-foreground)" }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "#D4A017"; e.currentTarget.style.color = "#D4A017"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "hsl(var(--border))"; e.currentTarget.style.color = "hsl(var(--muted-foreground))"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--color-border)"; e.currentTarget.style.color = "var(--color-muted-foreground)"; }}
           >
             <Linkedin className="w-4 h-4" />
           </a>

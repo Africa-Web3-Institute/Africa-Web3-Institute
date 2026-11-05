@@ -67,7 +67,7 @@ export default function RegulatoryTrackerMethodology() {
           <nav className="flex items-center gap-2 text-[0.75rem] text-white/40 mb-6">
             <Link to="/" className="hover:text-white/70 transition-colors">{T.breadcrumbHome || "Home"}</Link>
             <span>/</span>
-            <Link to="/country-tracker" className="hover:text-white/70 transition-colors">{T.breadcrumbTracker || "Regulatory Tracker"}</Link>
+            <Link to="/regulatory-tracker" className="hover:text-white/70 transition-colors">{T.breadcrumbTracker || "Regulatory Tracker"}</Link>
             <span>/</span>
             <span className="text-white/70">{T.breadcrumbMethodology || "Methodology"}</span>
           </nav>
@@ -259,7 +259,7 @@ export default function RegulatoryTrackerMethodology() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6">
             <p className="text-[1.0625rem] font-semibold text-white">{T.ctaTitle || "Questions about a specific classification?"}</p>
             <div className="flex flex-wrap gap-3 shrink-0">
-              <Link to="/country-tracker"
+              <Link to="/regulatory-tracker"
                 className="inline-flex items-center gap-2 text-[0.8125rem] font-semibold px-5 py-2.5 rounded-md transition-colors"
                 style={{ backgroundColor: GOLD, color: "#fff" }}
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}

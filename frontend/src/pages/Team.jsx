@@ -3,7 +3,7 @@ import {useEffect, useRef, useState }  from "react";
 import { useLanguage } from "../lib/LanguageContext";
 import { t } from "../lib/translations";
 import { Link } from "react-router-dom";
-import { FaLinkedin as Linkedin, FaTwitter as Twitter } from "react-icons/fa";
+import { FaLinkedin as Linkedin, FaXTwitter as Twitter } from "react-icons/fa6";
 import { Users, MapPin, Briefcase, ArrowRight } from "lucide-react";
 import KateAcH from "../assets/Board/Kate_operations-lead.png";
 

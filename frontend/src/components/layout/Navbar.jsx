@@ -8,6 +8,9 @@ import { useNavDropdown } from "../../lib/NavDropdownContext";
 // ─── Paths for highlighting active dropdowns ────────────────────────────────
 const ABOUT_PATHS = ["/about", "/team", "/board"];
 const NEWS_PATHS = ["/news"];
+// Gold divider between items in the desktop dropdowns and mobile accordions
+const DIVIDER_GOLD = "rgba(212,160,23,0.45)";
+
 const STATIC_PAGES = [
  "/nrti",
   "/ghana-vasp-journalists-workshop",
@@ -125,15 +128,16 @@ const getIntelligenceItems = (language) => [
         ),
         href: "/publications",
       },
-      {
-        label: getLabel(language, "Blog & Thought Leadership", "Blog & Pensée Stratégique"),
-        desc: getLabel(
-          language,
-          "Perspectives on African Web3 policy, stablecoins, and monetary sovereignty",
-          "Analyses de fond et perspectives sur les politiques Web3 africaines"
-        ),
-        href: "/blog",
-      },
+      // Blog page temporarily disabled
+      // {
+      //   label: getLabel(language, "Blog & Thought Leadership", "Blog & Pensée Stratégique"),
+      //   desc: getLabel(
+      //     language,
+      //     "Perspectives on African Web3 policy, stablecoins, and monetary sovereignty",
+      //     "Analyses de fond et perspectives sur les politiques Web3 africaines"
+      //   ),
+      //   href: "/blog",
+      // },
       {
         label: getLabel(language, "Newsletter Archive", "Archives des Bulletins"),
         desc: getLabel(
@@ -306,19 +310,15 @@ const VerticalDropdownMenu = ({ sections, navigateTo, isActive }) => {
         {flatItems.map((item, i) => {
           const active = isActive(item.href);
           return (
-            <div key={item.href} style={{ animation: `vItemIn 0.15s ease both` }}>
-
-
-              {i > 0 && (
-                <div
-                  className="-mx-2.5"
-                  style={{
-                    height: 1,
-                    background:
-                      "linear-gradient(90deg, rgba(212,160,23,0) 0%, rgba(212,160,23,0.65) 14%, rgba(212,160,23,0.65) 86%, rgba(212,160,23,0) 100%)",
-                  }}
-                />
-              )}
+            <div
+              key={item.href}
+              style={{
+                animation: `vItemIn 0.15s ease both`,
+                // A real border (not a 1px-tall div) is snapped to whole device pixels,
+                // so every divider renders at full strength under 125%/150% display scaling.
+                borderTop: i > 0 ? `1px solid ${DIVIDER_GOLD}` : undefined,
+              }}
+            >
               <button
               type="button"
                 onClick={() => navigateTo(item.href)}
@@ -370,7 +370,7 @@ const MobileMenuLink = ({ label, active, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center gap-3 w-full text-left px-8 py-3 text-sm"
+    className="flex items-center gap-3 w-full text-left px-2 py-3 text-sm"
     style={{
       color: active ? "#D4A017" : "#374151",
       borderLeft: active ? "2px solid #D4A017" : "2px solid transparent",
@@ -395,14 +395,15 @@ const MobileAccordion = ({ label, expanded, onToggle, sections, navigateTo, isAc
       />
     </button>
     {expanded && (
-      <div className="pb-2" style={{ backgroundColor: "#F9FAFB" }}>
-        {sections.flatMap((section) => section.items).map((item) => (
-          <MobileMenuLink
-            key={item.href}
-            label={item.label}
-            active={isActive(item.href)}
-            onClick={() => navigateTo(item.href)}
-          />
+      <div className="pb-2 px-6" style={{ backgroundColor: "#F9FAFB" }}>
+        {sections.flatMap((section) => section.items).map((item, i) => (
+          <div key={item.href} style={{ borderTop: i > 0 ? `1px solid ${DIVIDER_GOLD}` : undefined }}>
+            <MobileMenuLink
+              label={item.label}
+              active={isActive(item.href)}
+              onClick={() => navigateTo(item.href)}
+            />
+          </div>
         ))}
       </div>
     )}
@@ -561,8 +562,8 @@ export default function Navbar() {
               alt="Africa Web3 Institute logo"
               style={{ height: "46px", width: "auto", objectFit: "contain" }}
             />
-            <span className="hidden sm:inline font-bold text-[0.9375rem] leading-tight" style={{ color: "#111827" }}>
-              Africa Web3<br className="hidden sm:block" /> Institute
+            <span className="font-bold text-[0.875rem] sm:text-[0.9375rem] leading-tight" style={{ color: "#111827" }}>
+              Africa Web3<br /> Institute
             </span>
           </Link>
 
@@ -627,7 +628,7 @@ export default function Navbar() {
                 <VerticalDropdownMenu sections={programsItems} navigateTo={navigateTo} isActive={isActive} />
               )}
             </div>
-              {/* ✅ News link */}
+            {/* News & Blog links temporarily disabled
             <Link
               to="/news"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -637,7 +638,6 @@ export default function Navbar() {
               {getLabel(language, "News", "Actualités")}
             </Link>
 
-            {/* ✅ Blog link */}
             <Link
               to="/blog"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -646,6 +646,7 @@ export default function Navbar() {
             >
               {getLabel(language, "Blog", "Blog")}
             </Link>
+            */}
 
             <button
               onClick={() => navigateTo("/contact")}
@@ -716,9 +717,12 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <div
-          className="lg:hidden max-w-[1600px] mx-auto overflow-hidden"
+          className="lg:hidden max-w-[1600px] mx-auto overflow-x-hidden overflow-y-auto overscroll-contain"
           style={{
             marginTop: 8,
+            // The navbar is fixed, so cap the panel to the screen and let it scroll —
+            // otherwise expanded sections push Contact / Get Reports off-screen on short phones.
+            maxHeight: "calc(100dvh - 110px)",
             backgroundColor: "#fff",
             borderRadius: 20,
             boxShadow: "0 10px 32px rgba(11,20,55,0.14)",
@@ -768,7 +772,8 @@ export default function Navbar() {
           />
 
           
- <Link
+          {/* News & Blog links temporarily disabled
+          <Link
             to="/news"
             onClick={() => {
               setOpen(false);
@@ -790,6 +795,7 @@ export default function Navbar() {
           >
          {getLabel(language, "Blog & Insights", "Blog & Analyses")}
           </Link>
+          */}
           <Link
             to="/contact"
             onClick={() => {

@@ -1,196 +1,115 @@
 /**
- * ExploreAWI — Ucresco-inspired image card grid.
+ * ExploreAWI — "featured + 3" layout.
  *
- * Each card has:
- *  - A full-height image with Ken-Burns scale on hover
- *  - Ucresco-style gold corner brackets (top-left + bottom-right) that animate in on hover
- *  - A floating icon badge sitting on the image/content boundary
- *  - Framer Motion entrance + hover animations
+ * Intelligence (the flagship) is a large featured card; Programs & Events,
+ * About and Partnerships stack beside it. Text sits on the photo over a navy
+ * gradient, and every card links straight to its page.
+ *
+ *  lg:  [ featured (2 cols × 3 rows) ][ small ]
+ *                                      [ small ]
+ *                                      [ small ]
+ *  md:  featured full width, three small cards in a row beneath
+ *  sm:  everything stacked
  */
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { BookOpen, CalendarDays, Users, Mail, ArrowRight } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
 import Reveal from "../common/Reveal";
-import { useNavDropdown } from "../../lib/NavDropdownContext";
 
 const CARD_META = [
-  {
-    icon: BookOpen,
-    accent: "#D4A017",
-    iconBg: "rgba(212,160,23,0.12)",
-    href: "/intelligence",
-    dropdownKey: "intelligence",
-    image: "/images/moments/speaker-session.jpg",
-  },
-  {
-    icon: CalendarDays,
-    accent: "#D4A017",
-    iconBg: "rgba(212,160,23,0.12)",
-    href: "/programs-events",
-    dropdownKey: "programmes",
-    image: "/images/moments/policy-convening.jpg",
-  },
-  {
-    icon: Users,
-    accent: "#D4A017",
-    iconBg: "rgba(212,160,23,0.12)",
-    href: "/about",
-    image: "/images/moments/roundtable-briefing.jpg",
-  },
-  {
-    icon: Mail,
-    accent: "#D4A017",
-    iconBg: "rgba(212,160,23,0.12)",
-    href: "/contact",
-    image: "/images/moments/workshop-group.jpg",
-  },
+  { icon: BookOpen, href: "/intelligence", image: "/images/moments/roundtable-briefing.jpg" },
+  { icon: CalendarDays, href: "/programs-events", image: "/images/moments/classroom-training.jpg" },
+  { icon: Users, href: "/about", image: "/images/moments/speaker-session.jpg" },
+  { icon: Mail, href: "/contact", image: "/images/moments/workshop-group.jpg" },
 ];
 
-/* Gold corner brackets — Ucresco signature image treatment, animate in on card hover */
-function CornerBrackets() {
-  const cls = "absolute w-7 h-7 pointer-events-none z-20 opacity-0 scale-75 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:scale-100";
-  return (
-    <>
-      <span className={`${cls} top-3 left-3`} style={{ borderTop: "2px solid #D4A017", borderLeft: "2px solid #D4A017" }} />
-      <span className={`${cls} top-3 right-3`} style={{ borderTop: "2px solid #D4A017", borderRight: "2px solid #D4A017", transitionDelay: "0.04s" }} />
-      <span className={`${cls} bottom-3 left-3`} style={{ borderBottom: "2px solid #D4A017", borderLeft: "2px solid #D4A017", transitionDelay: "0.08s" }} />
-      <span className={`${cls} bottom-3 right-3`} style={{ borderBottom: "2px solid #D4A017", borderRight: "2px solid #D4A017", transitionDelay: "0.12s" }} />
-    </>
-  );
-}
-
-function ExploreCard({ card, meta, index }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px 0px" });
-  const navigate = useNavigate();
-  const { setActiveDropdown } = useNavDropdown();
+function ExploreCard({ card, meta, featured, delay, className = "" }) {
   const Icon = meta.icon;
 
-  const handleClick = () => {
-    if (meta.dropdownKey) {
-      // Desktop: open the dropdown
-      setActiveDropdown(meta.dropdownKey);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      // Mobile: open the menu and expand the accordion
-      if (window.innerWidth < 1024) {
-        const event = new CustomEvent('openMobileDropdown', { detail: meta.dropdownKey });
-        document.dispatchEvent(event);
-      }
-    } else {
-      navigate(meta.href);
-    }
-  };
-
   return (
-    <motion.div
-      ref={ref}
-      className="group cursor-pointer"
-      initial={{ opacity: 0, y: 36 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } }}
-      aria-label={card.title}
-    >
-      <motion.div
-        className="w-full h-full bg-white flex flex-col overflow-hidden rounded-[18px]"
-        style={{ border: "1px solid hsl(var(--border))" }}
-        whileHover={{ y: -6, borderColor: "#D4A017", boxShadow: "0 24px 48px rgba(11,20,55,0.16)" }}
-        transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+    <Reveal delay={delay} className={className}>
+      <Link
+        to={meta.href}
+        onClick={() => window.scrollTo({ top: 0 })}
+        aria-label={card.title}
+        className={`group relative flex h-full w-full overflow-hidden rounded-[18px] bg-[#0B1437] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4A017] ${
+          featured ? "min-h-[340px] sm:min-h-[400px]" : "min-h-[170px]"
+        }`}
       >
-        {/* Image area */}
-        <div className="relative w-full overflow-hidden shrink-0 rounded-t-[18px]" style={{ height: "clamp(210px, 22vw, 280px)" }}>
-          {/* Ken-Burns on hover */}
-          <motion.img
-            src={meta.image}
-            alt={card.title}
-            className="absolute inset-0 w-full h-full object-cover"
-            whileHover={{ scale: 1.06 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          />
+        {/* Photo (slow zoom on hover) */}
+        <img
+          src={meta.image}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
+        />
 
-          {/* Gradient */}
-          <div
-            className="absolute inset-0 z-10"
-            style={{ background: "linear-gradient(to top, rgba(11,20,55,0.65) 0%, rgba(11,20,55,0.15) 55%, transparent 100%)" }}
-          />
+        {/* Navy gradient keeps white text readable on any photo */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: featured
+              ? "linear-gradient(to top, rgba(11,20,55,0.95) 0%, rgba(11,20,55,0.7) 38%, rgba(11,20,55,0.15) 75%, rgba(11,20,55,0.05) 100%)"
+              : "linear-gradient(to top, rgba(11,20,55,0.95) 0%, rgba(11,20,55,0.78) 50%, rgba(11,20,55,0.35) 100%)",
+          }}
+        />
 
-          {/* Ucresco gold corner brackets — visible on group hover */}
-          <CornerBrackets />
-
-          {/* Floating icon badge — sits on boundary line */}
+        {/* Content pinned to the bottom */}
+        <div className={`relative z-10 mt-auto w-full ${featured ? "p-7 sm:p-9 lg:p-10" : "p-5 sm:p-6"}`}>
           <span
-            className="absolute bottom-2 left-7 translate-y-1/2 z-30 inline-flex items-center justify-center w-12 h-12 rounded-xl shadow-lg"
-            style={{
-              backgroundColor: "#fff",
-              border: `1.5px solid rgba(212,160,23,0.35)`,
-            }}
+            className={`inline-flex items-center justify-center rounded-lg mb-4 backdrop-blur-sm ${featured ? "w-11 h-11" : "w-9 h-9"}`}
+            style={{ backgroundColor: "rgba(212,160,23,0.16)", border: "1px solid rgba(212,160,23,0.45)" }}
           >
-            <Icon className="w-5 h-5" style={{ color: meta.accent }} />
+            <Icon className={featured ? "w-5 h-5" : "w-4 h-4"} style={{ color: "#D4A017" }} />
           </span>
-        </div>
 
-        {/* Content area */}
-        <div className="flex flex-col flex-1 px-7 pt-9 pb-7 gap-3">
-          <motion.h3
-            className="text-[1.0625rem] font-bold leading-snug"
-            style={{ color: "#0B1437" }}
-            whileHover={{ color: "#D4A017" }}
-            transition={{ duration: 0.2 }}
+          <h3
+            className={`font-bold text-white leading-tight ${
+              featured ? "font-display text-[1.75rem] sm:text-[2.125rem] mb-3" : "text-[1.125rem] mb-1.5"
+            }`}
           >
             {card.title}
-          </motion.h3>
+          </h3>
 
-          <p className="text-[0.875rem] leading-[1.75] flex-1" style={{ color: "#6B7280" }}>
+          <p
+            className={`leading-relaxed ${featured ? "text-[0.9375rem] sm:text-[1rem] max-w-md mb-6" : "text-[0.8125rem] mb-3 line-clamp-2"}`}
+            style={{ color: "rgba(255,255,255,0.75)" }}
+          >
             {card.description}
           </p>
 
-          {/* CTA link */}
-          <motion.span
-            className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold mt-3 pt-4"
-            style={{
-              color: meta.accent,
-              borderTop: "1px solid hsl(var(--border))",
-            }}
-            whileHover={{ gap: "8px" }}
-            transition={{ duration: 0.2 }}
-          >
+          <span className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold" style={{ color: "#D4A017" }}>
             {card.cta}
-            <motion.span
-              animate={{ x: 0 }}
-              whileHover={{ x: 3 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            >
-              <ArrowRight className="w-3.5 h-3.5" />
-            </motion.span>
-          </motion.span>
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+          </span>
         </div>
-      </motion.div>
-    </motion.div>
+
+        {/* Gold rule that grows along the bottom edge on hover */}
+        <span
+          className="absolute left-0 bottom-0 h-[3px] w-full origin-left scale-x-0 transition-transform duration-500 ease-out group-hover:scale-x-100 z-20"
+          style={{ backgroundColor: "#D4A017" }}
+        />
+      </Link>
+    </Reveal>
   );
 }
 
 export default function ExploreAWI() {
   const { language } = useLanguage();
   const T = t[language].exploreAWI;
+  const [featured, ...rest] = T.cards;
 
   return (
-    <section id="explore-awi" className="py-24 lg:py-32 border-b border-border bg-white">
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
+    <section id="explore-awi" className="py-20 lg:py-28 border-b border-border bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
         {/* Section header — centered */}
-        <div className="flex flex-col items-center text-center mb-14 max-w-2xl mx-auto">
+        <div className="flex flex-col items-center text-center mb-12 lg:mb-14 max-w-2xl mx-auto">
           <Reveal>
-            <p
-              className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase mb-4"
-              style={{ color: "#D4A017" }}
-            >
+            <p className="text-[0.6875rem] font-bold tracking-[0.22em] uppercase mb-4" style={{ color: "#D4A017" }}>
               {T.eyebrow}
             </p>
             <h2
@@ -200,24 +119,27 @@ export default function ExploreAWI() {
               {T.heading}
             </h2>
           </Reveal>
-
-          <Reveal delay={0.08}>
-            {/* Animated gold rule — Ucresco style */}
-            <motion.div
-              className="h-[2px] w-full max-w-[64px] mx-auto mt-6"
-              style={{ backgroundColor: "#D4A017" }}
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            />
-          </Reveal>
+          <motion.div
+            className="h-[2px] w-16 mx-auto mt-6"
+            style={{ backgroundColor: "#D4A017" }}
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          />
         </div>
 
-        {/* 2×2 grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {T.cards.map((card, i) => (
-            <ExploreCard key={card.title} card={card} meta={CARD_META[i]} index={i} />
+        {/* Featured + 3 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-rows-3 gap-5">
+          <ExploreCard
+            card={featured}
+            meta={CARD_META[0]}
+            featured
+            delay={0}
+            className="md:col-span-3 lg:col-span-2 lg:row-span-3"
+          />
+          {rest.map((card, i) => (
+            <ExploreCard key={card.title} card={card} meta={CARD_META[i + 1]} delay={0.08 * (i + 1)} />
           ))}
         </div>
       </div>

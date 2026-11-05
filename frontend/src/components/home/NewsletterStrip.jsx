@@ -46,8 +46,7 @@ export default function NewsletterStrip() {
 
   return (
     <motion.div
-      className="border-b border-white/10"
-      style={{ backgroundColor: "#0B1437" }}
+      style={{ backgroundColor: "#fff" }}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -62,12 +61,13 @@ export default function NewsletterStrip() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-[0.9375rem] font-semibold text-white leading-snug">{C.heading}</p>
-          <p className="text-[0.75rem] mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>{C.sub}</p>
+          <p className="text-[0.9375rem] font-semibold leading-snug" style={{ color: "#0B1437" }}>{C.heading}</p>
+          <p className="text-[0.75rem] mt-1" style={{ color: "#6B7280" }}>{C.sub}</p>
         </motion.div>
 
         {/* Right: form or success */}
         <motion.div
+          className="w-full sm:w-auto"
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -78,7 +78,7 @@ export default function NewsletterStrip() {
               <motion.p
                 key="success"
                 className="text-[0.875rem] font-semibold"
-                style={{ color: "#D4A017" }}
+                style={{ color: "#B8860B" }}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -89,14 +89,14 @@ export default function NewsletterStrip() {
             ) : (
               <motion.div
                 key="form"
-                className="flex flex-col gap-1.5 items-end"
+                className="flex flex-col gap-1.5 items-stretch sm:items-end"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <form onSubmit={handleSubmit} className="flex gap-2">
+                <form onSubmit={handleSubmit} className="flex gap-2 w-full sm:w-auto">
                   <motion.div
-                    className="relative"
+                    className="relative flex-1 sm:flex-none min-w-0"
                     animate={{ scale: focused ? 1.01 : 1 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -107,10 +107,10 @@ export default function NewsletterStrip() {
                       onFocus={() => setFocused(true)}
                       onBlur={() => setFocused(false)}
                       placeholder={C.placeholder}
-                      className="text-[0.8125rem] px-4 py-2.5 outline-none w-52 lg:w-68 text-white placeholder:text-white/35"
+                      className="text-[0.8125rem] px-4 py-2.5 outline-none w-full sm:w-52 lg:w-68 text-[#111827] placeholder:text-[#9CA3AF]"
                       style={{
-                        border: `1px solid ${error ? "#EF4444" : focused ? "rgba(212,160,23,0.7)" : "rgba(255,255,255,0.18)"}`,
-                        backgroundColor: "rgba(255,255,255,0.07)",
+                        border: `1px solid ${error ? "#EF4444" : focused ? "#D4A017" : "#D1D5DB"}`,
+                        backgroundColor: "#F9FAFB",
                         transition: "border-color 0.25s",
                       }}
                     />
@@ -130,7 +130,7 @@ export default function NewsletterStrip() {
                   {error && (
                     <motion.p
                       className="text-[0.72rem]"
-                      style={{ color: "#FCA5A5" }}
+                      style={{ color: "#DC2626" }}
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}

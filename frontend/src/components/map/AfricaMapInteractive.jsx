@@ -88,7 +88,7 @@ function CountryModal({ name, onClose, language }) {
 
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
-          to={`/country-tracker/${encodeURIComponent(name)}`}
+          to={`/regulatory-tracker/${encodeURIComponent(name)}`}
           onClick={onClose}
           className="flex-1 text-center text-[0.8125rem] font-semibold px-5 py-2.5 transition-colors"
           style={{ backgroundColor: "#D4A017", color: "#fff" }}
@@ -140,7 +140,7 @@ function CountryModal({ name, onClose, language }) {
         style={{ maxHeight: "85vh", overflowY: "auto" }}
       >
         {/* Header */}
-        <div className="px-7 py-5 flex items-start justify-between" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+        <div className="px-7 py-5 flex items-start justify-between" style={{ borderBottom: "1px solid var(--color-border)" }}>
           <div>
             <div className="flex items-center gap-2.5 mb-2">
               {data?.flag && <CountryFlag emoji={data.flag} size={20} />}
