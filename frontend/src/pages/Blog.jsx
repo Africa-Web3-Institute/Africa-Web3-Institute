@@ -5,14 +5,12 @@ import {
   BookOpen,
   Calendar,
   Clock,
-  User,
   ArrowRight,
   Search,
   Filter,
   Sparkles,
   CheckCircle2,
   Mail,
-  Share2,
 } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { blogsApi, newsletterApi } from "../api/api";
@@ -63,7 +61,10 @@ export default function Blog() {
         }
       })
       .catch((err) => {
-        console.warn("Could not fetch blogs from API, using fallback data:", err);
+        console.warn(
+          "Could not fetch blogs from API, using fallback data:",
+          err,
+        );
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -84,14 +85,16 @@ export default function Blog() {
 
   const filteredBlogs = useMemo(() => {
     return blogs.filter((b) => {
-      if (activeCategory !== "All" && b.category !== activeCategory) return false;
+      if (activeCategory !== "All" && b.category !== activeCategory)
+        return false;
       if (search.trim()) {
         const q = search.toLowerCase();
         const matchTitle = b.title?.toLowerCase().includes(q);
         const matchExcerpt = b.excerpt?.toLowerCase().includes(q);
         const matchAuthor = b.author?.toLowerCase().includes(q);
         const matchTag = b.tag?.toLowerCase().includes(q);
-        if (!matchTitle && !matchExcerpt && !matchAuthor && !matchTag) return false;
+        if (!matchTitle && !matchExcerpt && !matchAuthor && !matchTag)
+          return false;
       }
       return true;
     });
@@ -122,7 +125,7 @@ export default function Blog() {
       setNewsletterMsg(
         isFr
           ? "Merci! Vous êtes inscrit à nos analyses et briefings."
-          : "Thank you! You are subscribed to our thought leadership briefs."
+          : "Thank you! You are subscribed to our thought leadership briefs.",
       );
       setNewsletterEmail("");
     } catch {
@@ -130,7 +133,7 @@ export default function Blog() {
       setNewsletterMsg(
         isFr
           ? "Merci! Vous êtes bien enregistré."
-          : "Thank you! You are subscribed."
+          : "Thank you! You are subscribed.",
       );
     } finally {
       setNewsletterLoading(false);
@@ -155,14 +158,18 @@ export default function Blog() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4A017]/15 border border-[#D4A017]/30 text-[#D4A017] text-xs font-semibold uppercase tracking-wider mb-5">
               <Sparkles className="w-3.5 h-3.5" />
-              {isFr ? "Analyses & Pensée Stratégique" : "AWI Insights & Thought Leadership"}
+              {isFr
+                ? "Analyses & Pensée Stratégique"
+                : "AWI Insights & Thought Leadership"}
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-white mb-5">
               {isFr ? (
                 <>
                   Perspectives sur les politiques Web3 et la{" "}
-                  <span className="text-[#D4A017]">Souveraineté Économique</span>
+                  <span className="text-[#D4A017]">
+                    Souveraineté Économique
+                  </span>
                 </>
               ) : (
                 <>
@@ -182,7 +189,12 @@ export default function Blog() {
               <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-300">
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-[#D4A017]" />
-                  {blogs.length} {isFr ? "Analyses publiées" : blogs.length === 1 ? "Published Essay" : "Published Essays"}
+                  {blogs.length}{" "}
+                  {isFr
+                    ? "Analyses publiées"
+                    : blogs.length === 1
+                      ? "Published Essay"
+                      : "Published Essays"}
                 </span>
               </div>
             )}
@@ -196,7 +208,7 @@ export default function Blog() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Category Pills */}
             <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-              <Filter className="w-4 h-4 text-slate-400 mr-1 flex-shrink-0" />
+              <Filter className="w-4 h-4 text-slate-400 mr-1 shrink-0" />
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -213,13 +225,17 @@ export default function Blog() {
             </div>
 
             {/* Search Input */}
-            <div className="relative w-full md:w-72 flex-shrink-0">
+            <div className="relative w-full md:w-72 shrink-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder={isFr ? "Rechercher une analyse..." : "Search essays & topics..."}
+                placeholder={
+                  isFr
+                    ? "Rechercher une analyse..."
+                    : "Search essays & topics..."
+                }
                 className="w-full pl-9 pr-4 py-2 rounded-full border border-slate-200 bg-slate-50 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A017] focus:bg-white transition-all"
               />
               {search && (
@@ -242,7 +258,9 @@ export default function Blog() {
             <div className="flex flex-col items-center justify-center py-24 text-slate-400">
               <div className="w-10 h-10 border-4 border-slate-200 border-t-[#D4A017] rounded-full animate-spin mb-4" />
               <p className="text-sm font-medium">
-                {isFr ? "Chargement des analyses..." : "Loading thought leadership essays..."}
+                {isFr
+                  ? "Chargement des analyses..."
+                  : "Loading thought leadership essays..."}
               </p>
             </div>
           ) : filteredBlogs.length === 0 ? (
@@ -250,25 +268,33 @@ export default function Blog() {
               <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <h3 className="text-lg font-bold text-slate-800 mb-1">
                 {blogs.length === 0
-                  ? isFr ? "Aucune analyse pour le moment" : "No essays yet"
-                  : isFr ? "Aucun article trouvé" : "No articles found"}
+                  ? isFr
+                    ? "Aucune analyse pour le moment"
+                    : "No essays yet"
+                  : isFr
+                    ? "Aucun article trouvé"
+                    : "No articles found"}
               </h3>
               <p className="text-sm text-slate-500 mb-4">
                 {blogs.length === 0
-                  ? isFr ? "Revenez bientôt : de nouvelles analyses seront publiées ici." : "Check back soon: new essays will be published here."
+                  ? isFr
+                    ? "Revenez bientôt : de nouvelles analyses seront publiées ici."
+                    : "Check back soon: new essays will be published here."
                   : isFr
-                  ? "Essayez de modifier vos termes de recherche ou de réinitialiser le filtre."
-                  : "Try adjusting your search criteria or resetting the category filter."}
+                    ? "Essayez de modifier vos termes de recherche ou de réinitialiser le filtre."
+                    : "Try adjusting your search criteria or resetting the category filter."}
               </p>
-              {blogs.length > 0 && (<button
-                onClick={() => {
-                  setActiveCategory("All");
-                  setSearch("");
-                }}
-                className="px-4 py-2 rounded-full bg-[#0B1437] text-white text-xs font-semibold hover:bg-[#D4A017] hover:text-[#0B1437] transition-all"
-              >
-                {isFr ? "Réinitialiser" : "Reset Filters"}
-              </button>)}
+              {blogs.length > 0 && (
+                <button
+                  onClick={() => {
+                    setActiveCategory("All");
+                    setSearch("");
+                  }}
+                  className="px-4 py-2 rounded-full bg-[#0B1437] text-white text-xs font-semibold hover:bg-[#D4A017] hover:text-[#0B1437] transition-all"
+                >
+                  {isFr ? "Réinitialiser" : "Reset Filters"}
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-12">
@@ -301,14 +327,18 @@ export default function Blog() {
                       <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-[#0B1437] text-white flex items-center justify-center font-bold text-sm">
-                            {featuredPost.author ? featuredPost.author.charAt(0) : "A"}
+                            {featuredPost.author
+                              ? featuredPost.author.charAt(0)
+                              : "A"}
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-slate-900 leading-tight">
                               {featuredPost.author}
                             </p>
                             <p className="text-xs text-slate-500">
-                              {featuredPost.authorRole || featuredPost.authorTitle || "AWI Research Fellow"}
+                              {featuredPost.authorRole ||
+                                featuredPost.authorTitle ||
+                                "AWI Research Fellow"}
                             </p>
                           </div>
                         </div>
@@ -316,7 +346,11 @@ export default function Blog() {
                         <div className="flex items-center gap-4 text-xs text-slate-500">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
-                            {formatDate(featuredPost.date || featuredPost.publishedAt || featuredPost.createdAt)}
+                            {formatDate(
+                              featuredPost.date ||
+                                featuredPost.publishedAt ||
+                                featuredPost.createdAt,
+                            )}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
@@ -333,8 +367,9 @@ export default function Blog() {
                       </div>
                     </div>
 
-                    <div className="lg:col-span-5 bg-gradient-to-br from-[#0B1437] to-[#1E3A8A] p-8 flex flex-col justify-between text-white relative min-h-[260px]">
-                      <div className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
+                    <div className="lg:col-span-5 bg-linear-to-br from-[#0B1437] to-[#1E3A8A] p-8 flex flex-col justify-between text-white relative min-h-[260px]">
+                      <div
+                        className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
                         style={{
                           backgroundImage: `url("${featuredPost.image || featuredPost.coverImage || "/Awi_Website_pics.jpg"}")`,
                         }}
@@ -348,7 +383,8 @@ export default function Blog() {
 
                       <div className="relative z-10 mt-8">
                         <blockquote className="text-sm italic text-slate-200 border-l-2 border-[#D4A017] pl-3 py-1">
-                          "Empowering sovereign African regulatory frameworks designed for local economic realities."
+                          "Empowering sovereign African regulatory frameworks
+                          designed for local economic realities."
                         </blockquote>
                       </div>
                     </div>
@@ -361,7 +397,9 @@ export default function Blog() {
                 <div>
                   <h3 className="text-xl font-bold text-[#0B1437] mb-6 flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-[#D4A017]" />
-                    {isFr ? "Dernières Publications & Débats" : "Recent Essays & Field Commentary"}
+                    {isFr
+                      ? "Dernières Publications & Débats"
+                      : "Recent Essays & Field Commentary"}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -399,7 +437,11 @@ export default function Blog() {
                                 {post.author}
                               </p>
                               <p className="text-[11px] text-slate-400">
-                                {formatDate(post.date || post.publishedAt || post.createdAt)}
+                                {formatDate(
+                                  post.date ||
+                                    post.publishedAt ||
+                                    post.createdAt,
+                                )}
                               </p>
                             </div>
 
@@ -443,13 +485,20 @@ export default function Blog() {
               {newsletterMsg}
             </div>
           ) : (
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <form
+              onSubmit={handleSubscribe}
+              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+            >
               <input
                 type="email"
                 required
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder={isFr ? "Votre adresse e-mail professionnelle" : "Your professional email"}
+                placeholder={
+                  isFr
+                    ? "Votre adresse e-mail professionnelle"
+                    : "Your professional email"
+                }
                 className="flex-1 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4A017] focus:bg-white/15"
               />
               <button
@@ -457,17 +506,31 @@ export default function Blog() {
                 disabled={newsletterLoading}
                 className="px-6 py-3 rounded-full bg-[#D4A017] text-[#0B1437] font-bold text-sm hover:bg-[#b8891a] transition-all shadow-md disabled:opacity-70"
               >
-                {newsletterLoading ? (isFr ? "Envoi..." : "Joining...") : (isFr ? "S'abonner" : "Subscribe")}
+                {newsletterLoading
+                  ? isFr
+                    ? "Envoi..."
+                    : "Joining..."
+                  : isFr
+                    ? "S'abonner"
+                    : "Subscribe"}
               </button>
             </form>
           )}
 
           <div className="mt-8 flex items-center justify-center gap-6 text-xs text-slate-400">
-            <Link to="/newsletters/archive" className="hover:text-[#D4A017] underline transition-colors">
-              {isFr ? "Consulter les archives de newsletters" : "View Newsletter Archive"}
+            <Link
+              to="/newsletters/archive"
+              className="hover:text-[#D4A017] underline transition-colors"
+            >
+              {isFr
+                ? "Consulter les archives de newsletters"
+                : "View Newsletter Archive"}
             </Link>
             <span>•</span>
-            <Link to="/news" className="hover:text-[#D4A017] underline transition-colors">
+            <Link
+              to="/news"
+              className="hover:text-[#D4A017] underline transition-colors"
+            >
               {isFr ? "Actualités & Communiqués" : "Latest News & Press"}
             </Link>
           </div>

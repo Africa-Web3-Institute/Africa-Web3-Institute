@@ -11,7 +11,7 @@ import JadeBishop from "../assets/Board/JadeBishop.jpg";
 import FredrickNonde from "../assets/Board/fredrick_nonde.png";
 import JoergMolt from "../assets/Board/joerg_molt.jpg";
 import DaniilKozin from "../assets/Board/daniil_kozin.jpeg";
-import Web3ThinkTankBg from "../assets/Board/web3_think_tank_bg.png";
+//import Web3ThinkTankBg from "../assets/Board/web3_think_tank_bg.png";
 
 
 // ─── Advisory Board Data ─────────────────────────────────────────────────────
