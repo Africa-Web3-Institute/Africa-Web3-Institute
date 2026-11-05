@@ -100,16 +100,7 @@ export const t = {
         { title: "Startup Incubation", description: "Providing early-stage Web3 ventures with mentorship, regulatory guidance, funding pathways, and access to the pan-African ecosystem." },
       ],
     },
-    publications: {
-      eyebrow: "Publications",
-      heading: "Research & insights",
-      comingSoon: "Full report coming soon.",
-      items: [
-        { tag: "Quarterly Report", title: "State of Web3 Africa 2026", description: "A comprehensive review of blockchain adoption, policy developments, and ecosystem growth across 18+ African nations.", year: "2026", downloadLabel: "Download Q1 Report", downloadUrl: "https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf" },
-
-        { tag: "Policy Brief", title: "Policy Dashboard", description: "Access all our policy briefs here.", isDashboard: true, dashboardCta: "Access Policy Briefs →", dashboardUrl: "/publications" },
-      ],
-    },
+   
     events: {
       eyebrow: "Events & Convenings",
       heading: "Events & Convenings",
@@ -298,7 +289,7 @@ export const t = {
       heroTitle: "AWI Publications Library",
       heroSubtitle: "Policy research, market intelligence, and regulatory analysis advancing Africa's Web3 ecosystem",
       heroCount: "10+ Publications",
-      heroUpdated: "Updated: May 2026",
+      heroUpdated: "Updated: November 2026",
       tabAll: "All Publications",
       tabArticles: "Published Articles",
       tabPolicyBriefs: "Policy Briefs",
@@ -990,16 +981,7 @@ newsletterLanding: {
         { title: "Incubation de startups", description: "Accompagnement des projets Web3 en phase de démarrage : mentorat, conseil réglementaire, accès aux financements et à l'écosystème panafricain." },
       ],
     },
-    publications: {
-      eyebrow: "Publications",
-      heading: "Recherches & analyses",
-      comingSoon: "Rapport complet à venir.",
-      items: [
-        { tag: "Rapport trimestriel", title: "État du Web3 en Afrique 2026", description: "Un bilan approfondi de l'adoption de la blockchain, des évolutions réglementaires et de la croissance de l'écosystème dans 18+ nations africaines.", year: "2026", downloadLabel: "Télécharger le rapport T1", downloadUrl: "https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf" },
-
-        { tag: "Note de politique", title: "Tableau de bord des politiques", description: "Accédez à toutes nos notes de politique ici.", isDashboard: true, dashboardCta: "Accéder aux notes de politique →", dashboardUrl: "/publications" },
-      ],
-    },
+   
     events: {
       eyebrow: "Événements & Rencontres",
       heading: "Événements & Rencontres",
@@ -1197,7 +1179,7 @@ newsletterLanding: {
       heroTitle: "Bibliothèque de Publications AWI",
       heroSubtitle: "Recherche politique, intelligence de marché et analyse réglementaire pour l'écosystème Web3 africain",
       heroCount: "10+ Publications",
-      heroUpdated: "Mis à jour : mai 2026",
+      heroUpdated: "Mis à jour : novembre 2026",
       tabAll: "Toutes les publications",
       tabArticles: "Articles publiés",
       tabPolicyBriefs: "Notes de politique",

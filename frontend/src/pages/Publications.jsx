@@ -13,7 +13,10 @@ export const PUBLICATIONS = [
     category: "State of Web3 Africa",
     title: "State of Web3 Africa 2026 — Q1 Report",
     description: "A comprehensive review of blockchain adoption, policy developments, and ecosystem growth across 18+ African nations in Q1 2026.",
+    title_fr: "État du Web3 en Afrique 2026 — Rapport du T1",
+    description_fr: "Un examen complet de l'adoption de la blockchain, des évolutions politiques et de la croissance de l'écosystème dans plus de 18 pays africains au premier trimestre 2026.",
     date: "March 2026",
+    date_fr: "Mars 2026",
     author: "AWI Research Team",
     downloadUrl: "https://media.base44.com/files/public/69f0c79c7957f32b49dcc978/59df44ac1_Q1Report.pdf",
     available: true,
@@ -24,7 +27,10 @@ export const PUBLICATIONS = [
   //  category: "State of Web3 Africa",
   ////  title: "State of Web3 Africa 2026 — Q2 Report",
   ////  description: "Quarterly intelligence on stablecoin adoption, regulatory changes, and capital flows across African Web3 markets.",
+  //  title_fr: "État du Web3 en Afrique 2026 — Rapport du T2",
+  //  description_fr: "Veille trimestrielle sur l'adoption des stablecoins, les changements réglementaires et les flux de capitaux sur les marchés Web3 africains.",
   //  date: "June 2026",
+  //  date_fr: "Juin 2026",
     //author: "AWI Research Team",
     //downloadUrl: "#",
     //available: false,
@@ -36,7 +42,11 @@ export const PUBLICATIONS = [
     description: "On 29 October 2026, about $6.3 billion left Binance's wallets. This brief sets out what is reported so far and five requirements African regulators can place on platforms serving their markets: segregated and audited reserves, published withdrawal terms, incident reporting, a freeze-order process, and independent reconciliation.",
     date: "2 November 2026",
     author: "AWI Policy Team",
+    title_fr: "Faille de Binance : enseignements pour les régulateurs africains",
+    description_fr: "Le 29 octobre 2026, environ 6,3 milliards de dollars ont quitté les portefeuilles de Binance. Cette note présente ce qui est rapporté à ce jour et cinq exigences que les régulateurs africains peuvent imposer aux plateformes opérant sur leurs marchés : réserves ségréguées et auditées, conditions de retrait publiées, déclaration des incidents, procédure publiée pour les ordres de gel et rapprochement indépendant des comptes.",
+    date_fr: "2 novembre 2026",
     downloadUrl: "/reports/AWI_Policy_Brief_Binance_Breach_02_Nov_2026.pdf",
+    // downloadUrl_fr: "/reports/AWI_Note_Politique_Binance_02_Nov_2026.pdf", // add once a French PDF exists
     available: true,
   },
   // Older entries (ids 3, 5-14) removed while the backend is down; restore from version history.
@@ -50,30 +60,44 @@ const CATEGORY_STYLES = {
   "Published Research":                       { bg: "#e0e7ff", text: "#1A1F36" },
 };
 
-function CategoryPill({ category }) {
+function CategoryPill({ category, T }) {
   const s = CATEGORY_STYLES[category] || { bg: "#f3f4f6", text: "#374151" };
+  const labels = {
+    "Published Articles": T.tabArticles,
+    "Policy Brief": T.tabPolicyBriefs,
+    "Monthly African Stablecoin Adoption Report": T.tabStablecoin,
+    "State of Web3 Africa": T.tabStateOfWeb3,
+    "Published Research": T.tabResearch,
+  };
+  const label = labels[category] || category;
   return (
     <span className="inline-block text-[0.6875rem] font-semibold px-2.5 py-0.5 rounded-full"
       style={{ backgroundColor: s.bg, color: s.text }}>
-      {category}
+      {label}
     </span>
   );
 }
 
-function PublicationCard({ pub, T, track }) {
+function PublicationCard({ pub, T, track, language }) {
+  const isFr = language === "fr";
+  const title = (isFr && pub.title_fr) || pub.title;
+  const description = (isFr && pub.description_fr) || pub.description;
+  const date = (isFr && pub.date_fr) || pub.date;
+  const url = (isFr && pub.downloadUrl_fr) || pub.downloadUrl;
+
   return (
     <div className="bg-white border border-border rounded-lg p-6 flex flex-col gap-3 hover:shadow-md transition-shadow h-full">
-      <CategoryPill category={pub.category} />
-      <p className="text-[0.9375rem] font-bold text-secondary leading-snug">{pub.title}</p>
-      <p className="text-[0.8125rem] text-muted-foreground leading-relaxed flex-1">{pub.description}</p>
+      <CategoryPill category={pub.category} T={T} />
+      <p className="text-[0.9375rem] font-bold text-secondary leading-snug">{title}</p>
+      <p className="text-[0.8125rem] text-muted-foreground leading-relaxed flex-1">{description}</p>
       <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/50">
         <div>
-          <p className="text-[0.75rem] text-muted-foreground">{pub.date}</p>
+          <p className="text-[0.75rem] text-muted-foreground">{date}</p>
           <p className="text-[0.6875rem] text-muted-foreground/70">{pub.author}</p>
         </div>
-        {pub.available && pub.downloadUrl && pub.downloadUrl !== "#" ? (
+        {pub.available && url && url !== "#" ? (
           <a
-            href={pub.downloadUrl}
+            href={url}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track && trackDownload(pub.id)}
@@ -82,7 +106,7 @@ function PublicationCard({ pub, T, track }) {
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#b8891a"}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = "#D4A017"}
           >
-            {/\.pdf($|\?)/i.test(pub.downloadUrl) ? T.downloadBtn : T.readBtn}
+            {/\.pdf($|\?)/i.test(url) ? T.downloadBtn : T.readBtn}
           </a>
         ) : (
           <span className="inline-flex items-center text-[0.75rem] font-medium px-3 py-1.5 rounded-md shrink-0"
@@ -149,9 +173,9 @@ export default function Publications() {
       if (activeTab !== "all" && p.category !== activeTab) return false;
       if (search.trim()) {
         const q = search.toLowerCase();
-        if (!p.title.toLowerCase().includes(q) &&
-            !p.description.toLowerCase().includes(q) &&
-            !p.author.toLowerCase().includes(q)) return false;
+        const hay = [p.title, p.description, p.author, p.title_fr, p.description_fr]
+          .filter(Boolean).join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
       }
       return true;
     });
@@ -242,11 +266,11 @@ export default function Publications() {
       {/* Publications Grid */}
       <section className="max-w-7xl mx-auto px-6 lg:px-8 pb-12">
         {filtered.length === 0 ? (
-          <div className="py-20 text-center text-muted-foreground">No publications match your search.</div>
+          <div className="py-20 text-center text-muted-foreground">{T.noResults}</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(pub => (
-              <PublicationCard key={pub.id} pub={pub} T={T} track={fromApi} />
+              <PublicationCard key={pub.id} pub={pub} T={T} track={fromApi} language={language} />
             ))}
           </div>
         )}
@@ -276,7 +300,7 @@ export default function Publications() {
       <section style={{ backgroundColor: "#0B1437" }} className="py-14">
         <div className="max-w-2xl mx-auto px-6 lg:px-8 text-center">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase mb-3" style={{ color: "#D4A017" }}>
-            Stay Informed
+            {T.stayInformed}
           </p>
           <h2 className="text-[1.5rem] font-bold text-white mb-2">{T.newsletterTitle}</h2>
           <p className="text-[0.9375rem] mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
