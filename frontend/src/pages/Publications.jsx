@@ -50,6 +50,19 @@ export const PUBLICATIONS = [
     available: true,
   },
   // Older entries (ids 3, 5-14) removed while the backend is down; restore from version history.
+    {
+    id: 15,
+    category: "Policy Brief",
+    title: "Nigeria's New Virtual-Asset Rules",
+    description: "Nigeria's central bank now licenses payment-type crypto. This analysis sets out the key requirements on capital, reserves, redemption, P2P platforms and wallets, the timeline for existing operators, what will be hardest in practice, and drafting points to raise with the CBN.",
+    title_fr: "Les nouvelles règles du Nigeria sur les actifs virtuels",
+    description_fr: "La banque centrale du Nigeria délivre désormais des licences pour les crypto-actifs de type paiement. Cette analyse présente les principales exigences en matière de capital, de réserves, de remboursement, de plateformes P2P et de portefeuilles, le calendrier pour les opérateurs existants, les difficultés pratiques à prévoir et les points de rédaction à soulever auprès de la CBN.",
+    date: "7 November 2026",
+    date_fr: "7 novembre 2026",
+    author: "Donnie Starkey, Almstins, and Afrikanus Kofi Akosah Adusei",
+    downloadUrl: "/reports/AWI_Policy_Brief_Nigeria_CBN_Virtual_Asset_Rules_07_Nov_2026.pdf",
+    available: true,
+  },
 ];
 
 const CATEGORY_STYLES = {
@@ -62,13 +75,13 @@ const CATEGORY_STYLES = {
 
 function CategoryPill({ category, T }) {
   const s = CATEGORY_STYLES[category] || { bg: "#f3f4f6", text: "#374151" };
-  const labels = {
-    "Published Articles": T.tabArticles,
-    "Policy Brief": T.tabPolicyBriefs,
-    "Monthly African Stablecoin Adoption Report": T.tabStablecoin,
-    "State of Web3 Africa": T.tabStateOfWeb3,
-    "Published Research": T.tabResearch,
-  };
+const labels = {
+  "Published Articles": T.singularArticle,
+  "Policy Brief": T.singularPolicyBriefs,
+  "Monthly African Stablecoin Adoption Report": T.singularStablecoin,
+  "State of Web3 Africa": T.singularStateOfWeb3,
+  "Published Research": T.singularResearch,
+};
   const label = labels[category] || category;
   return (
     <span className="inline-block text-[0.6875rem] font-semibold px-2.5 py-0.5 rounded-full"
