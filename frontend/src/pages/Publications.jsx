@@ -59,7 +59,7 @@ export const PUBLICATIONS = [
     date: "7 November 2026",
     date_fr: "7 novembre 2026",
     author: "Donnie Starkey, Almstins, and Afrikanus Kofi Akosah Adusei",
-    downloadUrl: "/reports/AWI_Policy_Brief_Nigeria_CBN_Virtual_Asset_Rules_07_Nov_2026.pdf",
+    downloadUrl: "/reports/AWI_Policy_Analysis_Nigeria_CBN_Virtual_Asset_Rules_07_Nov_2026.pdf",
     available: true,
   },
 ];
