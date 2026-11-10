@@ -3,6 +3,8 @@ import {
   Plus, Search, Edit2, Trash2,
   Download, X, ChevronDown, FileText,
   BookOpen, BarChart2, TrendingUp, Calendar, Loader2, Upload,
+  Scale,
+  FileSearch,
 } from "lucide-react";
 import { publicationsApi } from "../../api/api";
 
@@ -49,6 +51,7 @@ const CATEGORIES = [
   "State of Web3 Africa",
   "Monthly African Stablecoin Adoption Report",
   "Policy Brief",
+  "Policy Analysis",
   "Published Articles",
   "Published Research",
 ];
@@ -65,9 +68,12 @@ const CATEGORY_ICONS = {
   "State of Web3 Africa":    BarChart2,
   "Monthly African Stablecoin Adoption Report": TrendingUp,
   "Policy Brief":            FileText,
+  "Policy Analysis" :          Scale, 
   "Published Articles":      BookOpen,
-  "Published Research":      FileText,
+  "Published Research":      FileSearch,
 };
+
+
 
 // ─── Modal ─────────────────────────────────────────────────────────────────
 function PublicationModal({ publication, onClose, onSave, saving, error }) {

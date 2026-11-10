@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-//import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useLanguage } from "../lib/LanguageContext";
 import { publicationsApi } from "../api/api";
@@ -52,10 +51,10 @@ export const PUBLICATIONS = [
   // Older entries (ids 3, 5-14) removed while the backend is down; restore from version history.
     {
     id: 15,
-    category: "Policy Brief",
-    title: "Nigeria's New Virtual-Asset Rules",
+    category: "Policy Analysis",
+    title: "Nigeria's New Virtual-Asset Rules : Capital is the headline, Records are the work",
     description: "Nigeria's central bank now licenses payment-type crypto. This analysis sets out the key requirements on capital, reserves, redemption, P2P platforms and wallets, the timeline for existing operators, what will be hardest in practice, and drafting points to raise with the CBN.",
-    title_fr: "Les nouvelles règles du Nigeria sur les actifs virtuels",
+    title_fr: "Nouvelles règles du Nigeria sur les actifs virtuels : le capital au premier plan, la tenue de registres au cœur du travail ",
     description_fr: "La banque centrale du Nigeria délivre désormais des licences pour les crypto-actifs de type paiement. Cette analyse présente les principales exigences en matière de capital, de réserves, de remboursement, de plateformes P2P et de portefeuilles, le calendrier pour les opérateurs existants, les difficultés pratiques à prévoir et les points de rédaction à soulever auprès de la CBN.",
     date: "7 November 2026",
     date_fr: "7 novembre 2026",
@@ -66,19 +65,39 @@ export const PUBLICATIONS = [
 ];
 
 const CATEGORY_STYLES = {
-  "Published Articles":                      { bg: "#dbeafe", text: "#1e40af" },
-  "Policy Brief":                             { bg: "#ede9fe", text: "#5b21b6" },
-  "Monthly African Stablecoin Adoption Report": { bg: "#dcfce7", text: "#166534" },
-  "State of Web3 Africa":                    { bg: "#fef3c7", text: "#D4A017" },
-  "Published Research":                       { bg: "#e0e7ff", text: "#1A1F36" },
+  "Published Articles": {
+    bg: "#E0F2FE",
+    text: "#075985",
+  },
+  "Policy Brief": {
+    bg: "#FEF3C7",
+    text: "#92400E",
+  },
+  "Policy Analysis": {
+    bg: "#FCE7F3",
+    text: "#9D174D",
+  },
+  "Monthly African Stablecoin Adoption Report": {
+    bg: "#DCFCE7",
+    text: "#166534",
+  },
+  "State of Web3 Africa": {
+    bg: "#F3E8FF",
+    text: "#6B21A8",
+  },
+  "Published Research": {
+    bg: "#E2E8F0",
+    text: "#334155",
+  },
 };
 
 function CategoryPill({ category, T }) {
   const s = CATEGORY_STYLES[category] || { bg: "#f3f4f6", text: "#374151" };
 const labels = {
   "Published Articles": T.singularArticle,
-  "Policy Brief": T.singularPolicyBriefs,
-  "Monthly African Stablecoin Adoption Report": T.singularStablecoin,
+  "Policy Analysis": T.singularPolicyAnalysis,
+  "Policy Brief": T.singularPolicyBrief,
+ "Monthly African Stablecoin Adoption Report": T.singularStablecoin,
   "State of Web3 Africa": T.singularStateOfWeb3,
   "Published Research": T.singularResearch,
 };
@@ -172,14 +191,15 @@ export default function Publications() {
     };
   }, []);
 
-  const TABS = [
-    { key: "all",        label: T.tabAll },
-    { key: "Published Articles", label: T.tabArticles },
-    { key: "Policy Brief",       label: T.tabPolicyBriefs },
-    { key: "Monthly African Stablecoin Adoption Report", label: T.tabStablecoin },
-    { key: "State of Web3 Africa",  label: T.tabStateOfWeb3 },
-    { key: "Published Research",    label: T.tabResearch },
-  ];
+ const TABS = [
+  { key: "all", label: T.tabAll },
+  { key: "Published Articles", label: T.tabArticles },
+  { key: "Policy Brief", label: T.tabPolicyBriefs },
+  { key: "Policy Analysis", label: T.tabPolicyAnalyses },
+  { key: "Monthly African Stablecoin Adoption Report", label: T.tabStablecoin },
+  { key: "State of Web3 Africa", label: T.tabStateOfWeb3 },
+  { key: "Published Research", label: T.tabResearch },
+];
 
   const filtered = useMemo(() => {
     return publicationsList.filter(p => {
