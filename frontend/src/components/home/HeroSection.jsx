@@ -4,7 +4,6 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
-import { useNavDropdown } from "../../lib/NavDropdownContext"; // ✅ import context
 
 const slides = [
   "/images/hero/slide-1.jpg",
@@ -49,7 +48,6 @@ export default function HeroSection() {
   const { language } = useLanguage();
   const T = t[language].hero;
   const navigate = useNavigate();
-  const { setActiveDropdown } = useNavDropdown(); // ✅ get dropdown setter
   const [current, setCurrent] = useState(0);
 
   const stats = language === "fr" ? STATS_FR : STATS_EN;
@@ -65,16 +63,9 @@ export default function HeroSection() {
     document.getElementById("explore-awi")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // ✅ Opens the Intelligence dropdown and scrolls to the navbar
   const handleIntelligenceClick = () => {
-    setActiveDropdown("intelligence"); // matches the key used in Navbar
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-      // If on mobile, also open the mobile menu and expand the intelligence accordion
-  if (window.innerWidth < 1024) { // or use a media query match
-    const event = new CustomEvent('openMobileDropdown', { detail: 'intelligence' });
-    document.dispatchEvent(event);
-  }
+    navigate("/intelligence");
+    window.scrollTo({ top: 0 });
   };
 
   return (
@@ -217,7 +208,7 @@ export default function HeroSection() {
             {/* CTA buttons */}
             <motion.div variants={item} className="flex flex-wrap gap-3 sm:gap-4">
               <motion.button
-                onClick={handleIntelligenceClick} // ✅ now opens dropdown
+                onClick={handleIntelligenceClick}
                 className="inline-flex items-center gap-2.5 text-[0.9375rem] font-semibold px-6 sm:px-8 py-3.5"
                 style={{ backgroundColor: "#D4A017", color: "#0B1437" }}
                 whileHover={{ scale: 1.03, backgroundColor: "#b8891a" }}

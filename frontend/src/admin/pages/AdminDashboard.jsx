@@ -8,6 +8,9 @@ import {
   ArrowUpRight,
   Loader2,
   AlertTriangle,
+  Inbox,
+  Mail,
+  Building2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -18,6 +21,7 @@ import {
   awpiiApi,
   trackerApi,
   analyticsApi,
+  contactApi,
 } from "../../api/api";
 
 // "Reports" no longer has its own admin page: reports are Publications in the
@@ -26,6 +30,9 @@ const QUICK_ACTIONS = [
   { label: "Add Publication or Report", href: "/admin/adminpublications", icon: BookOpen, color: "#D4A017" },
   { label: "Write Article or Blog Post", href: "/admin/articles", icon: FileText, color: "#3b82f6" },
   { label: "Add Enforcement Event", href: "/admin/enforcement", icon: TrendingUp, color: "#ef4444" },
+  { label: "Read Contact Messages", href: "/admin/messages", icon: Inbox, color: "#f59e0b" },
+  { label: "Publish Newsletter Edition", href: "/admin/newsletter", icon: Mail, color: "#8b5cf6" },
+  { label: "Add Startup to Directory", href: "/admin/state-of-web3", icon: Building2, color: "#10b981" },
 ];
 
 // GET /api/analytics needs the admin login but is not in api.js, so it is called here.
@@ -124,7 +131,7 @@ export default function AdminDashboard() {
           console.error(`Failed to load ${label}`, err);
           return null;
         });
-      const [publications, articles, blogs, enforcement, awpii, tracker, subscribers] = await Promise.all([
+      const [publications, articles, blogs, enforcement, awpii, tracker, subscribers, unread] = await Promise.all([
         safe("publications", publicationsApi.getAll()),
         safe("articles", articlesApi.getAll()),
         safe("blogs", blogsApi.getAll()),
@@ -138,9 +145,10 @@ export default function AdminDashboard() {
             console.error("Failed to load newsletter report", err);
             return null;
           }),
+        contactApi.getAll("unread").then((r) => Number(r?.unreadCount) || 0).catch(() => null),
       ]);
       if (cancelled) return;
-      setData({ publications, articles, blogs, enforcement, awpii, tracker, subscribers });
+      setData({ publications, articles, blogs, enforcement, awpii, tracker, subscribers, unread });
       setLoading(false);
     }
 
@@ -238,6 +246,19 @@ export default function AdminDashboard() {
             </p>
           </div>
         </div>
+      )}
+
+      {data.unread > 0 && (
+        <Link
+          to="/admin/messages"
+          className="rounded-xl border border-yellow-500/30 bg-yellow-500/5 px-5 py-4 flex items-center gap-3 hover:bg-yellow-500/10 transition-colors"
+        >
+          <Inbox size={18} className="text-yellow-400 flex-shrink-0" />
+          <p className="text-yellow-100 text-sm">
+            You have <span className="font-semibold">{data.unread}</span> unread contact message{data.unread === 1 ? "" : "s"}.
+          </p>
+          <span className="ml-auto text-yellow-400 text-xs font-medium flex items-center gap-1">Open inbox <ArrowUpRight size={12} /></span>
+        </Link>
       )}
 
       {/* Welcome */}

@@ -483,22 +483,6 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
- useEffect(() => {
-  const handleOpenMobileDropdown = (e) => {
-    setOpen(true);
-    // Map desktop dropdown keys to mobile accordion keys
-    let mobileKey = e.detail;
-    if (mobileKey === "programmes") mobileKey = "programs";
-    setMobileExpanded(mobileKey);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  document.addEventListener('openMobileDropdown', handleOpenMobileDropdown);
-  return () => {
-    document.removeEventListener('openMobileDropdown', handleOpenMobileDropdown);
-  };
-}, []);
-
   // ─── Helpers ────────────────────────────────────────────────────────────────
 
    const navigateTo = (href) => {

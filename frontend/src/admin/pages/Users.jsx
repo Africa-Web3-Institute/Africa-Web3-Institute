@@ -1,76 +1,160 @@
 import { useState } from "react";
-import { Search, Edit2, Trash2, Plus, Users as UsersIcon } from "lucide-react";
+import { toast } from "sonner";
+import { KeyRound, Pencil, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { usersApi } from "../../api/api";
+import {
+  Badge, Button, Card, ConfirmDialog, DataState, EmptyState, Field, IconButton, Input, Modal, Notice, PageHeader,
+  SearchInput, Select, Table, fmtDate, rowsOf, useApiData, useCurrentUser,
+} from "../ui";
 
-const MOCK_DATA = [
-  { id: 1, name: "Superadmin", email: "admin@africaweb3institute.org", role: "superadmin", lastActive: "Just now" },
-  { id: 2, name: "Editor A", email: "editorA@africaweb3institute.org", role: "editor", lastActive: "2 hours ago" },
+const ROLES = [
+  { value: "editor", label: "Editor — manage content" },
+  { value: "superadmin", label: "Superadmin — full access, users and settings" },
 ];
 
 export default function Users() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { user: me, isSuperadmin } = useCurrentUser();
+  const { data, loading, error, reload } = useApiData(() => (isSuperadmin ? usersApi.getAll() : Promise.resolve([])), [isSuperadmin]);
+  const [query, setQuery] = useState("");
+  const [editing, setEditing] = useState(null); // {} for new, user row for edit
+  const [toDelete, setToDelete] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  if (!isSuperadmin) {
+    return (
+      <div>
+        <PageHeader title="User Management" />
+        <Card><EmptyState title="Superadmin access required" description="Only superadmins can manage admin accounts. Ask a superadmin to change your role or password." /></Card>
+      </div>
+    );
+  }
+
+  const rows = rowsOf(data).filter((u) => `${u.name} ${u.email}`.toLowerCase().includes(query.trim().toLowerCase()));
+
+  const remove = async () => {
+    setBusy(true);
+    try {
+      await usersApi.remove(toDelete.id);
+      toast.success("User removed");
+      setToDelete(null);
+      reload();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">User Management</h1>
-          <p className="text-gray-400 text-sm mt-1">Manage admin access and roles</p>
-        </div>
-        <button className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-          <Plus size={18} /> Invite User
-        </button>
-      </div>
+    <div>
+      <PageHeader
+        title="User Management"
+        description="Who can sign in to the admin console, and what they can do."
+        actions={<Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add user</Button>}
+      />
+      <Notice>
+        <ShieldCheck className="w-4 h-4 inline -mt-0.5 mr-1" />
+        If you still sign in with the default password <code className="text-yellow-300">admin</code>, change it now with the key icon next to your account.
+      </Notice>
 
-      <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-        <div className="p-4 border-b border-gray-700 flex gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search users..."
-              className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-yellow-500"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </div>
+      <Card padded={false}>
+        <div className="p-4 border-b border-gray-700">
+          <SearchInput value={query} onChange={setQuery} placeholder="Search users…" className="max-w-md" />
         </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-400 uppercase bg-gray-900/50">
-              <tr>
-                <th className="px-6 py-4 font-medium">Name</th>
-                <th className="px-6 py-4 font-medium">Email</th>
-                <th className="px-6 py-4 font-medium">Role</th>
-                <th className="px-6 py-4 font-medium">Last Active</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800">
-              {MOCK_DATA.map(row => (
-                <tr key={row.id} className="hover:bg-gray-800/50 transition-colors">
-                  <td className="px-6 py-4 text-white font-medium flex items-center gap-2">
-                    <UsersIcon size={14} className="text-gray-500" /> {row.name}
-                  </td>
-                  <td className="px-6 py-4 text-gray-300">{row.email}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${
-                      row.role === 'superadmin' ? 'bg-purple-900/50 text-purple-400' : 'bg-gray-700 text-gray-300'
-                    }`}>
-                      {row.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-400">{row.lastActive}</td>
-                  <td className="px-6 py-4 text-right space-x-3">
-                    <button className="text-gray-400 hover:text-white transition-colors"><Edit2 size={16} /></button>
-                    <button className="text-gray-400 hover:text-red-400 transition-colors"><Trash2 size={16} /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <DataState loading={loading} error={error} onRetry={reload} data={data} isEmpty={rows.length === 0} empty={<EmptyState title="No users found" />}>
+          <Table
+            rows={rows}
+            columns={[
+              {
+                key: "name",
+                label: "Name",
+                render: (u) => (
+                  <span className="text-white">
+                    {u.name || "—"} {Number(u.id) === Number(me?.id) && <Badge tone="yellow">You</Badge>}
+                  </span>
+                ),
+              },
+              { key: "email", label: "Email" },
+              { key: "role", label: "Role", render: (u) => <Badge tone={u.role === "superadmin" ? "purple" : "gray"}>{u.role}</Badge> },
+              { key: "createdAt", label: "Added", render: (u) => fmtDate(u.createdAt) },
+              {
+                key: "actions",
+                label: "",
+                className: "text-right w-28",
+                render: (u) => (
+                  <div className="flex justify-end gap-1">
+                    <IconButton icon={KeyRound} label="Change password" onClick={() => setEditing({ ...u, passwordOnly: true })} />
+                    <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(u)} />
+                    <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(u)} />
+                  </div>
+                ),
+              },
+            ]}
+          />
+        </DataState>
+      </Card>
+
+      {editing && <UserForm user={editing} onClose={() => setEditing(null)} onSaved={reload} />}
+      <ConfirmDialog
+        open={!!toDelete}
+        title="Remove user?"
+        message={`${toDelete?.email} will no longer be able to sign in.`}
+        confirmLabel="Remove"
+        onConfirm={remove}
+        onCancel={() => setToDelete(null)}
+        busy={busy}
+      />
     </div>
+  );
+}
+
+function UserForm({ user, onClose, onSaved }) {
+  const isNew = !user.id;
+  const passwordOnly = !!user.passwordOnly;
+  const [form, setForm] = useState({ name: user.name || "", email: user.email || "", role: user.role || "editor", password: "", confirm: "" });
+  const [busy, setBusy] = useState(false);
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+  const submit = async () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return toast.error("Enter a valid email address");
+    if ((isNew || passwordOnly) && form.password.length < 10) return toast.error("Use a password of at least 10 characters");
+    if (form.password && form.password !== form.confirm) return toast.error("The passwords don't match");
+    setBusy(true);
+    try {
+      // The update endpoint replaces email, name and role, so always send all three
+      const payload = { name: form.name, email: form.email, role: form.role, ...(form.password ? { password: form.password } : {}) };
+      if (isNew) await usersApi.create(payload);
+      else await usersApi.update(user.id, payload);
+      toast.success(isNew ? "User added" : passwordOnly ? "Password changed" : "User updated");
+      onSaved();
+      onClose();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      open
+      title={isNew ? "Add user" : passwordOnly ? `Change password · ${user.email}` : "Edit user"}
+      onClose={onClose}
+      footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>{isNew ? "Add user" : "Save"}</Button></>}
+    >
+      {!passwordOnly && (
+        <>
+          <Field label="Name"><Input value={form.name} onChange={set("name")} /></Field>
+          <Field label="Email" required><Input type="email" value={form.email} onChange={set("email")} /></Field>
+          <Field label="Role"><Select value={form.role} onChange={set("role")} options={ROLES} /></Field>
+        </>
+      )}
+      <Field label={isNew ? "Password" : "New password"} required={isNew || passwordOnly} hint={!isNew && !passwordOnly ? "Leave blank to keep the current password." : "At least 10 characters."}>
+        <Input type="password" autoComplete="new-password" value={form.password} onChange={set("password")} />
+      </Field>
+      {(form.password || isNew || passwordOnly) && (
+        <Field label="Confirm password"><Input type="password" autoComplete="new-password" value={form.confirm} onChange={set("confirm")} /></Field>
+      )}
+    </Modal>
   );
 }

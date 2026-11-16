@@ -13,7 +13,11 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-
+  Inbox,
+  Mail,
+  LineChart,
+  Globe2,
+  PieChart,
 } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
 
@@ -22,38 +26,41 @@ const NAV_SECTIONS = [
     label: "Overview",
     items: [
       { label: "Dashboard", href: "/admin", icon: LayoutDashboard, end: true },
+      { label: "Messages", href: "/admin/messages", icon: Inbox, badgeKey: "unreadMessages" },
     ],
   },
   {
     label: "Content",
     items: [
       { label: "Publications", href: "/admin/adminpublications", icon: BookOpen },
-      { label: "Articles", href: "/admin/articles", icon: FileText },
-     
+      { label: "Articles & Blogs", href: "/admin/articles", icon: FileText },
       { label: "Events", href: "/admin/events", icon: Calendar },
+      { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
     ],
   },
   {
     label: "Intelligence",
     items: [
-      { label: "AWPII Data", href: "/admin/awpii", icon: Map },
-      { label: "Policy Tracker", href: "/admin/policy-tracker", icon: Map },
-      { label: "Regulatory Tracker", href: "/admin/tracker", icon: BarChart2 },
+      { label: "AWPII & Tracker", href: "/admin/policy-tracker", icon: Map },
       { label: "Enforcement Watch", href: "/admin/enforcement", icon: ShieldAlert },
+      { label: "State of Web3", href: "/admin/state-of-web3", icon: Globe2 },
+      { label: "Research Impact", href: "/admin/research", icon: LineChart },
+      { label: "Visualizations", href: "/admin/visualizations", icon: PieChart },
     ],
   },
   {
     label: "System",
     items: [
-      { label: "Analytics", href: "/admin/analytics", icon: BarChart2 },
+      { label: "Site Analytics", href: "/admin/analytics", icon: BarChart2 },
       { label: "User Management", href: "/admin/users", icon: Users },
       { label: "Settings", href: "/admin/settings", icon: Settings },
     ],
   },
 ];
 
-function NavItem({ item, collapsed }) {
+function NavItem({ item, collapsed, badges = {} }) {
   const Icon = item.icon;
+  const badge = item.badgeKey ? badges[item.badgeKey] : 0;
   return (
     <NavLink
       to={item.href}
@@ -76,6 +83,11 @@ function NavItem({ item, collapsed }) {
           />
           <Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={2} />
           {!collapsed && <span className="truncate">{item.label}</span>}
+          {badge > 0 && (
+            <span className={`rounded-full bg-yellow-500 text-gray-900 text-[10px] font-bold leading-none ${collapsed ? "absolute top-1 right-1 px-1 py-0.5" : "ml-auto px-1.5 py-1"}`}>
+              {badge > 99 ? "99+" : badge}
+            </span>
+          )}
 
           {/* Tooltip when collapsed */}
           {collapsed && (
@@ -89,7 +101,7 @@ function NavItem({ item, collapsed }) {
   );
 }
 
-export default function SideBar({ collapsed, setCollapsed }) {
+export default function SideBar({ collapsed, setCollapsed, badges }) {
   const navigate = useNavigate();
   const {logout}=useAuth();
   const [logoutHover, setLogoutHover] = useState(false);
@@ -136,7 +148,7 @@ export default function SideBar({ collapsed, setCollapsed }) {
             )}
             <div className="space-y-1">
               {section.items.map((item) => (
-                <NavItem key={item.href} item={item} collapsed={collapsed} />
+                <NavItem key={item.href} item={item} collapsed={collapsed} badges={badges} />
               ))}
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
 import Reveal from "../common/Reveal";
 import { Send, Loader2 , Mail} from "lucide-react";
+import { API_BASE_URL } from "../../api/api";
 
 export default function ContactSection() {
   const { language } = useLanguage();
@@ -32,7 +33,7 @@ export default function ContactSection() {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
+      const response = await fetch(`${API_BASE_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

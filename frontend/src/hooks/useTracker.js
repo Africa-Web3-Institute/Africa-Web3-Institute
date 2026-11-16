@@ -1,7 +1,8 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// VITE_API_URL includes the /api prefix (same convention as api/api.js)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 const TELEMETRY_ENDPOINT = `${API_URL}/event`;
 const HEARTBEAT_INTERVAL_MS = 10000;
 
