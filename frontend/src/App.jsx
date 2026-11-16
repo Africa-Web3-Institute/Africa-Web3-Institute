@@ -2,7 +2,7 @@ import { Toaster } from "./components/ui/toaster";
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
-//import PageNotFound from './lib/PageNotFound';
+import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
 import UserNotRegisteredError from './components/UserNotRegisteredError';
@@ -50,9 +50,12 @@ import Articles from "./admin/pages/Articles";
 import Events from "./admin/pages/Events";
 import Analytics from "./admin/pages/Analytics"
 import AdminPolicyTracker from "./admin/pages/AdminPolicyTracker";
-import AWPIIData from "./admin/pages/AWPIIData";
-import AdminRegulatoryTracker from "./admin/pages/AdminRegulatoryTracker";
-import AdminEnforcementWatch from "./admin/pages/EnforcementWatch";
+import EnforcementAdmin from "./admin/pages/EnforcementAdmin";
+import Messages from "./admin/pages/Messages";
+import Newsletter from "./admin/pages/Newsletter";
+import Research from "./admin/pages/Research";
+import StateOfWeb3 from "./admin/pages/StateOfWeb3";
+import Visualizations from "./admin/pages/Visualizations";
 import Users from "./admin/pages/Users";
 import Settings from "./admin/pages/Settings";
 import AdminLayout from "./admin/Layouts/AdminLayout";
@@ -137,6 +140,7 @@ return (
     
 <Route path="/newsletter" element={<NewsletterLanding />} />
 <Route path="/newsletters/archive" element={<Newsletters />} />
+      <Route path="*" element={<PageNotFound />} />
 
     </Route>
 
@@ -159,10 +163,16 @@ return (
   
     <Route path="events" element={<Events/>}/>
     <Route path="analytics" element={<Analytics />} />
-    <Route path="awpii" element={<AWPIIData />} />
     <Route path="policy-tracker" element={<AdminPolicyTracker />} />
-    <Route path="tracker" element={<AdminRegulatoryTracker />} />
-    <Route path="enforcement" element={<AdminEnforcementWatch />} />
+    {/* AWPII scores and tracker statuses are both edited on the Policy Tracker page */}
+    <Route path="awpii" element={<Navigate to="/admin/policy-tracker" replace />} />
+    <Route path="tracker" element={<Navigate to="/admin/policy-tracker" replace />} />
+    <Route path="enforcement" element={<EnforcementAdmin />} />
+    <Route path="messages" element={<Messages />} />
+    <Route path="newsletter" element={<Newsletter />} />
+    <Route path="research" element={<Research />} />
+    <Route path="state-of-web3" element={<StateOfWeb3 />} />
+    <Route path="visualizations" element={<Visualizations />} />
     <Route path="users" element={<Users />} />
     <Route path="settings" element={<Settings />} />
   </Route>

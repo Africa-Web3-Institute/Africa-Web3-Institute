@@ -76,6 +76,7 @@ export const authApi = {
 // ─── Publications ──────────────────────────────────────────────────────────
 export const publicationsApi = {
   getAll: ()         => request("/publications"),
+  getById: (id)      => request(`/publications/${id}`),
   create: (data)     => request("/publications",      { method: "POST",   body: JSON.stringify(data) }),
   update: (id, data) => request(`/publications/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
   remove: (id)       => request(`/publications/${id}`,{ method: "DELETE" }),
@@ -152,7 +153,72 @@ export const newsletterApi = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getSubscribers: () => request("/admin/subscribers"),
+  getSubscribers: (params) => request(`/admin/subscribers${qs(params)}`),
+  addSubscriber: (data) => request("/subscribers", { method: "POST", body: JSON.stringify(data) }),
+  getCampaigns: () => request("/campaigns"),
+  createCampaign: (data) => request("/campaigns", { method: "POST", body: JSON.stringify(data) }),
+  getAnalytics: () => request("/analytics"),
+};
+
+// Build "?a=1&b=2" from an object, skipping empty values
+function qs(params) {
+  if (!params) return "";
+  const entries = Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "");
+  return entries.length ? "?" + new URLSearchParams(entries).toString() : "";
+}
+
+// ─── System ────────────────────────────────────────────────────────────────
+export const systemApi = {
+  health: () => request("/health"),
+};
+
+// ─── Contact messages (Admin) ──────────────────────────────────────────────
+export const contactApi = {
+  getAll: (status) => request(`/contact-messages${qs({ status })}`),
+  setStatus: (id, status) => request(`/contact-messages/${id}`, { method: "PUT", body: JSON.stringify({ status }) }),
+  remove: (id) => request(`/contact-messages/${id}`, { method: "DELETE" }), // superadmin
+};
+
+// ─── Users & Settings (superadmin) ─────────────────────────────────────────
+export const usersApi = {
+  getAll: () => request("/admin/users"),
+  create: (data) => request("/admin/users", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/admin/users/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/admin/users/${id}`, { method: "DELETE" }),
+};
+
+export const settingsApi = {
+  get: () => request("/admin/settings"),
+  update: (data) => request("/admin/settings", { method: "PUT", body: JSON.stringify(data) }),
+};
+
+// ─── Research impact ───────────────────────────────────────────────────────
+export const researchApi = {
+  impact: () => request("/research-metrics/impact"),
+  getCitations: (publicationId) => request(`/research-metrics/citations${qs({ publicationId })}`),
+  addCitation: (data) => request("/research-metrics/citations", { method: "POST", body: JSON.stringify(data) }),
+  removeCitation: (id) => request(`/research-metrics/citations/${id}`, { method: "DELETE" }),
+};
+
+// ─── State of Web3 in Africa ───────────────────────────────────────────────
+export const web3Api = {
+  dashboard: () => request("/state-of-web3/dashboard"),
+  adoption: () => request("/state-of-web3/adoption"),
+  getMetrics: (params) => request(`/state-of-web3/metrics${qs(params)}`),
+  createMetric: (data) => request("/state-of-web3/metrics", { method: "POST", body: JSON.stringify(data) }),
+  getStartups: (params) => request(`/state-of-web3/startups${qs(params)}`),
+  createStartup: (data) => request("/state-of-web3/startups", { method: "POST", body: JSON.stringify(data) }),
+  updateStartup: (id, data) => request(`/state-of-web3/startups/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  removeStartup: (id) => request(`/state-of-web3/startups/${id}`, { method: "DELETE" }),
+};
+
+// ─── Research visualizations ───────────────────────────────────────────────
+export const visualizationsApi = {
+  getAll: (params) => request(`/visualizations${qs(params)}`),
+  getBySlug: (slug) => request(`/visualizations/${slug}`),
+  create: (data) => request("/visualizations", { method: "POST", body: JSON.stringify(data) }),
+  update: (id, data) => request(`/visualizations/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  remove: (id) => request(`/visualizations/${id}`, { method: "DELETE" }),
 };
 
 export const API_BASE_URL = API_BASE;

@@ -243,12 +243,12 @@ export default function Events() {
 
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <Reveal as="div" className="max-w-2xl">
-            <h2
+            <h1
               className="font-san font-bold leading-snug tracking-tight mb-5 text-white"
               style={{ fontSize: "clamp(1.75rem, 3vw, 2.375rem)" }}
             >
               {T.heading}
-            </h2>
+            </h1>
             <p className="text-[1rem] leading-[1.82] mb-3" style={{ color: "rgba(255,255,255,0.75)" }}>{T.intro1}</p>
             <p className="text-[1rem] leading-[1.82] mb-8" style={{ color: "rgba(255,255,255,0.75)" }}>{T.intro2}</p>
 
