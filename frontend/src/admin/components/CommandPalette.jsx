@@ -2,7 +2,7 @@
 // filtered as you type, chosen with the arrow keys and Enter.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, BookOpen, Building2, CornerDownLeft, KeyRound, Mail, Map, Moon, PenLine, Search, ShieldAlert, Sun } from "lucide-react";
+import { ArrowRight, BookOpen, Building2, CornerDownLeft, KeyRound, Mail, Map, Moon, PenLine, Search, ShieldAlert, Sun, UserRound } from "lucide-react";
 import { NAV_SECTIONS } from "./SideBar";
 import { useCurrentUser } from "../ui";
 
@@ -28,7 +28,8 @@ export default function CommandPalette({ open, onClose, theme, onToggleTheme }) 
     ].filter(Boolean).map((a) => ({ ...a, group: "Actions", run: () => navigate(a.to) }));
     const prefs = [
       { group: "Preferences", label: theme === "light" ? "Switch to dark mode" : "Switch to light mode", icon: theme === "light" ? Moon : Sun, run: onToggleTheme, keywords: "theme appearance colour color" },
-      { group: "Preferences", label: "Change my password", icon: KeyRound, run: () => window.dispatchEvent(new Event("awi:change-password")), keywords: "account security" },
+      { group: "Preferences", label: "Edit my profile", icon: UserRound, run: () => navigate("/admin/settings"), keywords: "account name job title phone bio" },
+      { group: "Preferences", label: "Change my password", icon: KeyRound, run: () => navigate("/admin/settings#security"), keywords: "account security" },
     ];
     return [...pages, ...actions, ...prefs];
   }, [can, navigate, theme, onToggleTheme]);

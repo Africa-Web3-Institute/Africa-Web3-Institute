@@ -90,7 +90,7 @@ export const trackActivity = async (req, res, next) => {
       summary = `Changed: ${Object.keys(body).join(', ')}`.slice(0, 300);
     } else if (area === 'me') {
       action = 'update';
-      summary = 'Changed own password';
+      summary = id === 'profile' ? 'Updated own profile' : 'Changed own password';
     }
 
     logActivity({

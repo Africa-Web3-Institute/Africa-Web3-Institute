@@ -14,6 +14,9 @@ if (IS_PROD && !JWT_SECRET_CONFIGURED) {
   console.error('🚨 JWT_SECRET is missing or shorter than 32 characters. Set a long random value in the hosting variables.');
 }
 
+// The only requests allowed while an account must still replace a password someone else set
+const SETUP_ROUTES = [/^GET \/api\/admin\/me$/, /^PUT \/api\/admin\/me\/(password|profile)$/, /^GET \/api\/admin\/permissions$/];
+
 // A session issued before the account's password last changed is no longer valid
 const sqliteTime = (v) => (v ? Math.floor(Date.parse(String(v).replace(' ', 'T') + (String(v).includes('Z') ? '' : 'Z')) / 1000) : 0);
 const sessionOutdated = (decoded, user) => !!user.passwordChangedAt && Number(decoded.iat || 0) < sqliteTime(user.passwordChangedAt);
@@ -36,10 +39,14 @@ export const requireAuth = async (req, res, next) => {
   }
 
   try {
-    const user = await dbGet('SELECT id, email, name, role, permissions, active, passwordChangedAt FROM users WHERE id = ?', [decoded.id]);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, passwordChangedAt, mustChangePassword FROM users WHERE id = ?', [decoded.id]);
     if (!user) return res.status(401).json({ error: 'Unauthorized: This account no longer exists' });
     if (Number(user.active ?? 1) === 0) return res.status(401).json({ error: 'This account has been disabled' });
     if (sessionOutdated(decoded, user)) return res.status(401).json({ error: 'Your password was changed. Please sign in again.' });
+    // A password someone else set (new account, reset, recovery) must be replaced before anything else
+    if (Number(user.mustChangePassword || 0) === 1 && !SETUP_ROUTES.some((r) => r.test(`${req.method} ${req.originalUrl.split('?')[0]}`))) {
+      return res.status(403).json({ error: 'Set your own password in Settings before continuing.', code: 'PASSWORD_CHANGE_REQUIRED' });
+    }
 
     req.user = {
       id: user.id,

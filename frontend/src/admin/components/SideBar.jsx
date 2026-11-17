@@ -61,8 +61,11 @@ export const NAV_SECTIONS = [
     items: [
       { label: "User Management", href: "/admin/users", icon: Users, perm: "users.manage" },
       { label: "Activity Log", href: "/admin/activity", icon: History, perm: "activity.view" },
-      { label: "Settings", href: "/admin/settings", icon: Settings, perm: "settings.manage" },
     ],
+  },
+  {
+    label: "Account",
+    items: [{ label: "Settings", href: "/admin/settings", icon: Settings }],
   },
 ];
 

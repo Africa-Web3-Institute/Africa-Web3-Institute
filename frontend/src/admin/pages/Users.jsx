@@ -98,7 +98,8 @@ export default function Users() {
                     <p className="text-white">
                       {u.name || "—"} {Number(u.id) === Number(me?.id) && <Badge tone="yellow">You</Badge>}
                     </p>
-                    <p className="text-xs text-gray-400">{u.email}</p>
+                    <p className="text-xs text-gray-400">{u.jobTitle ? `${u.jobTitle} · ` : ""}{u.email}</p>
+                    {u.mustChangePassword && <p className="text-[11px] text-yellow-300 mt-0.5">Hasn't set their own password yet</p>}
                   </div>
                 ),
               },
