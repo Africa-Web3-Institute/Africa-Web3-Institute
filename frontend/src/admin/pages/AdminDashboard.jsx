@@ -122,7 +122,7 @@ function AttentionCard({ to, icon: Icon, tone, title, text }) {
     red: "border-red-500/30 bg-red-500/[0.06] text-red-300",
   };
   return (
-    <Link to={to} className={`group flex items-center gap-3 rounded-2xl border px-4 py-3.5 transition-colors hover:bg-white/[0.03] ${tones[tone]}`}>
+    <Link to={to} className={`group min-w-0 flex items-center gap-3 rounded-2xl border px-4 py-3.5 transition-colors hover:bg-white/[0.03] ${tones[tone]}`}>
       <span className="w-9 h-9 rounded-xl bg-black/20 flex items-center justify-center shrink-0"><Icon className="w-[18px] h-[18px]" /></span>
       <span className="min-w-0">
         <span className="block text-sm font-semibold text-white">{title}</span>
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
       )}
 
       {/* 1. Greeting */}
-      <section className="relative overflow-hidden rounded-3xl border border-[#1e3a5f] bg-gradient-to-br from-[#0B1437] via-[#0f1d47] to-[#111827] px-6 py-7 sm:px-8">
+      <section className="admin-hero relative overflow-hidden rounded-3xl px-6 py-7 sm:px-8">
         <div className="pointer-events-none absolute -right-20 -top-24 w-80 h-80 rounded-full bg-[#D4A017]/10 blur-3xl" />
         <div className="pointer-events-none absolute right-10 bottom-0 w-56 h-56 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="relative flex flex-col lg:flex-row lg:items-end gap-6">
@@ -292,7 +292,7 @@ export default function AdminDashboard() {
               { label: "Page views", value: liveState === "ok" ? fmt(live?.views) : liveState === "connecting" ? null : "—", icon: LineChart },
               { label: "Live content", value: loading ? null : fmt((liveArticles || 0) + (liveBlogs || 0) + (len(d.publications) || 0)), icon: Globe2 },
             ].map((k) => (
-              <div key={k.label} className="rounded-2xl bg-white/[0.04] border border-white/10 px-3 sm:px-4 py-3 sm:min-w-[104px]">
+              <div key={k.label} className="admin-hero-tile rounded-2xl px-3 sm:px-4 py-3 sm:min-w-[104px]">
                 <k.icon className="w-4 h-4 text-[#D4A017]" />
                 <div className="mt-2 h-7 flex items-center">{k.value === null ? <Skeleton className="h-6 w-10" /> : <p className="text-xl font-bold text-white">{k.value}</p>}</div>
                 <p className="text-[11px] text-gray-400">{k.label}</p>

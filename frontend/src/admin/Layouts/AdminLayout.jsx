@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import { SideBar,TopBar } from "../components";
+import CommandPalette from "../components/CommandPalette";
+import { NAV_SECTIONS } from "../components/SideBar";
 import { authApi, contactApi, systemApi } from "../../api/api";
 import { useAuth } from "../../lib/AuthContext";
 import { useCurrentUser } from "../ui";
@@ -33,6 +35,36 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileNav, setMobileNav] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  // Light / dark theme for the console: remembered per browser, first visit follows the device
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("awi_admin_theme");
+      if (saved === "light" || saved === "dark") return saved;
+    } catch { /* storage unavailable */ }
+    return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  });
+  const toggleTheme = useCallback(() => {
+    setTheme((t) => {
+      const next = t === "light" ? "dark" : "light";
+      try { localStorage.setItem("awi_admin_theme", next); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
+
+  // Ctrl+K / ⌘K opens "Jump to…"
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  useEffect(() => setPaletteOpen(false), [location.pathname]);
   // Close the phone menu after choosing a page
   useEffect(() => setMobileNav(false), [location.pathname]);
   const { updateUser } = useAuth();
@@ -81,18 +113,29 @@ export default function AdminLayout() {
   }, [refreshStatus]);
 
   const pageTitle = PAGE_TITLES[location.pathname] || "Admin";
+  const section = NAV_SECTIONS.find((s) => s.items.some((i) => i.href === location.pathname))?.label;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-900">
+    <div className="admin-root flex h-screen overflow-hidden bg-gray-900" data-theme={theme}>
       {mobileNav && <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setMobileNav(false)} aria-hidden="true" />}
       <SideBar collapsed={collapsed} setCollapsed={setCollapsed} badges={{ unreadMessages }} mobileOpen={mobileNav} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <TopBar pageTitle={pageTitle} unreadMessages={unreadMessages} apiStatus={apiStatus} onMenu={() => setMobileNav(true)} />
+        <TopBar
+          pageTitle={pageTitle}
+          section={section}
+          unreadMessages={unreadMessages}
+          apiStatus={apiStatus}
+          onMenu={() => setMobileNav(true)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onSearch={() => setPaletteOpen(true)}
+        />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-900">
           <Outlet />
         </main>
       </div>
-      <Toaster theme="dark" position="bottom-right" richColors closeButton />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} theme={theme} onToggleTheme={toggleTheme} />
+      <Toaster theme={theme} position="bottom-right" richColors closeButton />
     </div>
   );
 }

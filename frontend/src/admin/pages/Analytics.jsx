@@ -400,7 +400,7 @@ export default function Analytics() {
                   <svg
                     viewBox="0 0 900 260"
                     className="w-full min-w-[700px] h-[260px]"
-                    style={{ background: 'rgba(2, 6, 23, 0.5)', borderRadius: '10px' }}
+                    style={{ background: 'var(--admin-diagram-bg)', borderRadius: '10px' }}
                   >
                     <defs>
                       <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -413,13 +413,13 @@ export default function Analytics() {
                     </defs>
 
                     {/* Paths */}
-                    <path d="M 70 130 L 230 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
-                    <path d="M 230 130 L 390 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
-                    <path d="M 390 130 C 430 130, 470 70, 550 70" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
-                    <path d="M 390 130 C 430 130, 470 190, 550 190" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
-                    <path d="M 550 70 C 630 70, 670 130, 710 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
-                    <path d="M 550 190 C 630 190, 670 130, 710 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
-                    <path d="M 710 130 L 830 130" stroke="#1e293b" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 70 130 L 230 130" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 230 130 L 390 130" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 390 130 C 430 130, 470 70, 550 70" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 390 130 C 430 130, 470 190, 550 190" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 550 70 C 630 70, 670 130, 710 130" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 550 190 C 630 190, 670 130, 710 130" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <path d="M 710 130 L 830 130" stroke="var(--admin-node)" strokeWidth="2.5" markerEnd="url(#arrow)" />
 
                     {/* Animated particles */}
                     {particles.map(p => (
@@ -435,71 +435,71 @@ export default function Analytics() {
 
                     {/* Node 1: Client SDK */}
                     <g transform="translate(70, 130)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <circle r="6" fill="#3b82f6" className="animate-ping" style={{ animationDuration: '3s' }} />
                       <circle r="5" fill="#3b82f6" />
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">CLIENT SDK</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">useTracker.js</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">CLIENT SDK</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">useTracker.js</text>
                     </g>
 
                     {/* Node 2: Ingestion API */}
                     <g transform="translate(230, 130)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <foreignObject x="-10" y="-10" width="20" height="20">
                         <Server className="w-5 h-5 text-amber-500" />
                       </foreignObject>
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">INGESTION API</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">POST /api/event</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">INGESTION API</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">POST /api/event</text>
                     </g>
 
                     {/* Node 3: Router & Parser */}
                     <g transform="translate(390, 130)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <foreignObject x="-10" y="-10" width="20" height="20">
                         <Network className="w-5 h-5 text-indigo-400" />
                       </foreignObject>
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">PARSER & ROUTER</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">Geo / Device Parse</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">PARSER & ROUTER</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">Geo / Device Parse</text>
                     </g>
 
                     {/* Node 4A: Aggregation Engine */}
                     <g transform="translate(550, 70)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <foreignObject x="-10" y="-10" width="20" height="20">
                         <Activity className="w-5 h-5 text-emerald-400" />
                       </foreignObject>
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">AGGREGATOR</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">In-Memory Maps</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">AGGREGATOR</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">In-Memory Maps</text>
                     </g>
 
                     {/* Node 4B: Circular Buffer Log */}
                     <g transform="translate(550, 190)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <foreignObject x="-10" y="-10" width="20" height="20">
                         <Database className="w-5 h-5 text-rose-400" />
                       </foreignObject>
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">LOG STORE</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">Circular Array</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">LOG STORE</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">Circular Array</text>
                     </g>
 
                     {/* Node 5: SSE Stream Broadcaster */}
                     <g transform="translate(710, 130)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <foreignObject x="-10" y="-10" width="20" height="20">
                         <Zap className="w-5 h-5 text-yellow-400" />
                       </foreignObject>
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">SSE BROADCAST</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">/api/live stream</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">SSE BROADCAST</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">/api/live stream</text>
                     </g>
 
                     {/* Node 6: Visualization */}
                     <g transform="translate(830, 130)">
-                      <circle r="22" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                      <circle r="22" fill="var(--admin-node)" stroke="var(--admin-node-stroke)" strokeWidth="2" />
                       <foreignObject x="-10" y="-10" width="20" height="20">
                         <Activity className="w-5 h-5 text-teal-400" />
                       </foreignObject>
-                      <text y="-30" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="600">UI DASHBOARD</text>
-                      <text y="35" textAnchor="middle" fill="#64748b" fontSize="8">Recharts Panel</text>
+                      <text y="-30" textAnchor="middle" fill="var(--admin-label)" fontSize="10" fontWeight="600">UI DASHBOARD</text>
+                      <text y="35" textAnchor="middle" fill="var(--admin-axis)" fontSize="8">Recharts Panel</text>
                     </g>
                   </svg>
                 </div>
@@ -591,13 +591,13 @@ export default function Analytics() {
                       <LineChart data={metrics.hourlyStats}>
                         <XAxis
                           dataKey="hour"
-                          stroke="#64748b"
+                          stroke="var(--admin-axis)"
                           fontSize={10}
                           tickFormatter={(h) => `${h}:00`}
                         />
-                        <YAxis stroke="#64748b" fontSize={10} />
+                        <YAxis stroke="var(--admin-axis)" fontSize={10} />
                         <Tooltip
-                          contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }}
+                          contentStyle={{ backgroundColor: 'var(--admin-inset2)', borderColor: 'var(--admin-node)', color: 'var(--admin-tooltip-text)' }}
                           labelFormatter={(h) => `Hour ${h}:00`}
                         />
                         <Line
@@ -625,9 +625,9 @@ export default function Analytics() {
                     {pageViewsData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={pageViewsData} layout="vertical">
-                          <XAxis type="number" stroke="#64748b" fontSize={9} />
-                          <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={9} width={60} />
-                          <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} />
+                          <XAxis type="number" stroke="var(--admin-axis)" fontSize={9} />
+                          <YAxis dataKey="name" type="category" stroke="var(--admin-axis)" fontSize={9} width={60} />
+                          <Tooltip contentStyle={{ backgroundColor: 'var(--admin-inset2)', borderColor: 'var(--admin-node)', color: 'var(--admin-tooltip-text)' }} />
                           <Bar dataKey="pv" fill="#D4A017" radius={[0, 4, 4, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
@@ -658,7 +658,7 @@ export default function Analytics() {
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Pie>
-                          <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} />
+                          <Tooltip contentStyle={{ backgroundColor: 'var(--admin-inset2)', borderColor: 'var(--admin-node)', color: 'var(--admin-tooltip-text)' }} />
                         </PieChart>
                       </ResponsiveContainer>
                     ) : (
@@ -683,9 +683,9 @@ export default function Analytics() {
                     {referralData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={referralData}>
-                          <XAxis dataKey="name" stroke="#64748b" fontSize={9} />
-                          <YAxis stroke="#64748b" fontSize={9} />
-                          <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} />
+                          <XAxis dataKey="name" stroke="var(--admin-axis)" fontSize={9} />
+                          <YAxis stroke="var(--admin-axis)" fontSize={9} />
+                          <Tooltip contentStyle={{ backgroundColor: 'var(--admin-inset2)', borderColor: 'var(--admin-node)', color: 'var(--admin-tooltip-text)' }} />
                           <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>

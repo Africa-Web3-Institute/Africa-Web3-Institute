@@ -105,12 +105,12 @@ function PublicationModal({ publication, onClose, onSave, saving, error }) {
     >
       <div
         className="w-full max-w-xl rounded-2xl overflow-hidden"
-        style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+        style={{ backgroundColor: "var(--admin-panel)", border: "1px solid var(--admin-line)" }}
       >
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 py-4 border-b"
-          style={{ borderColor: "#1f2937" }}
+          style={{ borderColor: "var(--admin-line)" }}
         >
           <h2 className="text-white font-semibold">
             {isEdit ? "Edit Publication" : "Add Publication"}
@@ -235,7 +235,7 @@ function PublicationModal({ publication, onClose, onSave, saving, error }) {
               type="button"
               onClick={() => set("available", !form.available)}
               className="relative w-11 h-6 rounded-full transition-colors"
-              style={{ backgroundColor: form.available ? "#D4A017" : "#374151" }}
+              style={{ backgroundColor: form.available ? "#D4A017" : "var(--admin-grid)" }}
             >
               <span
                 className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
@@ -286,7 +286,7 @@ function DeleteConfirm({ publication, onClose, onConfirm, error }) {
     >
       <div
         className="w-full max-w-sm rounded-2xl p-6"
-        style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+        style={{ backgroundColor: "var(--admin-panel)", border: "1px solid var(--admin-line)" }}
       >
         <div className="w-12 h-12 rounded-full bg-red-950 flex items-center justify-center mx-auto mb-4">
           <Trash2 size={20} className="text-red-400" />
@@ -323,7 +323,7 @@ function PublicationCard({ pub, onEdit, onDelete }) {
   return (
     <div
       className="rounded-xl p-4 space-y-3"
-      style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+      style={{ backgroundColor: "var(--admin-panel)", border: "1px solid var(--admin-line)" }}
     >
       <div className="flex items-start gap-3">
         <div
@@ -553,7 +553,7 @@ export default function AdminPublications() {
           <div
             key={s.label}
             className="rounded-xl p-4"
-            style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+            style={{ backgroundColor: "var(--admin-panel)", border: "1px solid var(--admin-line)" }}
           >
             <p className="text-gray-400 text-xs mb-1">{s.label}</p>
             <p className="text-xl md:text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
@@ -564,7 +564,7 @@ export default function AdminPublications() {
       {/* Filters */}
       <div
         className="flex flex-col md:flex-row flex-wrap gap-3 items-start md:items-center p-4 rounded-xl"
-        style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+        style={{ backgroundColor: "var(--admin-panel)", border: "1px solid var(--admin-line)" }}
       >
         {/* Search */}
         <div className="relative w-full md:flex-1 min-w-[200px]">
@@ -611,14 +611,14 @@ export default function AdminPublications() {
       {/* ─── Table (desktop) ───────────────────────────────────────────────── */}
       <div
         className="rounded-xl overflow-hidden hidden md:block"
-        style={{ backgroundColor: "#1a1f2e", border: "1px solid #1f2937" }}
+        style={{ backgroundColor: "var(--admin-panel)", border: "1px solid var(--admin-line)" }}
       >
         <div className="overflow-x-auto">
           <table className="w-full" style={{ minWidth: "700px" }}>
             <thead>
               <tr
                 className="text-left border-b"
-                style={{ backgroundColor: "#111827", borderColor: "#1f2937" }}
+                style={{ backgroundColor: "var(--admin-inset)", borderColor: "var(--admin-line)" }}
               >
                 <th className="px-5 py-3.5 text-xs font-semibold tracking-wider uppercase text-gray-500">Title</th>
                 <th className="px-5 py-3.5 text-xs font-semibold tracking-wider uppercase text-gray-500">Category</th>
@@ -644,7 +644,7 @@ export default function AdminPublications() {
                       key={pub.id}
                       className="border-b transition-colors"
                       style={{
-                        borderColor: "#1f2937",
+                        borderColor: "var(--admin-line)",
                         backgroundColor: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)",
                       }}
                       onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(212,160,23,0.04)"}

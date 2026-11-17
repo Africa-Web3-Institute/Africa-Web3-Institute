@@ -12,8 +12,8 @@ import {
 } from "../ui";
 
 const TYPES = ["line", "bar", "area", "donut", "radar", "scatter", "geo", "table"];
-const COLORS = ["#D4A017", "#10B981", "#38BDF8", "#A78BFA", "#F472B6", "#F97316", "#94A3B8"];
-const tooltip = { contentStyle: { background: "#1f2937", border: "1px solid #374151", borderRadius: 8, color: "#e5e7eb" } };
+const COLORS = ["#D4A017", "#10B981", "#38BDF8", "#A78BFA", "#F472B6", "#F97316", "var(--admin-label)"];
+const tooltip = { contentStyle: { background: "var(--admin-line)", border: "1px solid var(--admin-grid)", borderRadius: 8, color: "var(--admin-tooltip-text)" } };
 
 // Works out the x-axis (first text field) and series (numeric fields) from the data rows
 function shape(data) {
@@ -31,9 +31,9 @@ export function ChartPreview({ viz, height = 260 }) {
 
   const axes = (
     <>
-      <CartesianGrid stroke="#374151" vertical={false} />
-      <XAxis dataKey={xKey} stroke="#9ca3af" fontSize={11} />
-      <YAxis stroke="#9ca3af" fontSize={11} width={40} />
+      <CartesianGrid stroke="var(--admin-grid)" vertical={false} />
+      <XAxis dataKey={xKey} stroke="var(--admin-axis2)" fontSize={11} />
+      <YAxis stroke="var(--admin-axis2)" fontSize={11} width={40} />
       <Tooltip {...tooltip} />
       {series.length > 1 && <Legend wrapperStyle={{ fontSize: 11 }} />}
     </>
@@ -56,8 +56,8 @@ export function ChartPreview({ viz, height = 260 }) {
   } else if (viz.type === "radar") {
     chart = (
       <RadarChart data={rows} outerRadius="70%">
-        <PolarGrid stroke="#374151" />
-        <PolarAngleAxis dataKey={xKey} stroke="#9ca3af" fontSize={11} />
+        <PolarGrid stroke="var(--admin-grid)" />
+        <PolarAngleAxis dataKey={xKey} stroke="var(--admin-axis2)" fontSize={11} />
         <Tooltip {...tooltip} />
         {series.map((s, i) => <Radar key={s} dataKey={s} stroke={COLORS[i % COLORS.length]} fill={COLORS[i % COLORS.length]} fillOpacity={0.25} />)}
       </RadarChart>
@@ -65,9 +65,9 @@ export function ChartPreview({ viz, height = 260 }) {
   } else if (viz.type === "scatter" && series.length >= 2) {
     chart = (
       <ScatterChart>
-        <CartesianGrid stroke="#374151" />
-        <XAxis type="number" dataKey={series[0]} name={series[0]} stroke="#9ca3af" fontSize={11} />
-        <YAxis type="number" dataKey={series[1]} name={series[1]} stroke="#9ca3af" fontSize={11} width={40} />
+        <CartesianGrid stroke="var(--admin-grid)" />
+        <XAxis type="number" dataKey={series[0]} name={series[0]} stroke="var(--admin-axis2)" fontSize={11} />
+        <YAxis type="number" dataKey={series[1]} name={series[1]} stroke="var(--admin-axis2)" fontSize={11} width={40} />
         <Tooltip {...tooltip} />
         <Scatter data={rows} fill={COLORS[0]} />
       </ScatterChart>

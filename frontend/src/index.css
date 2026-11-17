@@ -269,3 +269,99 @@
     animation-duration: 0.01ms !important;
   }
 }
+/* ============================================================
+   ADMIN CONSOLE THEMES
+   The console is written with dark utility classes. Light mode
+   (data-theme="light" on .admin-root) re-maps the grey scale and
+   darkens pastel accent text so everything stays readable.
+   ============================================================ */
+.admin-root {
+  color-scheme: dark;
+  --admin-panel: #1a1f2e;
+  --admin-line: #1f2937;
+  --admin-inset: #111827;
+  --admin-inset2: #0f172a;
+  --admin-node: #1e293b;
+  --admin-grid: #374151;
+  --admin-node-stroke: #475569;
+  --admin-label: #94a3b8;
+  --admin-axis: #64748b;
+  --admin-axis2: #9ca3af;
+  --admin-tooltip-text: #e5e7eb;
+  --admin-diagram-bg: rgba(2, 6, 23, 0.5);
+}
+.admin-root[data-theme="light"] {
+  color-scheme: light;
+  --admin-panel: #ffffff;
+  --admin-line: #e3e7ee;
+  --admin-inset: #f6f8fb;
+  --admin-inset2: #ffffff;
+  --admin-node: #e2e8f0;
+  --admin-grid: #e5e7eb;
+  --admin-node-stroke: #94a3b8;
+  --admin-label: #475569;
+  --admin-axis: #64748b;
+  --admin-axis2: #6b7280;
+  --admin-tooltip-text: #1f2937;
+  --admin-diagram-bg: #f6f8fb;
+
+  --color-gray-950: #ffffff;
+  --color-gray-900: #f3f5f9;
+  --color-gray-800: #ffffff;
+  --color-gray-700: #e3e7ee;
+  --color-gray-600: #cdd4de;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #4b5563;
+  --color-gray-300: #374151;
+  --color-gray-200: #1f2937;
+  --color-gray-100: #111827;
+  --color-slate-950: #ffffff;
+  --color-slate-900: #f3f5f9;
+  --color-slate-800: #e3e7ee;
+  --color-slate-700: #cdd4de;
+  --color-slate-600: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-400: #475569;
+  --color-slate-300: #334155;
+  --color-slate-200: #1e293b;
+  --color-slate-100: #0f172a;
+}
+/* Headings and body text written as "white" become ink; keep white on solid colour fills */
+.admin-root[data-theme="light"] .text-white,
+.admin-root[data-theme="light"] [class*="hover:text-white"]:hover { color: #0f172a; }
+.admin-root[data-theme="light"] :is(.bg-red-500, .bg-red-600, .bg-red-700, .bg-amber-500, .bg-amber-600, .bg-yellow-600, .bg-sky-500, .bg-emerald-500, .bg-blue-500, .bg-violet-500).text-white { color: #ffffff; }
+.admin-root[data-theme="light"] [class*="text-[#D4A017]"] { color: #a87b0a; }
+/* Cards get a soft shadow instead of relying on contrast with the page */
+.admin-root[data-theme="light"] :is(section, .rounded-xl, .rounded-2xl)[class*="bg-gray-800"] { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03); }
+
+.admin-root[data-theme="light"] [class~="text-yellow-100"], .admin-root[data-theme="light"] [class~="text-yellow-200"], .admin-root[data-theme="light"] [class~="text-yellow-300"], .admin-root[data-theme="light"] [class~="text-yellow-400"] { color: #a16207; }
+.admin-root[data-theme="light"] [class~="text-amber-100"], .admin-root[data-theme="light"] [class~="text-amber-200"], .admin-root[data-theme="light"] [class~="text-amber-300"], .admin-root[data-theme="light"] [class~="text-amber-400"] { color: #b45309; }
+.admin-root[data-theme="light"] [class~="text-emerald-100"], .admin-root[data-theme="light"] [class~="text-emerald-200"], .admin-root[data-theme="light"] [class~="text-emerald-300"], .admin-root[data-theme="light"] [class~="text-emerald-400"] { color: #047857; }
+.admin-root[data-theme="light"] [class~="text-green-100"], .admin-root[data-theme="light"] [class~="text-green-200"], .admin-root[data-theme="light"] [class~="text-green-300"], .admin-root[data-theme="light"] [class~="text-green-400"] { color: #15803d; }
+.admin-root[data-theme="light"] [class~="text-sky-100"], .admin-root[data-theme="light"] [class~="text-sky-200"], .admin-root[data-theme="light"] [class~="text-sky-300"], .admin-root[data-theme="light"] [class~="text-sky-400"] { color: #0369a1; }
+.admin-root[data-theme="light"] [class~="text-blue-100"], .admin-root[data-theme="light"] [class~="text-blue-200"], .admin-root[data-theme="light"] [class~="text-blue-300"], .admin-root[data-theme="light"] [class~="text-blue-400"] { color: #1d4ed8; }
+.admin-root[data-theme="light"] [class~="text-red-100"], .admin-root[data-theme="light"] [class~="text-red-200"], .admin-root[data-theme="light"] [class~="text-red-300"], .admin-root[data-theme="light"] [class~="text-red-400"] { color: #b91c1c; }
+.admin-root[data-theme="light"] [class~="text-rose-100"], .admin-root[data-theme="light"] [class~="text-rose-200"], .admin-root[data-theme="light"] [class~="text-rose-300"], .admin-root[data-theme="light"] [class~="text-rose-400"] { color: #be123c; }
+.admin-root[data-theme="light"] [class~="text-violet-100"], .admin-root[data-theme="light"] [class~="text-violet-200"], .admin-root[data-theme="light"] [class~="text-violet-300"], .admin-root[data-theme="light"] [class~="text-violet-400"] { color: #6d28d9; }
+.admin-root[data-theme="light"] [class~="text-purple-100"], .admin-root[data-theme="light"] [class~="text-purple-200"], .admin-root[data-theme="light"] [class~="text-purple-300"], .admin-root[data-theme="light"] [class~="text-purple-400"] { color: #7e22ce; }
+.admin-root[data-theme="light"] [class~="text-indigo-100"], .admin-root[data-theme="light"] [class~="text-indigo-200"], .admin-root[data-theme="light"] [class~="text-indigo-300"], .admin-root[data-theme="light"] [class~="text-indigo-400"] { color: #4338ca; }
+.admin-root[data-theme="light"] [class~="text-teal-100"], .admin-root[data-theme="light"] [class~="text-teal-200"], .admin-root[data-theme="light"] [class~="text-teal-300"], .admin-root[data-theme="light"] [class~="text-teal-400"] { color: #0f766e; }
+.admin-root[data-theme="light"] [class~="text-orange-100"], .admin-root[data-theme="light"] [class~="text-orange-200"], .admin-root[data-theme="light"] [class~="text-orange-300"], .admin-root[data-theme="light"] [class~="text-orange-400"] { color: #c2410c; }
+.admin-root[data-theme="light"] [class~="text-yellow-500"], .admin-root[data-theme="light"] [class~="text-amber-500"] { color: #a16207; }
+.admin-root[data-theme="light"] :is([class*="bg-red-950"], [class*="bg-red-900"]) { background-color: #fef2f2; }
+.admin-root[data-theme="light"] [class*="border-red-800"] { border-color: #fecaca; }
+.admin-root[data-theme="light"] :is([class*="bg-green-950"], [class*="bg-green-900"]) { background-color: #f0fdf4; }
+.admin-root[data-theme="light"] [class*="border-green-800"] { border-color: #bbf7d0; }
+.admin-root[data-theme="light"] :is([class*="bg-yellow-950"], [class*="bg-yellow-900"]) { background-color: #fefce8; }
+.admin-root[data-theme="light"] [class*="border-yellow-800"] { border-color: #fde68a; }
+.admin-root[data-theme="light"] :is([class*="bg-blue-950"], [class*="bg-blue-900"]) { background-color: #eff6ff; }
+.admin-root[data-theme="light"] [class*="border-blue-800"] { border-color: #bfdbfe; }
+.admin-root[data-theme="light"] :is([class*="bg-purple-950"], [class*="bg-purple-900"]) { background-color: #faf5ff; }
+.admin-root[data-theme="light"] [class*="border-purple-800"] { border-color: #e9d5ff; }
+
+/* Dashboard greeting banner */
+.admin-hero { border: 1px solid #1e3a5f; background: linear-gradient(135deg, #0B1437 0%, #0f1d47 50%, #111827 100%); }
+.admin-hero-tile { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); }
+.admin-root[data-theme="light"] .admin-hero { border-color: #f1e3b8; background: linear-gradient(135deg, #fff8e6 0%, #ffffff 45%, #eaf3ff 100%); }
+.admin-root[data-theme="light"] .admin-hero-tile { background: rgba(255, 255, 255, 0.85); border-color: #e7e2d3; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
+
