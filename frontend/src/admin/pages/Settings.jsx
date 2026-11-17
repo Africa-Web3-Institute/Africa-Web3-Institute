@@ -30,7 +30,7 @@ export default function Settings() {
     return (
       <div>
         <PageHeader title="Settings" />
-        <Card><EmptyState title="Settings access required" description="Your account doesn't have permission to change site settings. A superadmin can grant it in User Management." /></Card>
+        <Card><EmptyState title="Settings access required" description="Your account doesn't have permission to change site settings. Ask your administrator if you need it." /></Card>
       </div>
     );
   }

@@ -51,7 +51,7 @@ export default function ActivityLog() {
     return (
       <div>
         <PageHeader title="Activity Log" />
-        <Card><EmptyState title="Superadmin access required" description="Only superadmins can see what each account has done." /></Card>
+        <Card><EmptyState title="Not available" description="Your account doesn't have access to the activity log." /></Card>
       </div>
     );
   }

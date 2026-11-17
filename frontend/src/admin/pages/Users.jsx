@@ -35,7 +35,7 @@ export default function Users() {
     return (
       <div>
         <PageHeader title="User Management" />
-        <Card><EmptyState title="Admin access required" description="Only admins and superadmins can manage accounts. You can change your own password from the menu under your name (top right)." /></Card>
+        <Card><EmptyState title="Admin access required" description="Only administrators can manage accounts. You can change your own password from the menu under your name (top right)." /></Card>
       </div>
     );
   }
@@ -77,10 +77,8 @@ export default function Users() {
       <Notice>
         <ShieldCheck className="w-4 h-4 inline -mt-0.5 mr-1" />
         Changes take effect immediately, even for people who are already signed in.
-        {isSuperadmin ? (
+        {isSuperadmin && (
           <> Everything each account does is recorded in the <Link to="/admin/activity" className="underline text-sky-300">Activity Log</Link>.</>
-        ) : (
-          <> Superadmin accounts can only be changed by a superadmin.</>
         )}
       </Notice>
 
@@ -133,9 +131,7 @@ export default function Users() {
                 key: "actions",
                 label: "",
                 className: "text-right w-48",
-                render: (u) => !canTouch(u) ? (
-                  <span className="text-[11px] text-gray-500">Superadmin only</span>
-                ) : (
+                render: (u) => !canTouch(u) ? null : (
                   <div className="flex justify-end items-center gap-1">
                     {Number(u.id) !== Number(me?.id) && (
                       <button onClick={() => toggleActive(u)} className="text-[11px] text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-gray-700">
@@ -280,7 +276,7 @@ function UserForm({ user, catalog, isSuperadmin, onClose, onSaved }) {
                     })}
                   </div>
                 ))}
-                <p className="px-3 py-2 text-[11px] text-gray-500">Managing accounts comes with the Admin role. The activity log is for superadmins only.</p>
+                <p className="px-3 py-2 text-[11px] text-gray-500">Managing accounts comes with the Admin role{isSuperadmin ? "; the activity log is for superadmins only" : ""}.</p>
               </div>
             )}
           </div>

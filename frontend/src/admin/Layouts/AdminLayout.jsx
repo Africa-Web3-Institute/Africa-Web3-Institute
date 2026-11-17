@@ -136,7 +136,7 @@ export default function AdminLayout() {
           {blocked ? (
             <div className="max-w-lg mx-auto mt-16 text-center rounded-2xl border border-gray-700 bg-gray-800 p-8">
               <p className="text-lg font-semibold text-white">This page isn't available to your account</p>
-              <p className="text-sm text-gray-400 mt-2">Your role doesn't include access to {pageTitle}. If you need it, ask an admin or superadmin.</p>
+              <p className="text-sm text-gray-400 mt-2">Your role doesn't include access to {pageTitle}. If you need it, ask your administrator.</p>
               <button onClick={() => navigate("/admin")} className="mt-5 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black hover:bg-yellow-400">Back to the dashboard</button>
             </div>
           ) : (
