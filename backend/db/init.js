@@ -434,8 +434,7 @@ const initializeTables = async () => {
     `ALTER TABLE users ADD COLUMN lastLoginAt DATETIME;`,
     // Sessions issued before this time are rejected (set whenever a password changes)
     `ALTER TABLE users ADD COLUMN passwordChangedAt DATETIME;`,
-    // Profile (name + job title are required before using the console) and
-    // "must change password" for passwords someone else set
+    // Profile details (mustChangePassword is no longer used)
     `ALTER TABLE users ADD COLUMN jobTitle TEXT;`,
     `ALTER TABLE users ADD COLUMN phone TEXT;`,
     `ALTER TABLE users ADD COLUMN bio TEXT;`,
@@ -490,10 +489,10 @@ const ensureAdminAccess = async () => {
     const hash = await bcrypt.hash(recoveryPassword, 12);
     const existing = dbInstance.get('SELECT id FROM users WHERE LOWER(email) = ?', [recoveryEmail]);
     if (existing) {
-      dbInstance.run("UPDATE users SET role = 'superadmin', active = 1, permissions = '{}', password = ?, passwordChangedAt = CURRENT_TIMESTAMP, mustChangePassword = 1 WHERE id = ?", [hash, existing.id]);
+      dbInstance.run("UPDATE users SET role = 'superadmin', active = 1, permissions = '{}', password = ?, passwordChangedAt = CURRENT_TIMESTAMP WHERE id = ?", [hash, existing.id]);
     } else {
       dbInstance.run(
-        "INSERT INTO users (email, password, name, role, permissions, active, passwordChangedAt, mustChangePassword) VALUES (?, ?, '', 'superadmin', '{}', 1, CURRENT_TIMESTAMP, 1)",
+        "INSERT INTO users (email, password, name, role, permissions, active, passwordChangedAt) VALUES (?, ?, '', 'superadmin', '{}', 1, CURRENT_TIMESTAMP)",
         [recoveryEmail, hash]
       );
     }

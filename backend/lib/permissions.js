@@ -30,6 +30,9 @@ export const SUPERADMIN_ONLY = ['users.manage', 'activity.view'];
 // only superadmins can touch superadmin accounts.
 export const ROLE_EXTRAS = { admin: ['users.manage'] };
 
+// Only a superadmin may grant or remove these on any account (admins can't see or change them)
+export const SUPERADMIN_GRANTED = ['settings.manage'];
+
 const ALL = PERMISSIONS.map((p) => p.key);
 
 export const ROLE_DEFAULTS = {

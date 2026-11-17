@@ -1,10 +1,9 @@
-// Settings: every account's own profile and password, plus site-wide values for
-// accounts allowed to manage them. Completing the profile (name + job title) and
-// replacing a password someone else set are required before using the console.
+// Settings: every account's own profile and password (on every role's dashboard),
+// plus site-wide values for accounts allowed to manage them.
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { CheckCircle2, Circle, KeyRound, Plus, Save, ShieldCheck, Trash2, UserRound } from "lucide-react";
+import { KeyRound, Plus, Save, ShieldCheck, Trash2, UserRound } from "lucide-react";
 import { authApi, settingsApi } from "../../api/api";
 import { useAuth } from "../../lib/AuthContext";
 import { Badge, Button, Card, DataState, Field, IconButton, Input, Notice, PageHeader, PasswordInput, Textarea, fmtDate, useApiData, useCurrentUser } from "../ui";
@@ -20,60 +19,29 @@ export default function Settings() {
   const { user, can } = useCurrentUser();
   const { updateUser } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
-  const mustChangePassword = !!user?.mustChangePassword;
-  const profileComplete = user?.profileComplete !== false;
-  const setupNeeded = mustChangePassword || !profileComplete;
 
   useEffect(() => {
     if (location.hash === "#security") document.getElementById("security")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [location.hash]);
 
-  const done = (patch) => {
-    updateUser(patch);
-    const next = { ...user, ...patch };
-    if (!next.mustChangePassword && next.profileComplete !== false && setupNeeded) {
-      toast.success("All set. Welcome to the AWI admin console.");
-      navigate("/admin");
-    }
-  };
+  const done = (patch) => updateUser(patch);
 
   return (
     <div className="max-w-3xl mx-auto">
       <PageHeader title="Settings" description="Your profile, your password and how you appear to the team." />
 
-      {setupNeeded && (
-        <div className="mb-6 rounded-2xl border border-yellow-500/40 bg-yellow-500/[0.07] p-5">
-          <p className="text-sm font-semibold text-white">Finish setting up your account to continue</p>
-          <p className="text-xs text-gray-400 mt-1">These steps are required before you can use the rest of the console.</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            <Step done={profileComplete} label="Complete your profile (full name and job title)" />
-            <Step done={!mustChangePassword} label="Replace the password you were given with your own" />
-          </ul>
-        </div>
-      )}
-
       <div className="space-y-6">
-        <ProfileCard user={user} onSaved={done} highlight={!profileComplete} />
-        <SecurityCard mustChange={mustChangePassword} onChanged={done} />
-        {can("settings.manage") && !setupNeeded && <SiteSettings />}
+        <ProfileCard user={user} onSaved={done} />
+        <SecurityCard onChanged={done} />
+        {can("settings.manage") && <SiteSettings />}
       </div>
     </div>
   );
 }
 
-function Step({ done, label }) {
-  return (
-    <li className={`flex items-center gap-2 ${done ? "text-emerald-300" : "text-gray-200"}`}>
-      {done ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <Circle className="w-4 h-4 shrink-0 text-yellow-400" />}
-      <span className={done ? "line-through opacity-80" : ""}>{label}</span>
-    </li>
-  );
-}
-
 /* ── Profile ────────────────────────────────────────────────────────────── */
 
-function ProfileCard({ user, onSaved, highlight }) {
+function ProfileCard({ user, onSaved }) {
   const [form, setForm] = useState({ name: "", jobTitle: "", phone: "", bio: "" });
   const [busy, setBusy] = useState(false);
   useEffect(() => {
@@ -85,13 +53,12 @@ function ProfileCard({ user, onSaved, highlight }) {
 
   const save = async () => {
     if (form.name.trim().length < 2) return toast.error("Enter your full name");
-    if (form.jobTitle.trim().length < 2) return toast.error("Enter your job title");
     setBusy(true);
     try {
       const res = await authApi.updateProfile(form);
       toast.success("Profile saved");
       const u = res?.user || {};
-      onSaved({ name: u.name, jobTitle: u.jobTitle, phone: u.phone, bio: u.bio, profileComplete: u.profileComplete });
+      onSaved({ name: u.name, jobTitle: u.jobTitle, phone: u.phone, bio: u.bio });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -100,7 +67,7 @@ function ProfileCard({ user, onSaved, highlight }) {
   };
 
   return (
-    <section className={`rounded-2xl border bg-gray-800 ${highlight ? "border-yellow-500/50" : "border-gray-700"}`}>
+    <section className="rounded-2xl border border-gray-700 bg-gray-800">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 border-b border-gray-700 p-5">
         <span className="w-16 h-16 rounded-2xl bg-yellow-500 text-black flex items-center justify-center text-xl font-extrabold shrink-0">{initials || <UserRound />}</span>
         <div className="min-w-0 flex-1">
@@ -117,7 +84,7 @@ function ProfileCard({ user, onSaved, highlight }) {
         <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2"><UserRound className="w-4 h-4 text-yellow-400" /> Profile</h2>
         <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4 mb-4">
           <Field label="Full name" required><Input value={form.name} onChange={set("name")} placeholder="e.g. Yves Bambara" autoComplete="name" /></Field>
-          <Field label="Job title" required><Input value={form.jobTitle} onChange={set("jobTitle")} placeholder="e.g. Research Lead" autoComplete="organization-title" /></Field>
+          <Field label="Job title"><Input value={form.jobTitle} onChange={set("jobTitle")} placeholder="e.g. Research Lead" autoComplete="organization-title" /></Field>
           <Field label="Email" hint="Used to sign in. Ask your administrator to change it."><Input value={user?.email || ""} disabled /></Field>
           <Field label="Phone"><Input value={form.phone} onChange={set("phone")} placeholder="+233 …" autoComplete="tel" /></Field>
         </div>
@@ -134,7 +101,7 @@ function ProfileCard({ user, onSaved, highlight }) {
 
 /* ── Password ───────────────────────────────────────────────────────────── */
 
-function SecurityCard({ mustChange, onChanged }) {
+function SecurityCard({ onChanged }) {
   const [form, setForm] = useState({ current: "", next: "", confirm: "" });
   const [busy, setBusy] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
@@ -147,7 +114,7 @@ function SecurityCard({ mustChange, onChanged }) {
       const res = await authApi.changePassword(form.current, form.next);
       toast.success("Password changed. Any other signed-in devices have been signed out.");
       setForm({ current: "", next: "", confirm: "" });
-      onChanged({ ...(res?.token ? { token: res.token } : {}), mustChangePassword: false });
+      if (res?.token) onChanged({ token: res.token });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -156,15 +123,11 @@ function SecurityCard({ mustChange, onChanged }) {
   };
 
   return (
-    <section id="security" className={`rounded-2xl border bg-gray-800 p-5 scroll-mt-6 ${mustChange ? "border-yellow-500/50" : "border-gray-700"}`}>
+    <section id="security" className="rounded-2xl border border-gray-700 bg-gray-800 p-5 scroll-mt-6">
       <h2 className="text-sm font-semibold text-white mb-1 flex items-center gap-2"><KeyRound className="w-4 h-4 text-yellow-400" /> Password</h2>
-      <p className="text-xs text-gray-400 mb-4">
-        {mustChange
-          ? "You're signed in with a password someone else set. Choose your own to continue."
-          : "Changing your password signs you out on your other devices."}
-      </p>
+      <p className="text-xs text-gray-400 mb-4">Changing your password signs you out on your other devices.</p>
       <div className="grid sm:grid-cols-3 gap-x-4 gap-y-4 mb-4">
-        <Field label={mustChange ? "Password you were given" : "Current password"} required>
+        <Field label="Current password" required>
           <PasswordInput autoComplete="current-password" value={form.current} onChange={set("current")} />
         </Field>
         <Field label="New password" required hint="At least 10 characters.">

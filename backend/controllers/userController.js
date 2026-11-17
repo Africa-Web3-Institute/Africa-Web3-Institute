@@ -1,6 +1,6 @@
 import { dbGet, dbAll, dbRun } from '../db/init.js';
 import bcrypt from 'bcryptjs';
-import { ROLES, effectivePermissions, sanitizeOverrides } from '../lib/permissions.js';
+import { ROLES, SUPERADMIN_GRANTED, effectivePermissions, sanitizeOverrides } from '../lib/permissions.js';
 import { isWeakPassword } from '../db/init.js';
 import { invalidateDefaultPasswordCache } from './authController.js';
 
@@ -17,7 +17,6 @@ const shape = (u) => ({
   lastLoginAt: u.lastLoginAt || null,
   createdAt: u.createdAt,
   jobTitle: u.jobTitle || '',
-  mustChangePassword: Number(u.mustChangePassword || 0) === 1,
 });
 
 // Admins can manage admins, editors and viewers. Superadmin accounts are invisible to them:
@@ -26,12 +25,25 @@ const actorIsSuper = (req) => req.user?.role === 'superadmin';
 const rolesFor = (req) => (actorIsSuper(req) ? ROLES : ROLES.filter((r) => r !== 'superadmin'));
 const roleError = (req) => ({ error: `Role must be one of: ${rolesFor(req).join(', ')}` });
 
+// Overrides an admin sends can't touch superadmin-granted permissions (e.g. site settings):
+// whatever a superadmin decided for that account is kept.
+const overridesFrom = (req, incoming, existingRaw) => {
+  const next = sanitizeOverrides(incoming);
+  if (actorIsSuper(req)) return next;
+  const existing = sanitizeOverrides(existingRaw);
+  for (const key of SUPERADMIN_GRANTED) {
+    delete next[key];
+    if (key in existing) next[key] = existing[key];
+  }
+  return next;
+};
+
 const activeSuperadmins = () => dbAll("SELECT id FROM users WHERE role = 'superadmin' AND COALESCE(active, 1) != 0");
 
 export const getUsers = async (req, res) => {
   try {
     const users = await dbAll(
-      `SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, mustChangePassword FROM users ${actorIsSuper(req) ? '' : "WHERE role != 'superadmin'"} ORDER BY createdAt DESC`
+      `SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle FROM users ${actorIsSuper(req) ? '' : "WHERE role != 'superadmin'"} ORDER BY createdAt DESC`
     );
     res.status(200).json({ data: users.map(shape) });
   } catch (err) {
@@ -55,9 +67,8 @@ export const createUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
     await dbRun(
-      // The person must replace this password (set by someone else) at their first sign-in
-      'INSERT INTO users (email, password, name, role, permissions, active, mustChangePassword) VALUES (?, ?, ?, ?, ?, ?, 1)',
-      [email, hashedPassword, name || '', role, JSON.stringify(role === 'superadmin' ? {} : sanitizeOverrides(permissions)), active ? 1 : 0]
+      'INSERT INTO users (email, password, name, role, permissions, active) VALUES (?, ?, ?, ?, ?, ?)',
+      [email, hashedPassword, name || '', role, JSON.stringify(role === 'superadmin' ? {} : overridesFrom(req, permissions, null)), active ? 1 : 0]
     );
     res.status(201).json({ success: true, message: 'User created' });
   } catch (err) {
@@ -107,15 +118,13 @@ export const updateUser = async (req, res) => {
     if (body.active !== undefined) { sets.push('active = ?'); params.push(nextActive ? 1 : 0); }
     if (body.permissions !== undefined || (body.role === 'superadmin')) {
       sets.push('permissions = ?');
-      params.push(JSON.stringify(nextRole === 'superadmin' ? {} : sanitizeOverrides(body.permissions)));
+      params.push(JSON.stringify(nextRole === 'superadmin' ? {} : overridesFrom(req, body.permissions, user.permissions)));
     }
     if (body.password) {
       if (String(body.password).length < 10) return res.status(400).json({ error: 'Use a password of at least 10 characters' });
       if (isWeakPassword(body.password)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
       // Setting a new password signs that person out everywhere
       sets.push('password = ?', 'passwordChangedAt = CURRENT_TIMESTAMP'); params.push(await bcrypt.hash(body.password, 12));
-      // A password set for someone else is temporary: they replace it at their next sign-in
-      if (id !== req.user.id) sets.push('mustChangePassword = 1');
     }
 
     if (sets.length) await dbRun(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, [...params, id]);
