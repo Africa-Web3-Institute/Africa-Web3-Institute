@@ -99,7 +99,6 @@ export default function Users() {
                       {u.name || "—"} {Number(u.id) === Number(me?.id) && <Badge tone="yellow">You</Badge>}
                     </p>
                     <p className="text-xs text-gray-400">{u.jobTitle ? `${u.jobTitle} · ` : ""}{u.email}</p>
-                    {u.mustChangePassword && <p className="text-[11px] text-yellow-300 mt-0.5">Hasn't set their own password yet</p>}
                   </div>
                 ),
               },
@@ -269,6 +268,7 @@ function UserForm({ user, catalog, isSuperadmin, onClose, onSaved }) {
                           <input type="checkbox" checked={on} onChange={() => toggle(p.key)} className="mt-0.5 accent-yellow-500" />
                           <span className="flex-1">
                             <span className="text-sm text-gray-200">{p.label}</span>
+                            {p.superadminOnly && <span className="ml-2 rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-violet-300">Only you can grant this</span>}
                             {changed && <span className={`ml-2 text-[10px] font-semibold ${on ? "text-emerald-300" : "text-red-300"}`}>{on ? "ALLOWED" : "DENIED"}</span>}
                             <span className="block text-[11px] text-gray-500">{p.description}</span>
                           </span>

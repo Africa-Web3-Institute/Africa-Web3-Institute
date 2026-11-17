@@ -2,16 +2,13 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { dbAll, dbGet, dbRun, DB_STATUS, isWeakPassword } from '../db/init.js';
 import { JWT_SECRET, JWT_SECRET_CONFIGURED } from '../middleware/auth.js';
-import { PERMISSIONS, ROLE_DEFAULTS, effectivePermissions } from '../lib/permissions.js';
+import { PERMISSIONS, ROLE_DEFAULTS, SUPERADMIN_GRANTED, effectivePermissions } from '../lib/permissions.js';
 import { logActivity, clientIp } from '../lib/activity.js';
 
 const publicUser = (user) => {
-  const { password: _, passwordChangedAt: __, permissions: overrides, ...rest } = user;
+  const { password: _, passwordChangedAt: __, mustChangePassword: ___, permissions: overrides, ...rest } = user;
   return {
     ...rest,
-    mustChangePassword: Number(user.mustChangePassword || 0) === 1,
-    // Name and job title are required before the console can be used
-    profileComplete: !!(String(user.name || '').trim() && String(user.jobTitle || '').trim()),
     permissions: effectivePermissions(user.role, overrides),
   };
 };
@@ -76,7 +73,7 @@ export const login = async (req, res) => {
 // The signed-in account, with its current role and permissions
 export const me = async (req, res) => {
   try {
-    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, phone, bio, mustChangePassword FROM users WHERE id = ?', [req.user.id]);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, phone, bio FROM users WHERE id = ?', [req.user.id]);
     res.status(200).json({ user: publicUser(user) });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -96,7 +93,7 @@ export const changeOwnPassword = async (req, res) => {
     if (!user || !(await bcrypt.compare(currentPassword, user.password))) {
       return res.status(400).json({ error: 'Your current password is incorrect' });
     }
-    await dbRun('UPDATE users SET password = ?, passwordChangedAt = CURRENT_TIMESTAMP, mustChangePassword = 0 WHERE id = ?', [await bcrypt.hash(newPassword, 12), req.user.id]);
+    await dbRun('UPDATE users SET password = ?, passwordChangedAt = CURRENT_TIMESTAMP WHERE id = ?', [await bcrypt.hash(newPassword, 12), req.user.id]);
     invalidateDefaultPasswordCache();
     // Other sessions for this account are now signed out; this one gets a fresh token
     const fresh = await dbGet('SELECT id, email, role FROM users WHERE id = ?', [req.user.id]);
@@ -106,7 +103,7 @@ export const changeOwnPassword = async (req, res) => {
   }
 };
 
-// Any signed-in account updates its own profile. Name and job title are required.
+// Any signed-in account updates its own profile (only the name is required).
 const clean = (v, max) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
 export const updateProfile = async (req, res) => {
   const body = req.body || {};
@@ -115,11 +112,10 @@ export const updateProfile = async (req, res) => {
   const phone = clean(body.phone, 30);
   const bio = String(body.bio ?? '').trim().slice(0, 300);
   if (name.length < 2) return res.status(400).json({ error: 'Enter your full name' });
-  if (jobTitle.length < 2) return res.status(400).json({ error: 'Enter your job title' });
   if (phone && !/^[+()\d\s.-]{6,30}$/.test(phone)) return res.status(400).json({ error: 'Enter a valid phone number, or leave it empty' });
   try {
     await dbRun('UPDATE users SET name = ?, jobTitle = ?, phone = ?, bio = ? WHERE id = ?', [name, jobTitle, phone, bio, req.user.id]);
-    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, phone, bio, mustChangePassword FROM users WHERE id = ?', [req.user.id]);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, phone, bio FROM users WHERE id = ?', [req.user.id]);
     res.status(200).json({ success: true, user: publicUser(user) });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -177,7 +173,12 @@ export const systemStatus = async (req, res) => {
 
 // The permission list and each role's defaults, for the User Management screen
 export const permissionCatalog = (req, res) => {
+  const isSuper = req.user?.role === 'superadmin';
   const roleDefaults = { ...ROLE_DEFAULTS };
-  if (req.user?.role !== 'superadmin') delete roleDefaults.superadmin;
-  res.status(200).json({ permissions: PERMISSIONS, roleDefaults });
+  if (!isSuper) delete roleDefaults.superadmin;
+  // Admins don't see permissions only a superadmin can grant
+  const permissions = isSuper
+    ? PERMISSIONS.map((p) => (SUPERADMIN_GRANTED.includes(p.key) ? { ...p, superadminOnly: true } : p))
+    : PERMISSIONS.filter((p) => !SUPERADMIN_GRANTED.includes(p.key));
+  res.status(200).json({ permissions, roleDefaults });
 };
