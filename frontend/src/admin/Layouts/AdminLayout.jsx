@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import { SideBar,TopBar } from "../components";
-import { contactApi, systemApi } from "../../api/api";
+import { authApi, contactApi, systemApi } from "../../api/api";
+import { useAuth } from "../../lib/AuthContext";
+import { useCurrentUser } from "../ui";
 
 const PAGE_TITLES = {
   "/admin": "Dashboard",
@@ -18,6 +20,7 @@ const PAGE_TITLES = {
   "/admin/visualizations": "Visualizations",
   "/admin/analytics": "Site Analytics",
   "/admin/users": "User Management",
+  "/admin/activity": "Activity Log",
   "/admin/settings": "Settings",
 };
 
@@ -29,6 +32,9 @@ export default function AdminLayout() {
   const [apiStatus, setApiStatus] = useState("checking"); // checking | online | offline
   const navigate = useNavigate();
   const location = useLocation();
+  const { updateUser } = useAuth();
+  const { can } = useCurrentUser();
+  const canReadMessages = can("messages.view");
 
   useEffect(() => {
     const user = localStorage.getItem("awi_admin_user");
@@ -46,13 +52,21 @@ export default function AdminLayout() {
       setApiStatus("offline");
       return;
     }
+    // Pick up role / permission changes a superadmin made since sign-in
+    try {
+      const res = await authApi.me();
+      if (res?.user) updateUser({ role: res.user.role, permissions: res.user.permissions, name: res.user.name, email: res.user.email });
+    } catch {
+      /* a 401 here signs the user out (handled in api.js) */
+    }
+    if (!canReadMessages) return;
     try {
       const res = await contactApi.getAll("unread");
       setUnreadMessages(Number(res?.unreadCount) || 0);
     } catch {
       /* the Messages page shows its own error */
     }
-  }, []);
+  }, [updateUser, canReadMessages]);
 
   useEffect(() => {
     refreshStatus();

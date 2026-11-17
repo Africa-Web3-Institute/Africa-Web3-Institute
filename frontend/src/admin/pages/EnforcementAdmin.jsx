@@ -17,7 +17,8 @@ const STATUS_TONE = { active: "red", under_review: "yellow", resolved: "green", 
 const statusLabel = (s) => STATUSES.find((x) => x.value === s)?.label || s || "—";
 
 export default function EnforcementAdmin() {
-  const { isSuperadmin } = useCurrentUser();
+  const { can } = useCurrentUser();
+  const canDelete = can("content.delete");
   const { data, loading, error, reload } = useApiData(() => enforcementApi.getAll());
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -76,7 +77,7 @@ export default function EnforcementAdmin() {
                 render: (e) => (
                   <div className="flex justify-end gap-1">
                     <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(e)} />
-                    {isSuperadmin && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(e)} />}
+                    {canDelete && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(e)} />}
                   </div>
                 ),
               },

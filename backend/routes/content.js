@@ -24,7 +24,7 @@ import {
   getTrackerStatus,
   updateTrackerStatus
 } from "../controllers/contentController.js";
-import { requireAuth, requireSuperadmin } from "../middleware/auth.js";
+import { requireAuth, requirePermission } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -59,29 +59,29 @@ router.get("/tracker", getTrackerStatus);
 // ==========================================
 
 // Publications (Admin)
-router.post("/publications", requireAuth, createPublication);
-router.put("/publications/:id", requireAuth, updatePublication);
-router.delete("/publications/:id", requireAuth, requireSuperadmin, deletePublication);
+router.post("/publications", requireAuth, requirePermission("content.create"), createPublication);
+router.put("/publications/:id", requireAuth, requirePermission("content.edit"), updatePublication);
+router.delete("/publications/:id", requireAuth, requirePermission("content.delete"), deletePublication);
 
 // Articles (Admin)
-router.post("/articles", requireAuth, createArticle);
-router.put("/articles/:id", requireAuth, updateArticle);
-router.delete("/articles/:id", requireAuth, requireSuperadmin, deleteArticle);
+router.post("/articles", requireAuth, requirePermission("content.create"), createArticle);
+router.put("/articles/:id", requireAuth, requirePermission("content.edit"), updateArticle);
+router.delete("/articles/:id", requireAuth, requirePermission("content.delete"), deleteArticle);
 
 // Blogs (Admin)
-router.post("/blogs", requireAuth, createBlog);
-router.put("/blogs/:id", requireAuth, updateBlog);
-router.delete("/blogs/:id", requireAuth, requireSuperadmin, deleteBlog);
+router.post("/blogs", requireAuth, requirePermission("content.create"), createBlog);
+router.put("/blogs/:id", requireAuth, requirePermission("content.edit"), updateBlog);
+router.delete("/blogs/:id", requireAuth, requirePermission("content.delete"), deleteBlog);
 
 // Enforcement (Admin)
-router.post("/enforcement", requireAuth, createEnforcement);
-router.put("/enforcement/:id", requireAuth, updateEnforcement);
-router.delete("/enforcement/:id", requireAuth, requireSuperadmin, deleteEnforcement);
+router.post("/enforcement", requireAuth, requirePermission("content.create"), createEnforcement);
+router.put("/enforcement/:id", requireAuth, requirePermission("content.edit"), updateEnforcement);
+router.delete("/enforcement/:id", requireAuth, requirePermission("content.delete"), deleteEnforcement);
 
 // AWPII (Admin)
-router.put("/awpii/:country", requireAuth, requireSuperadmin, updateAwpiiScore);
+router.put("/awpii/:country", requireAuth, requirePermission("policy.edit"), updateAwpiiScore);
 
 // Tracker (Admin)
-router.put("/tracker/:country", requireAuth, requireSuperadmin, updateTrackerStatus);
+router.put("/tracker/:country", requireAuth, requirePermission("policy.edit"), updateTrackerStatus);
 
 export default router;

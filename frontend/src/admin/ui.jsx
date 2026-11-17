@@ -33,9 +33,14 @@ export function useApiData(fetcher, deps = []) {
 // Normalise the backend's mixed response shapes ({data:[...]}, [...]) to an array
 export const rowsOf = (res) => (Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : []);
 
+// can("content.delete") — superadmins can do everything; everyone else gets the
+// permissions the backend sent at sign-in (refreshed by AdminLayout every 30s).
+// The backend enforces the same rules; this only hides buttons that would fail.
 export function useCurrentUser() {
   const { user } = useAuth();
-  return { user, isSuperadmin: user?.role === "superadmin" };
+  const isSuperadmin = user?.role === "superadmin";
+  const can = (key) => isSuperadmin || (Array.isArray(user?.permissions) && user.permissions.includes(key));
+  return { user, isSuperadmin, can };
 }
 
 /* ── Formatting ─────────────────────────────────────────────────────────── */

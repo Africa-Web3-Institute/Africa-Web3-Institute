@@ -71,6 +71,10 @@ export const authApi = {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
+  me: () => request("/admin/me"),
+  changePassword: (currentPassword, newPassword) =>
+    request("/admin/me/password", { method: "PUT", body: JSON.stringify({ currentPassword, newPassword }) }),
+  permissions: () => request("/admin/permissions"),
 };
 
 // ─── Publications ──────────────────────────────────────────────────────────
@@ -176,7 +180,7 @@ export const systemApi = {
 export const contactApi = {
   getAll: (status) => request(`/contact-messages${qs({ status })}`),
   setStatus: (id, status) => request(`/contact-messages/${id}`, { method: "PUT", body: JSON.stringify({ status }) }),
-  remove: (id) => request(`/contact-messages/${id}`, { method: "DELETE" }), // superadmin
+  remove: (id) => request(`/contact-messages/${id}`, { method: "DELETE" }), // needs messages.delete
 };
 
 // ─── Users & Settings (superadmin) ─────────────────────────────────────────
@@ -185,6 +189,12 @@ export const usersApi = {
   create: (data) => request("/admin/users", { method: "POST", body: JSON.stringify(data) }),
   update: (id, data) => request(`/admin/users/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   remove: (id) => request(`/admin/users/${id}`, { method: "DELETE" }),
+};
+
+// ─── Activity log (superadmin) ─────────────────────────────────────────────
+export const activityApi = {
+  list: (params) => request(`/admin/activity${qs(params)}`),
+  summary: () => request("/admin/activity/summary"),
 };
 
 export const settingsApi = {

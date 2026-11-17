@@ -18,15 +18,17 @@ import {
   LineChart,
   Globe2,
   PieChart,
+  History,
 } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
+import { useCurrentUser } from "../ui";
 
 const NAV_SECTIONS = [
   {
     label: "Overview",
     items: [
       { label: "Dashboard", href: "/admin", icon: LayoutDashboard, end: true },
-      { label: "Messages", href: "/admin/messages", icon: Inbox, badgeKey: "unreadMessages" },
+      { label: "Messages", href: "/admin/messages", icon: Inbox, badgeKey: "unreadMessages", perm: "messages.view" },
     ],
   },
   {
@@ -35,7 +37,7 @@ const NAV_SECTIONS = [
       { label: "Publications", href: "/admin/adminpublications", icon: BookOpen },
       { label: "Articles & Blogs", href: "/admin/articles", icon: FileText },
       { label: "Events", href: "/admin/events", icon: Calendar },
-      { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
+      { label: "Newsletter", href: "/admin/newsletter", icon: Mail, perm: "newsletter.view" },
     ],
   },
   {
@@ -52,8 +54,9 @@ const NAV_SECTIONS = [
     label: "System",
     items: [
       { label: "Site Analytics", href: "/admin/analytics", icon: BarChart2 },
-      { label: "User Management", href: "/admin/users", icon: Users },
-      { label: "Settings", href: "/admin/settings", icon: Settings },
+      { label: "User Management", href: "/admin/users", icon: Users, perm: "users.manage" },
+      { label: "Activity Log", href: "/admin/activity", icon: History, perm: "activity.view" },
+      { label: "Settings", href: "/admin/settings", icon: Settings, perm: "settings.manage" },
     ],
   },
 ];
@@ -104,6 +107,10 @@ function NavItem({ item, collapsed, badges = {} }) {
 export default function SideBar({ collapsed, setCollapsed, badges }) {
   const navigate = useNavigate();
   const {logout}=useAuth();
+  const { can } = useCurrentUser();
+  const sections = NAV_SECTIONS
+    .map((s) => ({ ...s, items: s.items.filter((i) => !i.perm || can(i.perm)) }))
+    .filter((s) => s.items.length);
   const [logoutHover, setLogoutHover] = useState(false);
 
   const handleLogout = () => {
@@ -132,7 +139,7 @@ export default function SideBar({ collapsed, setCollapsed, badges }) {
 
       {/* Nav sections */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
-        {NAV_SECTIONS.map((section) => (
+        {sections.map((section) => (
           <div key={section.label}>
             {!collapsed && (
               <p

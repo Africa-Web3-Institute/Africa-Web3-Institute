@@ -5,7 +5,7 @@ import {
   updateMessageStatus,
   deleteContactMessage
 } from '../controllers/contactController.js';
-import { requireAuth, requireSuperadmin } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -13,8 +13,8 @@ const router = express.Router();
 router.post('/contact', submitContactMessage);
 
 // Protected admin endpoints for managing inbox messages
-router.get('/contact-messages', requireAuth, getContactMessages);
-router.put('/contact-messages/:id', requireAuth, updateMessageStatus);
-router.delete('/contact-messages/:id', requireAuth, requireSuperadmin, deleteContactMessage);
+router.get('/contact-messages', requireAuth, requirePermission('messages.view'), getContactMessages);
+router.put('/contact-messages/:id', requireAuth, requirePermission('messages.view'), updateMessageStatus);
+router.delete('/contact-messages/:id', requireAuth, requirePermission('messages.delete'), deleteContactMessage);
 
 export default router;

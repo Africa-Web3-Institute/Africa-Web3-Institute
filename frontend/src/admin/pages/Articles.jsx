@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { Search, Edit2, Trash2, Plus, FileText, BookOpen, ArrowLeft, Loader2, Eye, PenLine } from "lucide-react";
 import { articlesApi, blogsApi } from "../../api/api";
+import { useCurrentUser } from "../ui";
 import BlockEditor from "../../components/BlockEditor";
 import BlockRenderer from "../../components/BlockRenderer";
 import { parseContent, serializeBlocks, estimateReadTime, autoExcerpt, newBlock } from "../../lib/blocks";
@@ -219,6 +220,8 @@ function Editor({ kind, item, onClose, onSaved }) {
 }
 
 export default function Articles() {
+  const { can } = useCurrentUser();
+  const canDelete = can("content.delete");
   const [tab, setTab] = useState("articles");
   const [articles, setArticles] = useState([]);
   const [blogs, setBlogs] = useState([]);
@@ -248,7 +251,7 @@ export default function Articles() {
       await (tab === "articles" ? articlesApi : blogsApi).remove(getId(item));
       setList((p) => p.filter((x) => String(getId(x)) !== String(getId(item))));
     } catch (err) {
-      alert("Could not delete: " + (err.message || "unknown error") + "\n(Only super-admins can delete.)");
+      alert("Could not delete: " + (err.message || "unknown error"));
     }
   };
 
@@ -323,7 +326,7 @@ export default function Articles() {
                     </td>
                     <td className="px-6 py-4 text-right space-x-3">
                       <button onClick={() => setEditor({ item: i })} aria-label={`Edit ${i.title}`} title="Edit" className="text-gray-400 hover:text-[#D4A017]"><Edit2 size={16} /></button>
-                      <button onClick={() => remove(i)} aria-label={`Delete ${i.title}`} title="Delete" className="text-gray-400 hover:text-red-400"><Trash2 size={16} /></button>
+                      {canDelete && <button onClick={() => remove(i)} aria-label={`Delete ${i.title}`} title="Delete" className="text-gray-400 hover:text-red-400"><Trash2 size={16} /></button>}
                     </td>
                   </tr>
                 ))}

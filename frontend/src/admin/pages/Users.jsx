@@ -1,20 +1,24 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { KeyRound, Pencil, Plus, ShieldCheck, Trash2 } from "lucide-react";
-import { usersApi } from "../../api/api";
+import { History, KeyRound, Pencil, Plus, RotateCcw, ShieldCheck, Trash2 } from "lucide-react";
+import { authApi, usersApi } from "../../api/api";
 import {
   Badge, Button, Card, ConfirmDialog, DataState, EmptyState, Field, IconButton, Input, Modal, Notice, PageHeader,
   SearchInput, Select, Table, fmtDate, rowsOf, useApiData, useCurrentUser,
 } from "../ui";
 
-const ROLES = [
-  { value: "editor", label: "Editor — manage content" },
-  { value: "superadmin", label: "Superadmin — full access, users and settings" },
-];
+export const ROLE_INFO = {
+  superadmin: { label: "Superadmin", tone: "purple", description: "Everything, including accounts, permissions and the activity log" },
+  admin: { label: "Admin", tone: "blue", description: "All content, including deleting, plus AWPII, inbox and newsletters" },
+  editor: { label: "Editor", tone: "gray", description: "Create and edit content; read messages and newsletter stats" },
+};
+const ROLE_OPTIONS = Object.entries(ROLE_INFO).map(([value, r]) => ({ value, label: `${r.label} — ${r.description}` }));
 
 export default function Users() {
   const { user: me, isSuperadmin } = useCurrentUser();
   const { data, loading, error, reload } = useApiData(() => (isSuperadmin ? usersApi.getAll() : Promise.resolve([])), [isSuperadmin]);
+  const catalog = useApiData(() => (isSuperadmin ? authApi.permissions() : Promise.resolve(null)), [isSuperadmin]);
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState(null); // {} for new, user row for edit
   const [toDelete, setToDelete] = useState(null);
@@ -24,12 +28,13 @@ export default function Users() {
     return (
       <div>
         <PageHeader title="User Management" />
-        <Card><EmptyState title="Superadmin access required" description="Only superadmins can manage admin accounts. Ask a superadmin to change your role or password." /></Card>
+        <Card><EmptyState title="Superadmin access required" description="Only superadmins can manage admin accounts. You can change your own password from the menu under your name (top right)." /></Card>
       </div>
     );
   }
 
-  const rows = rowsOf(data).filter((u) => `${u.name} ${u.email}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const rows = rowsOf(data).filter((u) => `${u.name} ${u.email} ${u.role}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const permLabel = Object.fromEntries((catalog.data?.permissions || []).map((p) => [p.key, p.label]));
 
   const remove = async () => {
     setBusy(true);
@@ -45,16 +50,27 @@ export default function Users() {
     }
   };
 
+  const toggleActive = async (u) => {
+    try {
+      await usersApi.update(u.id, { active: !u.active });
+      toast.success(u.active ? `${u.email} can no longer sign in` : `${u.email} can sign in again`);
+      reload();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
   return (
     <div>
       <PageHeader
         title="User Management"
-        description="Who can sign in to the admin console, and what they can do."
+        description="Who can sign in to the admin console, their role, and anything they're specifically allowed or denied."
         actions={<Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add user</Button>}
       />
       <Notice>
         <ShieldCheck className="w-4 h-4 inline -mt-0.5 mr-1" />
-        If you still sign in with the default password <code className="text-yellow-300">admin</code>, change it now with the key icon next to your account.
+        Changes take effect immediately, even for people who are already signed in. Everything each account does is recorded in the{" "}
+        <Link to="/admin/activity" className="underline text-sky-300">Activity Log</Link>.
       </Notice>
 
       <Card padded={false}>
@@ -67,25 +83,58 @@ export default function Users() {
             columns={[
               {
                 key: "name",
-                label: "Name",
+                label: "Account",
                 render: (u) => (
-                  <span className="text-white">
-                    {u.name || "—"} {Number(u.id) === Number(me?.id) && <Badge tone="yellow">You</Badge>}
-                  </span>
+                  <div>
+                    <p className="text-white">
+                      {u.name || "—"} {Number(u.id) === Number(me?.id) && <Badge tone="yellow">You</Badge>}
+                    </p>
+                    <p className="text-xs text-gray-400">{u.email}</p>
+                  </div>
                 ),
               },
-              { key: "email", label: "Email" },
-              { key: "role", label: "Role", render: (u) => <Badge tone={u.role === "superadmin" ? "purple" : "gray"}>{u.role}</Badge> },
-              { key: "createdAt", label: "Added", render: (u) => fmtDate(u.createdAt) },
+              {
+                key: "role",
+                label: "Role",
+                render: (u) => {
+                  const custom = Object.entries(u.overrides || {});
+                  return (
+                    <div className="space-y-1">
+                      <Badge tone={ROLE_INFO[u.role]?.tone || "gray"}>{ROLE_INFO[u.role]?.label || u.role}</Badge>
+                      {custom.length > 0 && (
+                        <p className="text-[11px] text-gray-400 leading-snug">
+                          {custom.map(([k, v]) => (
+                            <span key={k} className={`mr-2 ${v ? "text-emerald-300" : "text-red-300"}`}>{v ? "+" : "−"} {permLabel[k] || k}</span>
+                          ))}
+                        </p>
+                      )}
+                    </div>
+                  );
+                },
+              },
+              {
+                key: "active",
+                label: "Status",
+                render: (u) => (u.active ? <Badge tone="green">Active</Badge> : <Badge tone="red">Disabled</Badge>),
+              },
+              { key: "lastLoginAt", label: "Last sign-in", render: (u) => (u.lastLoginAt ? fmtDate(u.lastLoginAt, true) : <span className="text-gray-500">Never</span>) },
               {
                 key: "actions",
                 label: "",
-                className: "text-right w-28",
+                className: "text-right w-48",
                 render: (u) => (
-                  <div className="flex justify-end gap-1">
-                    <IconButton icon={KeyRound} label="Change password" onClick={() => setEditing({ ...u, passwordOnly: true })} />
-                    <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(u)} />
-                    <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(u)} />
+                  <div className="flex justify-end items-center gap-1">
+                    {Number(u.id) !== Number(me?.id) && (
+                      <button onClick={() => toggleActive(u)} className="text-[11px] text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-gray-700">
+                        {u.active ? "Disable" : "Enable"}
+                      </button>
+                    )}
+                    <Link to={`/admin/activity?userId=${u.id}`} title="View activity" aria-label="View activity" className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700">
+                      <History className="w-4 h-4" />
+                    </Link>
+                    <IconButton icon={KeyRound} label="Set password" onClick={() => setEditing({ ...u, passwordOnly: true })} />
+                    <IconButton icon={Pencil} label="Edit role & permissions" onClick={() => setEditing(u)} />
+                    {Number(u.id) !== Number(me?.id) && <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(u)} />}
                   </div>
                 ),
               },
@@ -94,11 +143,11 @@ export default function Users() {
         </DataState>
       </Card>
 
-      {editing && <UserForm user={editing} onClose={() => setEditing(null)} onSaved={reload} />}
+      {editing && <UserForm user={editing} catalog={catalog.data} onClose={() => setEditing(null)} onSaved={reload} />}
       <ConfirmDialog
         open={!!toDelete}
         title="Remove user?"
-        message={`${toDelete?.email} will no longer be able to sign in.`}
+        message={`${toDelete?.email} will no longer be able to sign in. Their past activity stays in the log. (To block them temporarily, use Disable instead.)`}
         confirmLabel="Remove"
         onConfirm={remove}
         onCancel={() => setToDelete(null)}
@@ -108,24 +157,49 @@ export default function Users() {
   );
 }
 
-function UserForm({ user, onClose, onSaved }) {
+function UserForm({ user, catalog, onClose, onSaved }) {
   const isNew = !user.id;
   const passwordOnly = !!user.passwordOnly;
   const [form, setForm] = useState({ name: user.name || "", email: user.email || "", role: user.role || "editor", password: "", confirm: "" });
+  const [overrides, setOverrides] = useState(user.overrides || {});
   const [busy, setBusy] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  const permissions = catalog?.permissions || [];
+  const defaults = useMemo(() => new Set(catalog?.roleDefaults?.[form.role] || []), [catalog, form.role]);
+  const isOn = (key) => (key in overrides ? overrides[key] : defaults.has(key));
+
+  // Store only the differences from the role's defaults
+  const toggle = (key) => {
+    const next = !isOn(key);
+    const copy = { ...overrides };
+    if (next === defaults.has(key)) delete copy[key];
+    else copy[key] = next;
+    setOverrides(copy);
+  };
+  const cleanOverrides = () => Object.fromEntries(Object.entries(overrides).filter(([k, v]) => v !== defaults.has(k)));
+
+  const groups = permissions.reduce((acc, p) => ((acc[p.group] = acc[p.group] || []).push(p), acc), {});
+
   const submit = async () => {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return toast.error("Enter a valid email address");
+    if (!passwordOnly && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return toast.error("Enter a valid email address");
     if ((isNew || passwordOnly) && form.password.length < 10) return toast.error("Use a password of at least 10 characters");
+    if (form.password && form.password.length < 10) return toast.error("Use a password of at least 10 characters");
     if (form.password && form.password !== form.confirm) return toast.error("The passwords don't match");
     setBusy(true);
     try {
-      // The update endpoint replaces email, name and role, so always send all three
-      const payload = { name: form.name, email: form.email, role: form.role, ...(form.password ? { password: form.password } : {}) };
+      const payload = passwordOnly
+        ? { password: form.password }
+        : {
+            name: form.name,
+            email: form.email.trim().toLowerCase(),
+            role: form.role,
+            permissions: form.role === "superadmin" ? {} : cleanOverrides(),
+            ...(form.password ? { password: form.password } : {}),
+          };
       if (isNew) await usersApi.create(payload);
       else await usersApi.update(user.id, payload);
-      toast.success(isNew ? "User added" : passwordOnly ? "Password changed" : "User updated");
+      toast.success(isNew ? "User added" : passwordOnly ? "Password set" : "User updated");
       onSaved();
       onClose();
     } catch (err) {
@@ -135,21 +209,69 @@ function UserForm({ user, onClose, onSaved }) {
     }
   };
 
+  const customCount = Object.keys(cleanOverrides()).length;
+
   return (
     <Modal
       open
-      title={isNew ? "Add user" : passwordOnly ? `Change password · ${user.email}` : "Edit user"}
+      wide={!passwordOnly}
+      title={isNew ? "Add user" : passwordOnly ? `Set password · ${user.email}` : `Edit ${user.email}`}
       onClose={onClose}
       footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>{isNew ? "Add user" : "Save"}</Button></>}
     >
       {!passwordOnly && (
         <>
-          <Field label="Name"><Input value={form.name} onChange={set("name")} /></Field>
-          <Field label="Email" required><Input type="email" value={form.email} onChange={set("email")} /></Field>
-          <Field label="Role"><Select value={form.role} onChange={set("role")} options={ROLES} /></Field>
+          <div className="grid sm:grid-cols-2 gap-x-4">
+            <Field label="Name"><Input value={form.name} onChange={set("name")} /></Field>
+            <Field label="Email" required><Input type="email" value={form.email} onChange={set("email")} /></Field>
+          </div>
+          <Field label="Role"><Select value={form.role} onChange={set("role")} options={ROLE_OPTIONS} /></Field>
+
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-gray-300">
+                Permissions {customCount > 0 && <span className="text-yellow-300 font-normal">· {customCount} changed from the {ROLE_INFO[form.role]?.label} defaults</span>}
+              </p>
+              {form.role !== "superadmin" && customCount > 0 && (
+                <button type="button" onClick={() => setOverrides({})} className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-white">
+                  <RotateCcw className="w-3 h-3" /> Reset to role defaults
+                </button>
+              )}
+            </div>
+            {form.role === "superadmin" ? (
+              <p className="text-xs text-gray-400 rounded-lg border border-gray-700 px-3 py-2.5">
+                Superadmins always have every permission, and can manage accounts and see the activity log.
+              </p>
+            ) : !catalog ? (
+              <p className="text-xs text-gray-400">Loading permissions…</p>
+            ) : (
+              <div className="rounded-lg border border-gray-700 divide-y divide-gray-700">
+                {Object.entries(groups).map(([group, perms]) => (
+                  <div key={group} className="px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-1">{group}</p>
+                    {perms.map((p) => {
+                      const on = isOn(p.key);
+                      const changed = p.key in overrides && overrides[p.key] !== defaults.has(p.key);
+                      return (
+                        <label key={p.key} className="flex items-start gap-3 py-1.5 cursor-pointer">
+                          <input type="checkbox" checked={on} onChange={() => toggle(p.key)} className="mt-0.5 accent-yellow-500" />
+                          <span className="flex-1">
+                            <span className="text-sm text-gray-200">{p.label}</span>
+                            {changed && <span className={`ml-2 text-[10px] font-semibold ${on ? "text-emerald-300" : "text-red-300"}`}>{on ? "ALLOWED" : "DENIED"}</span>}
+                            <span className="block text-[11px] text-gray-500">{p.description}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                ))}
+                <p className="px-3 py-2 text-[11px] text-gray-500">Managing accounts and viewing the activity log are for superadmins only.</p>
+              </div>
+            )}
+          </div>
         </>
       )}
-      <Field label={isNew ? "Password" : "New password"} required={isNew || passwordOnly} hint={!isNew && !passwordOnly ? "Leave blank to keep the current password." : "At least 10 characters."}>
+      <Field label={isNew ? "Password" : "New password"} required={isNew || passwordOnly} hint={!isNew && !passwordOnly ? "Leave blank to keep the current password." : "At least 10 characters. Share it privately; they can change it from the menu under their name."}>
         <Input type="password" autoComplete="new-password" value={form.password} onChange={set("password")} />
       </Field>
       {(form.password || isNew || passwordOnly) && (

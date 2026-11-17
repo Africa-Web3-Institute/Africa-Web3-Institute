@@ -57,6 +57,7 @@ import Research from "./admin/pages/Research";
 import StateOfWeb3 from "./admin/pages/StateOfWeb3";
 import Visualizations from "./admin/pages/Visualizations";
 import Users from "./admin/pages/Users";
+import ActivityLog from "./admin/pages/ActivityLog";
 import Settings from "./admin/pages/Settings";
 import AdminLayout from "./admin/Layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -174,6 +175,7 @@ return (
     <Route path="state-of-web3" element={<StateOfWeb3 />} />
     <Route path="visualizations" element={<Visualizations />} />
     <Route path="users" element={<Users />} />
+    <Route path="activity" element={<ActivityLog />} />
     <Route path="settings" element={<Settings />} />
   </Route>
 </Route>

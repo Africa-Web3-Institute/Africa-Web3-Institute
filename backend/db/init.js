@@ -141,6 +141,18 @@ const initializeTables = async () => {
       role TEXT NOT NULL DEFAULT 'editor',
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
+    `CREATE TABLE IF NOT EXISTS activity_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER,
+      userEmail TEXT,
+      userName TEXT,
+      action TEXT NOT NULL,
+      entityType TEXT,
+      entityId TEXT,
+      summary TEXT,
+      ip TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
     `CREATE TABLE IF NOT EXISTS sessions (
       sessionId TEXT PRIMARY KEY,
       startedAt TEXT,
@@ -383,7 +395,11 @@ const initializeTables = async () => {
     `ALTER TABLE publications ADD COLUMN date TEXT;`,
     `ALTER TABLE publications ADD COLUMN available BOOLEAN DEFAULT 0;`,
     `ALTER TABLE publications ADD COLUMN downloadUrl TEXT;`,
-    `ALTER TABLE publications ADD COLUMN downloads INTEGER DEFAULT 0;`
+    `ALTER TABLE publications ADD COLUMN downloads INTEGER DEFAULT 0;`,
+    // Per-account permission overrides, enabled/disabled flag and last sign-in
+    `ALTER TABLE users ADD COLUMN permissions TEXT;`,
+    `ALTER TABLE users ADD COLUMN active INTEGER DEFAULT 1;`,
+    `ALTER TABLE users ADD COLUMN lastLoginAt DATETIME;`
   ];
   
   for (const alterQuery of addColumns) {
@@ -394,13 +410,14 @@ const initializeTables = async () => {
     }
   }
 
-  // Seed default Superadmin user
+  // Seed a default superadmin, but only into an empty database. (Seeding whenever this
+  // email was missing would bring back admin/admin after the account was removed.)
   const defaultEmail = 'admin@africaweb3institute.org';
-  const defaultPassword = 'admin'; // For MVP purposes
+  const defaultPassword = 'admin'; // Change it straight after the first sign-in
 
   try {
-    const existingUser = dbInstance.get('SELECT * FROM users WHERE email = ?', [defaultEmail]);
-    if (!existingUser) {
+    const userCount = dbInstance.get('SELECT COUNT(*) AS n FROM users')?.n || 0;
+    if (userCount === 0) {
       const hashedPassword = await bcrypt.hash(defaultPassword, 10);
       dbInstance.run(
         'INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)',
@@ -408,7 +425,7 @@ const initializeTables = async () => {
       );
       console.log(`✅ Seeded default superadmin: ${defaultEmail} / ${defaultPassword}`);
     } else {
-      console.log('✅ Default superadmin already exists.');
+      console.log(`✅ ${userCount} admin account(s) found.`);
     }
   } catch (err) {
     console.error('Error seeding default user:', err.message);

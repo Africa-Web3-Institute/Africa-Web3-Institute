@@ -179,7 +179,8 @@ function Adoption() {
 }
 
 function Startups() {
-  const { isSuperadmin } = useCurrentUser();
+  const { can } = useCurrentUser();
+  const canDelete = can("content.delete");
   const { data, loading, error, reload } = useApiData(() => web3Api.getStartups());
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState("");
@@ -228,7 +229,7 @@ function Startups() {
                   <div className="flex justify-end gap-1">
                     {s.website && <a href={s.website} target="_blank" rel="noreferrer"><IconButton icon={ExternalLink} label="Website" /></a>}
                     <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(s)} />
-                    {isSuperadmin && <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(s)} />}
+                    {canDelete && <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(s)} />}
                   </div>
                 ),
               },
