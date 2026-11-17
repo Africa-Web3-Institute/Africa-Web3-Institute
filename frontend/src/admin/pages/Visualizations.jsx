@@ -133,7 +133,7 @@ export default function Visualizations() {
       <PageHeader
         title="Visualizations"
         description="Chart definitions and datasets stored in the backend for research pages."
-        actions={<Button variant="primary" icon={Plus} onClick={() => setEditing({})}>New visualization</Button>}
+        actions={can("content.create") && <Button variant="primary" icon={Plus} onClick={() => setEditing({})}>New visualization</Button>}
       />
       <Card padded={false}>
         <div className="p-4 border-b border-gray-700 sm:w-64">
@@ -153,7 +153,7 @@ export default function Visualizations() {
                 render: (v) => (
                   <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                     <IconButton icon={Eye} label="Preview" onClick={() => view(v)} />
-                    <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(v)} />
+                    <IconButton icon={can("content.edit") ? Pencil : Eye} label={can("content.edit") ? "Edit" : "View"} onClick={() => setEditing(v)} />
                     {canDelete && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(v)} />}
                   </div>
                 ),
@@ -171,13 +171,13 @@ export default function Visualizations() {
           </>
         )}
       </Modal>
-      {editing && <VizForm item={editing} onClose={() => setEditing(null)} onSaved={reload} />}
+      {editing && <VizForm item={editing} onClose={() => setEditing(null)} onSaved={reload} readOnly={!can(editing.id ? "content.edit" : "content.create")} />}
       <ConfirmDialog open={!!toDelete} message={`Delete "${toDelete?.title}"?`} onConfirm={remove} onCancel={() => setToDelete(null)} busy={busy} />
     </div>
   );
 }
 
-function VizForm({ item, onClose, onSaved }) {
+function VizForm({ item, onClose, onSaved, readOnly = false }) {
   const isNew = !item.id;
   const [form, setForm] = useState({
     slug: item.slug || "", title: item.title || "", category: item.category || "General", type: item.type || "line",
@@ -214,7 +214,8 @@ function VizForm({ item, onClose, onSaved }) {
   };
 
   return (
-    <Modal open wide title={isNew ? "New visualization" : `Edit ${item.title}`} onClose={onClose} footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Save</Button></>}>
+    <Modal open wide title={readOnly ? `View: ${item.title || item.name || "details"}` : isNew ? "New visualization" : `Edit ${item.title}`} onClose={onClose} footer={readOnly ? <Button onClick={onClose}>Close</Button> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Save</Button></>}>
+      <fieldset disabled={readOnly} className="min-w-0 m-0 p-0 border-0">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Title" required><Input value={form.title} onChange={set("title")} /></Field>
         <Field label="Slug" required hint={isNew ? "Used in the URL, e.g. stablecoin-volume" : "Can't be changed after creation."}>
@@ -238,6 +239,7 @@ function VizForm({ item, onClose, onSaved }) {
       <Field label="Config (JSON object, optional)" hint="Extra display options such as axis labels or units.">
         <textarea value={form.config} onChange={set("config")} spellCheck={false} className="w-full min-h-[80px] bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-xs font-mono text-gray-200 focus:outline-none focus:border-yellow-500/60" />
       </Field>
+    </fieldset>
     </Modal>
   );
 }

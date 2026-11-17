@@ -4,8 +4,10 @@ import { Save, AlertCircle, RefreshCw, Loader2, FileText, Globe, TrendingUp } fr
 import awpiiDataFallback from "../../data/awpiiData";
 import { COUNTRIES as trackerCountriesFallback } from "../../data/trackerCountries";
 import { awpiiApi, trackerApi } from "../../api/api";
+import { useCurrentUser } from "../ui";
 
 export default function AdminPolicyTracker() {
+  const canEdit = useCurrentUser().can("policy.edit");
   const [awpiiData, setAwpiiData] = useState([]);
   const [trackerData, setTrackerData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -216,7 +218,7 @@ export default function AdminPolicyTracker() {
                           {item.countryName}
                         </td>
                         <td className="px-4 py-3">
-                          <select
+                          <select disabled={!canEdit}
                             value={item.status || "none"}
                             onChange={(e) => handleTrackerChange(index, "status", e.target.value)}
                             className="bg-gray-800 border border-gray-700 rounded-md px-2.5 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 w-full max-w-[140px]"
@@ -229,7 +231,7 @@ export default function AdminPolicyTracker() {
                           <StatusBadge status={item.status || "none"} />
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="text"
                             value={item.framework || ""}
                             onChange={(e) => handleTrackerChange(index, "framework", e.target.value)}
@@ -238,7 +240,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="text"
                             value={item.regulator || ""}
                             onChange={(e) => handleTrackerChange(index, "regulator", e.target.value)}
@@ -247,7 +249,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="text"
                             value={item.since || ""}
                             onChange={(e) => handleTrackerChange(index, "since", e.target.value)}
@@ -256,6 +258,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3 text-right">
+                          {canEdit && (
                           <button
                             onClick={() => handleSaveTracker(item)}
                             disabled={saving}
@@ -264,6 +267,7 @@ export default function AdminPolicyTracker() {
                             {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                             Save
                           </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -316,7 +320,7 @@ export default function AdminPolicyTracker() {
                           {item.id && <span className="text-xs text-gray-500">(#{item.id})</span>}
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="number"
                             value={item.rank || ""}
                             onChange={(e) => handleAwpiiChange(index, "rank", parseInt(e.target.value))}
@@ -325,7 +329,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="text"
                             value={item.grade || ""}
                             onChange={(e) => handleAwpiiChange(index, "grade", e.target.value)}
@@ -334,7 +338,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="number"
                             step="0.1"
                             value={item.score || ""}
@@ -345,7 +349,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3">
-                          <input
+                          <input disabled={!canEdit}
                             type="text"
                             value={item.momentum || ""}
                             onChange={(e) => handleAwpiiChange(index, "momentum", e.target.value)}
@@ -354,6 +358,7 @@ export default function AdminPolicyTracker() {
                           />
                         </td>
                         <td className="px-4 py-3 text-right">
+                          {canEdit && (
                           <button
                             onClick={() => handleSaveAwpii(item)}
                             disabled={saving}
@@ -362,6 +367,7 @@ export default function AdminPolicyTracker() {
                             {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                             Save
                           </button>
+                          )}
                         </td>
                       </tr>
                     ))}

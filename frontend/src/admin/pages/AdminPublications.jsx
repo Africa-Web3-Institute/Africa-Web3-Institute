@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  Plus, Search, Edit2, Trash2,
+  Plus, Search, Edit2, Trash2, Eye,
   Download, X, ChevronDown, FileText,
   BookOpen, BarChart2, TrendingUp, Calendar, Loader2, Upload,
   Scale,
@@ -77,7 +77,7 @@ const CATEGORY_ICONS = {
 
 
 // ─── Modal ─────────────────────────────────────────────────────────────────
-function PublicationModal({ publication, onClose, onSave, saving, error }) {
+function PublicationModal({ publication, onClose, onSave, saving, error, readOnly = false }) {
   const isEdit = !!publication?.id;
   const [form, setForm] = useState({
     title: publication?.title || "",
@@ -113,7 +113,7 @@ function PublicationModal({ publication, onClose, onSave, saving, error }) {
           style={{ borderColor: "var(--admin-line)" }}
         >
           <h2 className="text-white font-semibold">
-            {isEdit ? "Edit Publication" : "Add Publication"}
+            {readOnly ? "Publication details" : isEdit ? "Edit Publication" : "Add Publication"}
           </h2>
           <button
             onClick={onClose}
@@ -125,6 +125,7 @@ function PublicationModal({ publication, onClose, onSave, saving, error }) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto max-h-[70vh]">
+          <fieldset disabled={readOnly} className="min-w-0 m-0 p-0 border-0 space-y-4">
 
           {/* Title */}
           <div>
@@ -250,7 +251,12 @@ function PublicationModal({ publication, onClose, onSave, saving, error }) {
             </div>
           )}
 
+          </fieldset>
+
           {/* Actions */}
+          {readOnly ? (
+            <button type="button" onClick={onClose} className="w-full py-2.5 rounded-lg text-sm font-medium text-gray-300 border border-gray-700 hover:border-gray-500 transition-colors">Close</button>
+          ) : (
           <div className="flex gap-3 pt-2">
             <button
               type="button"
@@ -270,6 +276,7 @@ function PublicationModal({ publication, onClose, onSave, saving, error }) {
               {saving ? "Saving…" : isEdit ? "Save Changes" : "Add Publication"}
             </button>
           </div>
+          )}
         </form>
       </div>
     </div>
@@ -390,6 +397,8 @@ function PublicationCard({ pub, onEdit, onDelete }) {
 export default function AdminPublications() {
   const { can } = useCurrentUser();
   const canDelete = can("content.delete");
+  const canCreate = can("content.create");
+  const canEdit = can("content.edit");
   const [publications, setPublications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -512,6 +521,7 @@ export default function AdminPublications() {
             Manage all AWI publications, reports, and research documents
           </p>
         </div>
+        {canCreate && (
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <button
           onClick={handleImport}
@@ -533,6 +543,7 @@ export default function AdminPublications() {
           Add Publication
         </button>
         </div>
+        )}
       </div>
 
       {notice && (
@@ -706,11 +717,11 @@ export default function AdminPublications() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => { setFormError(""); setModal({ mode: "edit", data: pub }); }}
-                            aria-label={`Edit ${pub.title}`}
+                            aria-label={`${canEdit ? "Edit" : "View"} ${pub.title}`}
                             className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-gray-700 transition-colors"
-                            title="Edit"
+                            title={canEdit ? "Edit" : "View"}
                           >
-                            <Edit2 size={14} />
+                            {canEdit ? <Edit2 size={14} /> : <Eye size={14} />}
                           </button>
                           {canDelete && (
                           <button
@@ -762,6 +773,7 @@ export default function AdminPublications() {
           onSave={handleSave}
           saving={saving}
           error={formError}
+          readOnly={modal.mode === "edit" ? !canEdit : !canCreate}
         />
       )}
       {deleteTarget && (

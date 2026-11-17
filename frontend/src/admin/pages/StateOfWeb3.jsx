@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Activity, Building2, DollarSign, ExternalLink, Globe2, Lightbulb, Pencil, Plus, Trash2, TrendingUp, Users } from "lucide-react";
+import { Activity, Building2, DollarSign, ExternalLink, Globe2, Lightbulb, Eye, Pencil, Plus, Trash2, TrendingUp, Users } from "lucide-react";
 import { web3Api } from "../../api/api";
 import {
   Badge, Button, Card, ConfirmDialog, DataState, EmptyState, Field, IconButton, Input, Modal, Notice, PageHeader,
@@ -94,13 +94,14 @@ function MetricsTable({ rows }) {
 }
 
 function Metrics() {
+  const canCreate = useCurrentUser().can("content.create");
   const [category, setCategory] = useState("");
   const { data, loading, error, reload } = useApiData(() => web3Api.getMetrics({ category }), [category]);
   const [adding, setAdding] = useState(false);
   const rows = rowsOf(data);
   return (
     <>
-      <Card padded={false} title="Ecosystem metrics" actions={<Button variant="primary" icon={Plus} onClick={() => setAdding(true)}>Add metric</Button>}>
+      <Card padded={false} title="Ecosystem metrics" actions={canCreate && <Button variant="primary" icon={Plus} onClick={() => setAdding(true)}>Add metric</Button>}>
         <div className="p-4 border-b border-gray-700 sm:w-64">
           <Select value={category} onChange={(e) => setCategory(e.target.value)} options={[{ value: "", label: "All categories" }, ...METRIC_CATEGORIES]} />
         </div>
@@ -209,7 +210,7 @@ function Startups() {
 
   return (
     <>
-      <Card padded={false} title="Startup directory" actions={<Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add startup</Button>}>
+      <Card padded={false} title="Startup directory" actions={can("content.create") && <Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add startup</Button>}>
         <div className="flex flex-col sm:flex-row gap-3 p-4 border-b border-gray-700">
           <SearchInput value={query} onChange={setQuery} placeholder="Search name, country or category…" className="flex-1" />
           <div className="sm:w-48"><Select value={stage} onChange={(e) => setStage(e.target.value)} options={[{ value: "", label: "All stages" }, ...STAGES]} /></div>
@@ -228,7 +229,7 @@ function Startups() {
                 render: (s) => (
                   <div className="flex justify-end gap-1">
                     {s.website && <a href={s.website} target="_blank" rel="noreferrer"><IconButton icon={ExternalLink} label="Website" /></a>}
-                    <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(s)} />
+                    <IconButton icon={can("content.edit") ? Pencil : Eye} label={can("content.edit") ? "Edit" : "View"} onClick={() => setEditing(s)} />
                     {canDelete && <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(s)} />}
                   </div>
                 ),
@@ -237,13 +238,13 @@ function Startups() {
           />
         </DataState>
       </Card>
-      {editing && <StartupForm item={editing} onClose={() => setEditing(null)} onSaved={reload} />}
+      {editing && <StartupForm item={editing} onClose={() => setEditing(null)} onSaved={reload} readOnly={!can(editing.id ? "content.edit" : "content.create")} />}
       <ConfirmDialog open={!!toDelete} title="Remove startup?" message={`Remove ${toDelete?.name} from the directory?`} confirmLabel="Remove" onConfirm={remove} onCancel={() => setToDelete(null)} busy={busy} />
     </>
   );
 }
 
-function StartupForm({ item, onClose, onSaved }) {
+function StartupForm({ item, onClose, onSaved, readOnly = false }) {
   const isNew = !item.id;
   const [form, setForm] = useState({
     name: item.name || "", country: item.country || "", category: item.category || "", fundingStage: item.fundingStage || "Seed",
@@ -269,7 +270,8 @@ function StartupForm({ item, onClose, onSaved }) {
     }
   };
   return (
-    <Modal open wide title={isNew ? "Add startup" : `Edit ${item.name}`} onClose={onClose} footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Save</Button></>}>
+    <Modal open wide title={readOnly ? `View: ${item.title || item.name || "details"}` : isNew ? "Add startup" : `Edit ${item.name}`} onClose={onClose} footer={readOnly ? <Button onClick={onClose}>Close</Button> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Save</Button></>}>
+      <fieldset disabled={readOnly} className="min-w-0 m-0 p-0 border-0">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field label="Name" required><Input value={form.name} onChange={set("name")} /></Field>
         <Field label="Country" required><Input value={form.country} onChange={set("country")} /></Field>
@@ -281,6 +283,7 @@ function StartupForm({ item, onClose, onSaved }) {
         <Field label="Website" className="sm:col-span-2"><Input type="url" value={form.website} onChange={set("website")} placeholder="https://…" /></Field>
       </div>
       <Field label="Description"><Textarea value={form.description} onChange={set("description")} /></Field>
+    </fieldset>
     </Modal>
   );
 }
