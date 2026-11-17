@@ -20,8 +20,9 @@ import { useCurrentUser } from "../ui";
 
 const ROLE = {
   superadmin: { label: "Superadmin", blurb: "Full access, including accounts, permissions and the activity log.", chip: "bg-violet-500/15 text-violet-200 border-violet-400/30" },
-  admin: { label: "Admin", blurb: "All content, including deleting, plus AWPII, the inbox and newsletters.", chip: "bg-sky-500/15 text-sky-200 border-sky-400/30" },
-  editor: { label: "Editor", blurb: "Create and edit content, read messages and follow newsletter results.", chip: "bg-gray-500/20 text-gray-200 border-gray-400/30" },
+  admin: { label: "Admin", blurb: "All content, AWPII, the inbox and newsletters, plus adding admins, editors and viewers.", chip: "bg-sky-500/15 text-sky-200 border-sky-400/30" },
+  editor: { label: "Editor", blurb: "Create, edit and delete content, read messages and follow newsletter results.", chip: "bg-gray-500/20 text-gray-200 border-gray-400/30" },
+  viewer: { label: "Viewer", blurb: "View the dashboard and site analytics. Nothing can be changed from this account.", chip: "bg-emerald-500/15 text-emerald-200 border-emerald-400/30" },
 };
 
 const ACTION = {
@@ -159,6 +160,10 @@ export default function AdminDashboard() {
   const role = ROLE[user?.role] || ROLE.editor;
   const firstName = (user?.name && !/^(super)?admin$/i.test(user.name) ? user.name : (user?.email || "").split("@")[0]).split(" ")[0];
   const canMessages = can("messages.view");
+  const canContent = can("content.view");
+  const canAnalytics = can("analytics.view");
+  // Viewers (and anyone without editing rights) get a read-only dashboard
+  const canWork = isSuperadmin || can("content.create") || can("content.edit");
   const canNewsletter = can("newsletter.view");
 
   const [loading, setLoading] = useState(true);
@@ -254,7 +259,7 @@ export default function AdminDashboard() {
     can("policy.edit") && { label: "Update AWPII & tracker", to: "/admin/policy-tracker", icon: Map, accent: "#34d399" },
     can("content.create") && { label: "Add a startup", to: "/admin/state-of-web3", icon: Building2, accent: "#2dd4bf" },
     can("newsletter.send") && { label: "Send a newsletter", to: "/admin/newsletter", icon: Mail, accent: "#a78bfa" },
-    isSuperadmin && { label: "Manage accounts", to: "/admin/users", icon: Users, accent: "#c084fc" },
+    can("users.manage") && { label: "Manage accounts", to: "/admin/users", icon: Users, accent: "#c084fc" },
   ].filter(Boolean).slice(0, 6);
 
   const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -316,8 +321,8 @@ export default function AdminDashboard() {
       <section>
         <SectionLabel>At a glance</SectionLabel>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Metric label="Publications" value={val(len(d.publications))} hint="Reports, briefs and analyses" icon={BookOpen} accent="#D4A017" to="/admin/adminpublications" />
-          <Metric label="Articles & blog posts" value={loading ? null : fmt((liveArticles ?? 0) + (liveBlogs ?? 0))} hint={loading ? "" : `${fmt(liveArticles)} articles · ${fmt(liveBlogs)} blog posts${drafts.length ? ` · ${drafts.length} draft${drafts.length === 1 ? "" : "s"}` : ""}`} icon={FileText} accent="#60a5fa" to="/admin/articles" />
+          <Metric label="Publications" value={val(len(d.publications))} hint="Reports, briefs and analyses" icon={BookOpen} accent="#D4A017" to={canContent ? "/admin/adminpublications" : undefined} />
+          <Metric label="Articles & blog posts" value={loading ? null : fmt((liveArticles ?? 0) + (liveBlogs ?? 0))} hint={loading ? "" : `${fmt(liveArticles)} articles · ${fmt(liveBlogs)} blog posts${drafts.length ? ` · ${drafts.length} draft${drafts.length === 1 ? "" : "s"}` : ""}`} icon={FileText} accent="#60a5fa" to={canContent ? "/admin/articles" : undefined} />
           <Metric label="Report downloads" value={val(downloads)} hint="All time, across publications" icon={Download} accent="#34d399" />
           {canNewsletter ? (
             <Metric label="Newsletter subscribers" value={val(d.subscribers)} hint="Active subscribers" icon={Mail} accent="#a78bfa" to="/admin/newsletter" />
@@ -328,6 +333,7 @@ export default function AdminDashboard() {
       </section>
 
       {/* 4. Activity + shortcuts */}
+      {canWork && (
       <section className="grid gap-4 lg:grid-cols-3">
         <Panel
           className="lg:col-span-2"
@@ -398,6 +404,8 @@ export default function AdminDashboard() {
         </div>
       </section>
 
+      )}
+
       {/* 5. Content + intelligence */}
       <section className="grid gap-4 lg:grid-cols-3">
         <Panel
@@ -420,7 +428,7 @@ export default function AdminDashboard() {
             <ul className="divide-y divide-gray-700/60">
               {pipeline.map((c, i) => (
                 <li key={`${c.kind}-${i}`}>
-                  <Link to={c.href} className="flex items-center gap-3 py-2.5 -mx-2 px-2 rounded-lg hover:bg-gray-900/40 transition-colors">
+                  <Link to={canContent ? c.href : "#"} onClick={(e) => !canContent && e.preventDefault()} className={`flex items-center gap-3 py-2.5 -mx-2 px-2 rounded-lg transition-colors ${canContent ? "hover:bg-gray-900/40" : "cursor-default"}`}>
                     <span className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${c.draft ? "bg-sky-500/15 text-sky-300" : "bg-emerald-500/15 text-emerald-300"}`}>{c.draft ? "Draft" : "Live"}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm text-gray-200 truncate">{c.title}</span>
@@ -442,7 +450,7 @@ export default function AdminDashboard() {
               { label: "Enforcement events", value: val(len(d.enforcement)), to: "/admin/enforcement", icon: ShieldAlert },
               { label: "Startups in directory", value: val(len(d.startups)), to: "/admin/state-of-web3", icon: Building2 },
             ].map((t) => (
-              <Link key={t.label} to={t.to} className="rounded-xl border border-gray-700/70 bg-gray-900/40 p-3.5 hover:border-gray-500 transition-colors">
+              <Link key={t.label} to={canContent ? t.to : "#"} onClick={(e) => !canContent && e.preventDefault()} className={`rounded-xl border border-gray-700/70 bg-gray-900/40 p-3.5 transition-colors ${canContent ? "hover:border-gray-500" : "cursor-default"}`}>
                 <t.icon className="w-4 h-4 text-[#D4A017]" />
                 <div className="mt-2 h-7 flex items-center">{t.value === null ? <Skeleton className="h-6 w-10" /> : <p className="text-xl font-bold text-white">{t.value}</p>}</div>
                 <p className="text-[11px] text-gray-400 leading-tight">{t.label}</p>

@@ -34,26 +34,26 @@ export const NAV_SECTIONS = [
   {
     label: "Content",
     items: [
-      { label: "Articles & Blogs", href: "/admin/articles", icon: FileText },
-      { label: "Publications", href: "/admin/adminpublications", icon: BookOpen },
-      { label: "Events", href: "/admin/events", icon: Calendar },
+      { label: "Articles & Blogs", href: "/admin/articles", icon: FileText, perm: "content.view" },
+      { label: "Publications", href: "/admin/adminpublications", icon: BookOpen, perm: "content.view" },
+      { label: "Events", href: "/admin/events", icon: Calendar, perm: "content.view" },
     ],
   },
   {
     label: "Intelligence",
     items: [
-      { label: "AWPII & Tracker", href: "/admin/policy-tracker", icon: Map },
-      { label: "Enforcement Watch", href: "/admin/enforcement", icon: ShieldAlert },
-      { label: "State of Web3", href: "/admin/state-of-web3", icon: Globe2 },
-      { label: "Research Impact", href: "/admin/research", icon: LineChart },
-      { label: "Visualizations", href: "/admin/visualizations", icon: PieChart },
+      { label: "AWPII & Tracker", href: "/admin/policy-tracker", icon: Map, perm: "content.view" },
+      { label: "Enforcement Watch", href: "/admin/enforcement", icon: ShieldAlert, perm: "content.view" },
+      { label: "State of Web3", href: "/admin/state-of-web3", icon: Globe2, perm: "content.view" },
+      { label: "Research Impact", href: "/admin/research", icon: LineChart, perm: "content.view" },
+      { label: "Visualizations", href: "/admin/visualizations", icon: PieChart, perm: "content.view" },
     ],
   },
   {
     label: "Audience",
     items: [
       { label: "Newsletter", href: "/admin/newsletter", icon: Mail, perm: "newsletter.view" },
-      { label: "Site Analytics", href: "/admin/analytics", icon: BarChart2 },
+      { label: "Site Analytics", href: "/admin/analytics", icon: BarChart2, perm: "analytics.view" },
     ],
   },
   {
@@ -116,7 +116,7 @@ export default function SideBar({ collapsed: collapsedPref, setCollapsed, badges
   const {logout}=useAuth();
   const { can, user } = useCurrentUser();
   const displayName = user?.name && !/^(super)?admin$/i.test(user.name) ? user.name : (user?.email || "").split("@")[0];
-  const roleLabel = { superadmin: "Superadmin", admin: "Admin", editor: "Editor" }[user?.role] || user?.role || "";
+  const roleLabel = { superadmin: "Superadmin", admin: "Admin", editor: "Editor", viewer: "Viewer" }[user?.role] || user?.role || "";
   const sections = NAV_SECTIONS
     .map((s) => ({ ...s, items: s.items.filter((i) => !i.perm || can(i.perm)) }))
     .filter((s) => s.items.length);

@@ -18,6 +18,10 @@ const shape = (u) => ({
   createdAt: u.createdAt,
 });
 
+// Admins can manage admins, editors and viewers, but never superadmin accounts
+const ADMIN_FORBIDDEN = "Only a superadmin can create, change or remove superadmin accounts";
+const actorIsSuper = (req) => req.user?.role === 'superadmin';
+
 const activeSuperadmins = () => dbAll("SELECT id FROM users WHERE role = 'superadmin' AND COALESCE(active, 1) != 0");
 
 export const getUsers = async (req, res) => {
@@ -36,6 +40,7 @@ export const createUser = async (req, res) => {
   if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Enter a valid email address' });
   if (!ROLES.includes(role)) return res.status(400).json({ error: `Role must be one of: ${ROLES.join(', ')}` });
+  if (role === 'superadmin' && !actorIsSuper(req)) return res.status(403).json({ error: ADMIN_FORBIDDEN });
   if (String(password).length < 10) return res.status(400).json({ error: 'Use a password of at least 10 characters' });
   if (isWeakPassword(password)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
 
@@ -70,6 +75,9 @@ export const updateUser = async (req, res) => {
 
     if (body.role !== undefined && !ROLES.includes(body.role)) {
       return res.status(400).json({ error: `Role must be one of: ${ROLES.join(', ')}` });
+    }
+    if (!actorIsSuper(req) && (user.role === 'superadmin' || body.role === 'superadmin')) {
+      return res.status(403).json({ error: ADMIN_FORBIDDEN });
     }
 
     // Never leave the site without an active superadmin
@@ -120,6 +128,7 @@ export const deleteUser = async (req, res) => {
 
     const user = await dbGet('SELECT role, active FROM users WHERE id = ?', [id]);
     if (!user) return res.status(404).json({ error: 'User not found' });
+    if (user.role === 'superadmin' && !actorIsSuper(req)) return res.status(403).json({ error: ADMIN_FORBIDDEN });
     if (user.role === 'superadmin' && Number(user.active ?? 1) !== 0 && (await activeSuperadmins()).length <= 1) {
       return res.status(400).json({ error: 'Cannot delete the last superadmin' });
     }

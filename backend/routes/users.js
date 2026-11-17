@@ -5,13 +5,12 @@ import {
   updateUser,
   deleteUser
 } from '../controllers/userController.js';
-import { requireAuth, requireSuperadmin } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.use(requireAuth);
-// Only superadmins can manage users
-router.use(requireSuperadmin);
+router.use(requirePermission('users.manage')); // superadmins and admins (admins can't touch superadmin accounts)
 
 router.get('/', getUsers);
 router.post('/', createUser);
