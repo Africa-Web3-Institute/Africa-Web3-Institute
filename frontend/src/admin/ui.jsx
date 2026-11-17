@@ -1,7 +1,7 @@
 // Shared building blocks for the admin console, so every page has the same
 // look and the same loading / empty / error behaviour.
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, Inbox, Loader2, RefreshCw, Search, X } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Inbox, Loader2, RefreshCw, Search, X } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 
 /* ── Data hook ──────────────────────────────────────────────────────────── */
@@ -205,6 +205,25 @@ export function Field({ label, hint, required, children, className = "" }) {
 }
 
 export const Input = (props) => <input className={inputCls} {...props} />;
+
+// Password field with an eye button to show or hide what's typed
+export function PasswordInput({ className = "", ...props }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <span className="relative block">
+      <input {...props} type={visible ? "text" : "password"} className={`${className || inputCls} pr-10`} />
+      <button
+        type="button"
+        onClick={(e) => { e.preventDefault(); setVisible((v) => !v); }}
+        aria-label={visible ? "Hide password" : "Show password"}
+        title={visible ? "Hide password" : "Show password"}
+        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-white"
+      >
+        {visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </span>
+  );
+}
 export const Textarea = (props) => <textarea className={`${inputCls} min-h-[110px] resize-y`} {...props} />;
 export function Select({ options, ...props }) {
   return (

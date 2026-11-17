@@ -4,7 +4,7 @@ import { Bell, ExternalLink, KeyRound, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../lib/AuthContext";
 import { authApi } from "../../api/api";
-import { Button, Field, Input, Modal } from "../ui";
+import { Button, Field, Modal, PasswordInput } from "../ui";
 
 const ROLE_LABEL = { superadmin: "Superadmin", admin: "Admin", editor: "Editor" };
 
@@ -144,13 +144,13 @@ function ChangePasswordModal({ onClose }) {
       footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Change password</Button></>}
     >
       <Field label="Current password" required>
-        <Input type="password" autoComplete="current-password" value={form.current} onChange={set("current")} />
+        <PasswordInput autoComplete="current-password" value={form.current} onChange={set("current")} />
       </Field>
       <Field label="New password" required hint="At least 10 characters.">
-        <Input type="password" autoComplete="new-password" value={form.next} onChange={set("next")} />
+        <PasswordInput autoComplete="new-password" value={form.next} onChange={set("next")} />
       </Field>
       <Field label="Confirm new password" required>
-        <Input type="password" autoComplete="new-password" value={form.confirm} onChange={set("confirm")} />
+        <PasswordInput autoComplete="new-password" value={form.confirm} onChange={set("confirm")} />
       </Field>
     </Modal>
   );

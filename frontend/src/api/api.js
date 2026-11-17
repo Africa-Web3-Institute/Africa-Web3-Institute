@@ -36,13 +36,25 @@ async function request(path, options = {}) {
     headers,
   });
 
-  // Handle 401 — token expired or invalid, force logout
+  // A wrong email or password on the sign-in form is not an expired session
+  const isLogin = cleanPath === "/admin/login";
+  if (res.status === 401 && isLogin) {
+    throw new Error("Wrong email or password. Check both and try again (the password is case-sensitive).");
+  }
+
+  // Handle 401 — token expired or invalid, or the account was disabled/removed: force logout
   if (res.status === 401) {
-    
+    let reason = "";
+    try { reason = (await res.json())?.error || ""; } catch { /* not JSON */ }
+    const message = /disabled/i.test(reason)
+      ? "Your account has been disabled. Contact a superadmin."
+      : /no longer exists/i.test(reason)
+        ? "Your account has been removed. Contact a superadmin."
+        : "Your session has expired. Please sign in again.";
     localStorage.removeItem("awi_admin_user");
+    sessionStorage.setItem("awi_login_notice", message);
     window.location.href = "/admin/login";
-    throw new Error("Session expired. Please log in again.");
-    
+    throw new Error(message);
   }
 
   

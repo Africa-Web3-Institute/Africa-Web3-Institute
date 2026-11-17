@@ -5,7 +5,7 @@ import { History, KeyRound, Pencil, Plus, RotateCcw, ShieldCheck, Trash2 } from 
 import { authApi, usersApi } from "../../api/api";
 import {
   Badge, Button, Card, ConfirmDialog, DataState, EmptyState, Field, IconButton, Input, Modal, Notice, PageHeader,
-  SearchInput, Select, Table, fmtDate, rowsOf, useApiData, useCurrentUser,
+  PasswordInput, SearchInput, Select, Table, fmtDate, rowsOf, useApiData, useCurrentUser,
 } from "../ui";
 
 export const ROLE_INFO = {
@@ -272,10 +272,10 @@ function UserForm({ user, catalog, onClose, onSaved }) {
         </>
       )}
       <Field label={isNew ? "Password" : "New password"} required={isNew || passwordOnly} hint={!isNew && !passwordOnly ? "Leave blank to keep the current password." : "At least 10 characters. Share it privately; they can change it from the menu under their name."}>
-        <Input type="password" autoComplete="new-password" value={form.password} onChange={set("password")} />
+        <PasswordInput autoComplete="new-password" value={form.password} onChange={set("password")} />
       </Field>
       {(form.password || isNew || passwordOnly) && (
-        <Field label="Confirm password"><Input type="password" autoComplete="new-password" value={form.confirm} onChange={set("confirm")} /></Field>
+        <Field label="Confirm password"><PasswordInput autoComplete="new-password" value={form.confirm} onChange={set("confirm")} /></Field>
       )}
     </Modal>
   );
