@@ -36,7 +36,7 @@ export const ROLE_DEFAULTS = {
   superadmin: [...ALL],
   admin: ALL.filter((k) => k !== 'settings.manage'),
   editor: ['content.view', 'analytics.view', 'content.create', 'content.edit', 'content.delete', 'messages.view', 'newsletter.view'],
-  viewer: ['analytics.view'],
+  viewer: ['content.view', 'analytics.view'],
 };
 
 // Accepts the stored JSON (or an object) and keeps only known keys with boolean values

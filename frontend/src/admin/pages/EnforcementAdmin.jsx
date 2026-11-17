@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { enforcementApi } from "../../api/api";
 import {
   Badge, Button, Card, ConfirmDialog, DataState, EmptyState, Field, IconButton, Input, Modal, Notice, PageHeader,
@@ -50,7 +50,7 @@ export default function EnforcementAdmin() {
       <PageHeader
         title="Enforcement Watch"
         description="Regulatory enforcement actions recorded in the backend."
-        actions={<Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add action</Button>}
+        actions={can("content.create") && <Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add action</Button>}
       />
       <Notice tone="warn">
         The public Enforcement Watch page still uses the data built into the website, so actions added here don't appear
@@ -63,7 +63,7 @@ export default function EnforcementAdmin() {
         </div>
         <DataState
           loading={loading} error={error} onRetry={reload} data={data} isEmpty={rows.length === 0}
-          empty={<EmptyState title="No enforcement actions yet" description="Add the first one to start the backend record." action={<Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add action</Button>} />}
+          empty={<EmptyState title="No enforcement actions yet" description="Add the first one to start the backend record." action={can("content.create") ? <Button variant="primary" icon={Plus} onClick={() => setEditing({})}>Add action</Button> : undefined} />}
         >
           <Table
             rows={rows}
@@ -76,7 +76,7 @@ export default function EnforcementAdmin() {
                 key: "actions", label: "", className: "text-right w-20",
                 render: (e) => (
                   <div className="flex justify-end gap-1">
-                    <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(e)} />
+                    <IconButton icon={can("content.edit") ? Pencil : Eye} label={can("content.edit") ? "Edit" : "View"} onClick={() => setEditing(e)} />
                     {canDelete && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(e)} />}
                   </div>
                 ),
@@ -85,13 +85,13 @@ export default function EnforcementAdmin() {
           />
         </DataState>
       </Card>
-      {editing && <EnforcementForm item={editing} onClose={() => setEditing(null)} onSaved={reload} />}
+      {editing && <EnforcementForm item={editing} onClose={() => setEditing(null)} onSaved={reload} readOnly={!can(editing.id ? "content.edit" : "content.create")} />}
       <ConfirmDialog open={!!toDelete} message={`Delete "${toDelete?.title}"?`} onConfirm={remove} onCancel={() => setToDelete(null)} busy={busy} />
     </div>
   );
 }
 
-function EnforcementForm({ item, onClose, onSaved }) {
+function EnforcementForm({ item, onClose, onSaved, readOnly = false }) {
   const isNew = !item.id;
   const [form, setForm] = useState({
     title: item.title || "", description: item.description || "", country: item.country || "",
@@ -118,7 +118,8 @@ function EnforcementForm({ item, onClose, onSaved }) {
   };
 
   return (
-    <Modal open title={isNew ? "Add enforcement action" : "Edit enforcement action"} onClose={onClose} footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Save</Button></>}>
+    <Modal open title={readOnly ? `View: ${item.title || item.name || "details"}` : isNew ? "Add enforcement action" : "Edit enforcement action"} onClose={onClose} footer={readOnly ? <Button onClick={onClose}>Close</Button> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Save</Button></>}>
+      <fieldset disabled={readOnly} className="min-w-0 m-0 p-0 border-0">
       <Field label="Title" required><Input value={form.title} onChange={set("title")} placeholder="e.g. SEC fines unlicensed exchange" /></Field>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field label="Country"><Input value={form.country} onChange={set("country")} /></Field>
@@ -126,6 +127,7 @@ function EnforcementForm({ item, onClose, onSaved }) {
         <Field label="Status"><Select value={form.status} onChange={set("status")} options={STATUSES} /></Field>
       </div>
       <Field label="Description"><Textarea value={form.description} onChange={set("description")} /></Field>
+    </fieldset>
     </Modal>
   );
 }

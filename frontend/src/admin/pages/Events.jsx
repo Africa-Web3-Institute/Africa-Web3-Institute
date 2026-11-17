@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Search, Edit2, Trash2, Plus, Calendar } from "lucide-react";
 import { useLanguage } from "../../lib/LanguageContext";
 import { t } from "../../lib/translations";
+import { useCurrentUser } from "../ui";
 
 // ─── Date helpers (same as public Events page) ────────────
 const isFutureDate = (dateStr) => {
@@ -81,6 +82,7 @@ const flattenEvents = (months) => {
 };
 
 export default function Events() {
+  const { can } = useCurrentUser();
   const { language } = useLanguage();
   const T = t[language]?.events || t["en"].events;
 
@@ -140,12 +142,12 @@ export default function Events() {
             Manage institute events and webinars ({events.length} total)
           </p>
         </div>
-        <button
+        {can("content.create") && <button
           onClick={handleAdd}
           className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           <Plus size={18} /> New Event
-        </button>
+        </button>}
       </div>
 
       <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
@@ -194,18 +196,18 @@ export default function Events() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right space-x-3">
-                      <button
+                      {can("content.edit") && <button
                         onClick={() => handleEdit(ev.id)}
                         className="text-gray-400 hover:text-white transition-colors"
                       >
                         <Edit2 size={16} />
-                      </button>
-                      <button
+                      </button>}
+                      {can("content.delete") && <button
                         onClick={() => handleDelete(ev.id)}
                         className="text-gray-400 hover:text-red-400 transition-colors"
                       >
                         <Trash2 size={16} />
-                      </button>
+                      </button>}
                     </td>
                   </tr>
                 );

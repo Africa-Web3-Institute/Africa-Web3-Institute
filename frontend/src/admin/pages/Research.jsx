@@ -129,7 +129,7 @@ function Citations() {
       <Card
         padded={false}
         title="Citations"
-        actions={<Button variant="primary" icon={Plus} onClick={() => setAdding(true)} disabled={!pubList.length}>Add citation</Button>}
+        actions={can("content.create") && <Button variant="primary" icon={Plus} onClick={() => setAdding(true)} disabled={!pubList.length}>Add citation</Button>}
       >
         <div className="p-4 border-b border-gray-700 sm:w-96">
           <Select value={filter} onChange={(e) => setFilter(e.target.value)} options={[{ value: "all", label: "All publications" }, ...pubList.map((p) => ({ value: String(p.id), label: p.title }))]} />
