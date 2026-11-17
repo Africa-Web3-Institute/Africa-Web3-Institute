@@ -97,7 +97,8 @@ function CitationItem({ c, onDelete }) {
 }
 
 function Citations() {
-  const { isSuperadmin } = useCurrentUser();
+  const { can } = useCurrentUser();
+  const canDelete = can("content.delete");
   const citations = useApiData(() => researchApi.getCitations());
   const pubs = useApiData(() => publicationsApi.getAll());
   const [filter, setFilter] = useState("all");
@@ -146,7 +147,7 @@ function Citations() {
                 render: (c) => (
                   <div className="flex justify-end gap-1">
                     {c.citationUrl && <a href={c.citationUrl} target="_blank" rel="noreferrer"><IconButton icon={ExternalLink} label="Open source" /></a>}
-                    {isSuperadmin && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(c)} />}
+                    {canDelete && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(c)} />}
                   </div>
                 ),
               },

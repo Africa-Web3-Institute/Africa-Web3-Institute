@@ -13,8 +13,9 @@ const KNOWN = [
 ];
 
 export default function Settings() {
-  const { isSuperadmin } = useCurrentUser();
-  const { data, loading, error, reload } = useApiData(() => (isSuperadmin ? settingsApi.get() : Promise.resolve({ data: {} })), [isSuperadmin]);
+  const { can } = useCurrentUser();
+  const allowed = can("settings.manage");
+  const { data, loading, error, reload } = useApiData(() => (allowed ? settingsApi.get() : Promise.resolve({ data: {} })), [allowed]);
   const [values, setValues] = useState({});
   const [custom, setCustom] = useState([]); // [{ key, value }]
   const [busy, setBusy] = useState(false);
@@ -25,11 +26,11 @@ export default function Settings() {
     setCustom(Object.entries(s).filter(([k]) => !KNOWN.some((f) => f.key === k)).map(([key, value]) => ({ key, value })));
   }, [data]);
 
-  if (!isSuperadmin) {
+  if (!allowed) {
     return (
       <div>
         <PageHeader title="Settings" />
-        <Card><EmptyState title="Superadmin access required" description="Only superadmins can change site settings." /></Card>
+        <Card><EmptyState title="Settings access required" description="Your account doesn't have permission to change site settings. A superadmin can grant it in User Management." /></Card>
       </div>
     );
   }

@@ -3,13 +3,13 @@ import {
   getSettings,
   updateSettings
 } from '../controllers/settingsController.js';
-import { requireAuth, requireSuperadmin } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.use(requireAuth);
-// Only superadmins can manage settings
-router.use(requireSuperadmin);
+// Superadmins, plus any account given the "Manage settings" permission
+router.use(requirePermission('settings.manage'));
 
 router.get('/', getSettings);
 router.put('/', updateSettings);

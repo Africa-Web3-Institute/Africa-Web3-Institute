@@ -7,6 +7,7 @@ import {
   FileSearch,
 } from "lucide-react";
 import { publicationsApi } from "../../api/api";
+import { useCurrentUser } from "../ui";
 
 // ─── Listings currently built into the public Publications page ───────────
 // Used only by the "Import current website listings" button, which saves them to the
@@ -387,6 +388,8 @@ function PublicationCard({ pub, onEdit, onDelete }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function AdminPublications() {
+  const { can } = useCurrentUser();
+  const canDelete = can("content.delete");
   const [publications, setPublications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -471,7 +474,7 @@ export default function AdminPublications() {
       setPublications(prev => prev.filter(p => p.id !== id));
       setDeleteTarget(null);
     } catch (err) {
-      setFormError((err.message || "Could not delete.") + " (Only super-admins can delete.)");
+      setFormError(err.message || "Could not delete.");
     }
   };
 
@@ -709,6 +712,7 @@ export default function AdminPublications() {
                           >
                             <Edit2 size={14} />
                           </button>
+                          {canDelete && (
                           <button
                             onClick={() => { setFormError(""); setDeleteTarget(pub); }}
                             aria-label={`Delete ${pub.title}`}
@@ -717,6 +721,7 @@ export default function AdminPublications() {
                           >
                             <Trash2 size={14} />
                           </button>
+                          )}
                         </div>
                       </td>
                     </tr>

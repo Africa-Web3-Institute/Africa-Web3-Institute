@@ -24,6 +24,16 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null)
   }, [])
 
+  // Merge fresh account details (role, permissions) into the stored session
+  const updateUser = useCallback((partial) => {
+    setUser((prev) => {
+      if (!prev) return prev
+      const next = { ...prev, ...partial }
+      localStorage.setItem("awi_admin_user", JSON.stringify(next))
+      return next
+    })
+  }, [])
+
   const logout = useCallback(() => {
     localStorage.removeItem("awi_admin_user")
     setUser(null)
@@ -72,6 +82,7 @@ export const AuthProvider = ({ children }) => {
       appPublicSettings,
       authChecked,
       login,
+      updateUser,
       logout,
       navigateToLogin,
       checkUserAuth,

@@ -6,7 +6,7 @@ import {
   updateVisualization,
   deleteVisualization
 } from '../controllers/visualizationController.js';
-import { requireAuth, requireSuperadmin } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -15,8 +15,8 @@ router.get('/', getVisualizations);
 router.get('/:slug', getVisualizationBySlug);
 
 // Protected routes for editing and managing visualizations
-router.post('/', requireAuth, createVisualization);
-router.put('/:id', requireAuth, updateVisualization);
-router.delete('/:id', requireAuth, requireSuperadmin, deleteVisualization);
+router.post('/', requireAuth, requirePermission('content.create'), createVisualization);
+router.put('/:id', requireAuth, requirePermission('content.edit'), updateVisualization);
+router.delete('/:id', requireAuth, requirePermission('content.delete'), deleteVisualization);
 
 export default router;

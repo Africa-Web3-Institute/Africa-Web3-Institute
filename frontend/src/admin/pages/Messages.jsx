@@ -10,7 +10,8 @@ import {
 const STATUS_TONE = { unread: "yellow", read: "gray", replied: "green", archived: "blue" };
 
 export default function Messages() {
-  const { isSuperadmin } = useCurrentUser();
+  const { can } = useCurrentUser();
+  const canDelete = can("messages.delete");
   const { data, loading, error, reload, setData } = useApiData(() => contactApi.getAll());
   const [tab, setTab] = useState("inbox");
   const [query, setQuery] = useState("");
@@ -154,7 +155,7 @@ export default function Messages() {
                   {selected.status === "archived"
                     ? <Button icon={MailOpen} onClick={() => setStatus(selected, "read")}>Move to inbox</Button>
                     : <Button icon={Archive} onClick={() => setStatus(selected, "archived")}>Archive</Button>}
-                  {isSuperadmin && <Button variant="danger" icon={Trash2} onClick={() => setToDelete(selected)}>Delete</Button>}
+                  {canDelete && <Button variant="danger" icon={Trash2} onClick={() => setToDelete(selected)}>Delete</Button>}
                 </div>
               </div>
             )}

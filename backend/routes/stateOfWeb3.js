@@ -9,7 +9,7 @@ import {
   deleteStartup,
   getContinentalDashboard
 } from '../controllers/stateOfWeb3Controller.js';
-import { requireAuth, requireSuperadmin } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -20,9 +20,9 @@ router.get('/adoption', getAdoptionIndicators);
 router.get('/startups', getStartups);
 
 // Protected admin management routes
-router.post('/metrics', requireAuth, createEcosystemMetric);
-router.post('/startups', requireAuth, createStartup);
-router.put('/startups/:id', requireAuth, updateStartup);
-router.delete('/startups/:id', requireAuth, requireSuperadmin, deleteStartup);
+router.post('/metrics', requireAuth, requirePermission('content.create'), createEcosystemMetric);
+router.post('/startups', requireAuth, requirePermission('content.create'), createStartup);
+router.put('/startups/:id', requireAuth, requirePermission('content.edit'), updateStartup);
+router.delete('/startups/:id', requireAuth, requirePermission('content.delete'), deleteStartup);
 
 export default router;

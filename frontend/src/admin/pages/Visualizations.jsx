@@ -91,7 +91,8 @@ function DataTable({ rows }) {
 }
 
 export default function Visualizations() {
-  const { isSuperadmin } = useCurrentUser();
+  const { can } = useCurrentUser();
+  const canDelete = can("content.delete");
   const { data, loading, error, reload } = useApiData(() => visualizationsApi.getAll());
   const [category, setCategory] = useState("all");
   const [viewing, setViewing] = useState(null);
@@ -153,7 +154,7 @@ export default function Visualizations() {
                   <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                     <IconButton icon={Eye} label="Preview" onClick={() => view(v)} />
                     <IconButton icon={Pencil} label="Edit" onClick={() => setEditing(v)} />
-                    {isSuperadmin && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(v)} />}
+                    {canDelete && <IconButton icon={Trash2} tone="danger" label="Delete" onClick={() => setToDelete(v)} />}
                   </div>
                 ),
               },

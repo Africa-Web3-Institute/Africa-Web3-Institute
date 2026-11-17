@@ -14,6 +14,7 @@ import visualizationRoutes from './routes/visualization.js';
 import newsletterRoutes from './routes/newsletter.js';
 import stateOfWeb3Routes from './routes/stateOfWeb3.js';
 import researchMetricsRoutes from './routes/researchMetrics.js';
+import activityRoutes from './routes/activity.js';
 
 // Load environment variables
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api', analyticsRoutes); // Handles /api/event, /api/live, /api/export
 app.use('/api/admin', authRoutes); // Handles /api/admin/login
 app.use('/api/admin/users', usersRoutes);
 app.use('/api/admin/settings', settingsRoutes);
+app.use('/api/admin/activity', activityRoutes); // Superadmin: who did what
 app.use('/api', contactRoutes); // Handles /api/contact, /api/contact-messages
 app.use('/api/visualizations', visualizationRoutes); // Week 4: Research Visualization Systems
 app.use('/api/newsletter', newsletterRoutes); // Week 5: Newsletter Intelligence & Tracking

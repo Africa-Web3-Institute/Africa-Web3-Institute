@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Bell, ExternalLink, KeyRound, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "../../lib/AuthContext";
+import { authApi } from "../../api/api";
+import { Button, Field, Input, Modal } from "../ui";
+
+const ROLE_LABEL = { superadmin: "Superadmin", admin: "Admin", editor: "Editor" };
 
 const STATUS = {
   online: { dot: "bg-emerald-400", label: "Backend online" },
@@ -11,6 +16,7 @@ const STATUS = {
 
 export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "checking" }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const status = STATUS[apiStatus] || STATUS.checking;
@@ -73,7 +79,7 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
               </div>
               <span className="hidden md:block text-left">
                 <span className="block text-sm font-medium text-gray-200 leading-tight">{name}</span>
-                <span className="block text-[11px] text-gray-500 leading-tight capitalize">{user?.role || "admin"}</span>
+                <span className="block text-[11px] text-gray-500 leading-tight">{ROLE_LABEL[user?.role] || user?.role || "Admin"}</span>
               </span>
             </button>
 
@@ -85,16 +91,13 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
                     <p className="text-sm text-white truncate">{name}</p>
                     {user?.email && <p className="text-xs text-gray-500 truncate">{user.email}</p>}
                   </div>
-                  {user?.role === "superadmin" && (
-                    <Link
-                      to="/admin/users"
-                      onClick={() => setIsDropdownOpen(false)}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors flex items-center gap-2"
-                    >
-                      <KeyRound className="w-4 h-4" />
-                      Change password
-                    </Link>
-                  )}
+                  <button
+                    onClick={() => { setIsDropdownOpen(false); setPwOpen(true); }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors flex items-center gap-2"
+                  >
+                    <KeyRound className="w-4 h-4" />
+                    Change password
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 transition-colors flex items-center gap-2"
@@ -108,6 +111,47 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
           </div>
         </div>
       </div>
+      {pwOpen && <ChangePasswordModal onClose={() => setPwOpen(false)} />}
     </header>
+  );
+}
+
+function ChangePasswordModal({ onClose }) {
+  const [form, setForm] = useState({ current: "", next: "", confirm: "" });
+  const [busy, setBusy] = useState(false);
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+  const submit = async () => {
+    if (form.next.length < 10) return toast.error("Use a new password of at least 10 characters");
+    if (form.next !== form.confirm) return toast.error("The new passwords don't match");
+    setBusy(true);
+    try {
+      await authApi.changePassword(form.current, form.next);
+      toast.success("Password changed");
+      onClose();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      open
+      title="Change your password"
+      onClose={onClose}
+      footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Change password</Button></>}
+    >
+      <Field label="Current password" required>
+        <Input type="password" autoComplete="current-password" value={form.current} onChange={set("current")} />
+      </Field>
+      <Field label="New password" required hint="At least 10 characters.">
+        <Input type="password" autoComplete="new-password" value={form.next} onChange={set("next")} />
+      </Field>
+      <Field label="Confirm new password" required>
+        <Input type="password" autoComplete="new-password" value={form.confirm} onChange={set("confirm")} />
+      </Field>
+    </Modal>
   );
 }

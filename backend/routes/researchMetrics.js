@@ -6,7 +6,7 @@ import {
   deleteCitation,
   getResearchImpactDashboard
 } from '../controllers/researchMetricsController.js';
-import { requireAuth, requireSuperadmin } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.get('/citations', getCitations);
 router.get('/impact', getResearchImpactDashboard);
 
 // Protected admin routes
-router.post('/citations', requireAuth, addCitation);
-router.delete('/citations/:id', requireAuth, requireSuperadmin, deleteCitation);
+router.post('/citations', requireAuth, requirePermission('content.create'), addCitation);
+router.delete('/citations/:id', requireAuth, requirePermission('content.delete'), deleteCitation);
 
 export default router;

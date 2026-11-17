@@ -12,7 +12,7 @@ import {
   trackClick,
   getNewsletterAnalytics
 } from '../controllers/newsletterController.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, requirePermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -30,11 +30,11 @@ router.get('/track/open/:campaignId/:subscriberId', trackOpen);
 router.get('/track/click/:campaignId/:subscriberId', trackClick);
 
 // Protected Admin & Analytics endpoints
-router.get('/subscribers', requireAuth, getSubscribers);
-router.get('/admin/subscribers', requireAuth, getSubscribers);
-router.post('/admin/newsletters/send', requireAuth, sendNewsletter);
-router.get('/campaigns', requireAuth, getCampaigns);
-router.post('/campaigns', requireAuth, createCampaign);
-router.get('/analytics', requireAuth, getNewsletterAnalytics);
+router.get('/subscribers', requireAuth, requirePermission('newsletter.view'), getSubscribers);
+router.get('/admin/subscribers', requireAuth, requirePermission('newsletter.view'), getSubscribers);
+router.post('/admin/newsletters/send', requireAuth, requirePermission('newsletter.send'), sendNewsletter);
+router.get('/campaigns', requireAuth, requirePermission('newsletter.view'), getCampaigns);
+router.post('/campaigns', requireAuth, requirePermission('newsletter.send'), createCampaign);
+router.get('/analytics', requireAuth, requirePermission('newsletter.view'), getNewsletterAnalytics);
 
 export default router;
