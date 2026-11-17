@@ -87,6 +87,7 @@ export const authApi = {
   changePassword: (currentPassword, newPassword) =>
     request("/admin/me/password", { method: "PUT", body: JSON.stringify({ currentPassword, newPassword }) }),
   permissions: () => request("/admin/permissions"),
+  myActivity: (limit = 8) => request(`/admin/me/activity?limit=${limit}`),
 };
 
 // ─── Publications ──────────────────────────────────────────────────────────

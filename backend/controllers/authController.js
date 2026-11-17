@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { dbGet, dbRun } from '../db/init.js';
+import { dbAll, dbGet, dbRun } from '../db/init.js';
 import { JWT_SECRET } from '../middleware/auth.js';
 import { PERMISSIONS, ROLE_DEFAULTS, effectivePermissions } from '../lib/permissions.js';
 import { logActivity, clientIp } from '../lib/activity.js';
@@ -68,6 +68,27 @@ export const changeOwnPassword = async (req, res) => {
     }
     await dbRun('UPDATE users SET password = ? WHERE id = ?', [await bcrypt.hash(newPassword, 10), req.user.id]);
     res.status(200).json({ success: true, message: 'Password changed' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// The signed-in account's own recent activity (for its dashboard)
+export const myActivity = async (req, res) => {
+  const limit = Math.min(Math.max(Number(req.query.limit) || 8, 1), 50);
+  try {
+    const rows = await dbAll(
+      "SELECT id, action, entityType, entityId, summary, createdAt FROM activity_log WHERE userId = ? AND action NOT IN ('login', 'login_failed') ORDER BY id DESC LIMIT ?",
+      [req.user.id, limit]
+    );
+    const totals = await dbGet(
+      `SELECT SUM(CASE WHEN action = 'create' THEN 1 ELSE 0 END) AS created,
+              SUM(CASE WHEN action = 'update' THEN 1 ELSE 0 END) AS updated,
+              SUM(CASE WHEN action = 'delete' THEN 1 ELSE 0 END) AS deleted
+       FROM activity_log WHERE userId = ? AND createdAt >= datetime('now', '-30 days')`,
+      [req.user.id]
+    );
+    res.status(200).json({ data: rows, last30Days: { created: totals?.created || 0, updated: totals?.updated || 0, deleted: totals?.deleted || 0 } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

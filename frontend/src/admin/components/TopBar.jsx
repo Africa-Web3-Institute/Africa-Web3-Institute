@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, ExternalLink, KeyRound, LogOut } from "lucide-react";
+import { Bell, ExternalLink, KeyRound, LogOut, Menu } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../lib/AuthContext";
 import { authApi } from "../../api/api";
@@ -14,14 +14,14 @@ const STATUS = {
   checking: { dot: "bg-gray-500 animate-pulse", label: "Checking backend…" },
 };
 
-export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "checking" }) {
+export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "checking", onMenu }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const status = STATUS[apiStatus] || STATUS.checking;
 
-  const name = user?.name || user?.email || "Admin";
+  const name = (user?.name && !/^(super)?admin$/i.test(user.name) ? user.name : "") || user?.email || "Admin";
   const initials = name.split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "AD";
 
   const handleLogout = () => {
@@ -31,8 +31,13 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
 
   return (
     <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-30 shrink-0">
-      <div className="flex items-center justify-between px-6 py-3 gap-4">
-        <h2 className="text-xl font-semibold text-white truncate">{pageTitle}</h2>
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <button onClick={onMenu} aria-label="Open menu" className="lg:hidden -ml-1 p-2 rounded-lg text-gray-300 hover:bg-gray-700">
+            <Menu className="w-5 h-5" />
+          </button>
+          <h2 className="text-lg sm:text-xl font-semibold text-white truncate">{pageTitle}</h2>
+        </div>
 
         <div className="flex items-center gap-2">
           {/* Backend status */}

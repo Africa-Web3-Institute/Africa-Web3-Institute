@@ -34,10 +34,9 @@ const NAV_SECTIONS = [
   {
     label: "Content",
     items: [
-      { label: "Publications", href: "/admin/adminpublications", icon: BookOpen },
       { label: "Articles & Blogs", href: "/admin/articles", icon: FileText },
+      { label: "Publications", href: "/admin/adminpublications", icon: BookOpen },
       { label: "Events", href: "/admin/events", icon: Calendar },
-      { label: "Newsletter", href: "/admin/newsletter", icon: Mail, perm: "newsletter.view" },
     ],
   },
   {
@@ -51,9 +50,15 @@ const NAV_SECTIONS = [
     ],
   },
   {
-    label: "System",
+    label: "Audience",
     items: [
+      { label: "Newsletter", href: "/admin/newsletter", icon: Mail, perm: "newsletter.view" },
       { label: "Site Analytics", href: "/admin/analytics", icon: BarChart2 },
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
       { label: "User Management", href: "/admin/users", icon: Users, perm: "users.manage" },
       { label: "Activity Log", href: "/admin/activity", icon: History, perm: "activity.view" },
       { label: "Settings", href: "/admin/settings", icon: Settings, perm: "settings.manage" },
@@ -104,10 +109,14 @@ function NavItem({ item, collapsed, badges = {} }) {
   );
 }
 
-export default function SideBar({ collapsed, setCollapsed, badges }) {
+export default function SideBar({ collapsed: collapsedPref, setCollapsed, badges, mobileOpen = false }) {
+  // On phones the sidebar slides in over the page at full width; "collapsed" only applies on large screens
+  const collapsed = collapsedPref && !mobileOpen;
   const navigate = useNavigate();
   const {logout}=useAuth();
-  const { can } = useCurrentUser();
+  const { can, user } = useCurrentUser();
+  const displayName = user?.name && !/^(super)?admin$/i.test(user.name) ? user.name : (user?.email || "").split("@")[0];
+  const roleLabel = { superadmin: "Superadmin", admin: "Admin", editor: "Editor" }[user?.role] || user?.role || "";
   const sections = NAV_SECTIONS
     .map((s) => ({ ...s, items: s.items.filter((i) => !i.perm || can(i.perm)) }))
     .filter((s) => s.items.length);
@@ -120,9 +129,9 @@ export default function SideBar({ collapsed, setCollapsed, badges }) {
 
   return (
     <aside
-      className={`relative flex flex-col h-screen bg-gray-900 border-r border-gray-800 transition-all duration-200 flex-shrink-0 ${
-        collapsed ? "w-[72px]" : "w-64"
-      }`}
+      className={`fixed inset-y-0 left-0 z-50 lg:relative lg:z-auto flex flex-col h-screen bg-gray-900 border-r border-gray-800 transition-all duration-200 flex-shrink-0 w-64 ${
+        collapsedPref ? "lg:w-[72px]" : "lg:w-64"
+      } ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"} lg:translate-x-0 lg:shadow-none`}
     >
       {/* Logo / Brand */}
       <div className={`flex items-center gap-2.5 h-16 px-4 border-b border-gray-800 shrink-0 ${collapsed ? "justify-center px-0" : ""}`}>
@@ -162,8 +171,21 @@ export default function SideBar({ collapsed, setCollapsed, badges }) {
         ))}
       </nav>
 
-      {/* Footer — collapse toggle + logout */}
+      {/* Footer — signed-in account, collapse toggle + logout */}
       <div className="border-t border-gray-800 p-3 space-y-1 shrink-0">
+        {user && (
+          <div className={`flex items-center gap-3 rounded-lg px-2 py-2 mb-1 ${collapsed ? "justify-center" : ""}`} title={collapsed ? `${displayName} · ${roleLabel}` : undefined}>
+            <span className="w-8 h-8 rounded-full bg-yellow-500 text-gray-900 flex items-center justify-center text-xs font-extrabold uppercase shrink-0">
+              {displayName.slice(0, 2)}
+            </span>
+            {!collapsed && (
+              <span className="min-w-0">
+                <span className="block text-sm text-gray-200 font-medium truncate capitalize">{displayName}</span>
+                <span className="block text-[11px] text-gray-500 truncate">{roleLabel} · {user.email}</span>
+              </span>
+            )}
+          </div>
+        )}
         <button
           onMouseEnter={() => setLogoutHover(true)}
           onMouseLeave={() => setLogoutHover(false)}
@@ -181,7 +203,7 @@ export default function SideBar({ collapsed, setCollapsed, badges }) {
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-800 hover:text-gray-300 transition-colors"
+          className="hidden lg:flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-800 hover:text-gray-300 transition-colors"
         >
           {collapsed ? (
             <ChevronRight className="w-[18px] h-[18px] shrink-0" strokeWidth={2} />
