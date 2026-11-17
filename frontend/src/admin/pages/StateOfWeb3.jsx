@@ -10,7 +10,7 @@ import {
 
 const STAGES = ["Pre-Seed", "Seed", "Pre-Series A", "Series A", "Series B", "Series C", "Growth", "Acquired"];
 const METRIC_CATEGORIES = ["Adoption", "Market Volume", "Investment", "Regulation", "Infrastructure", "Talent"];
-const chartTooltip = { contentStyle: { background: "#1f2937", border: "1px solid #374151", borderRadius: 8, color: "#e5e7eb" }, cursor: { fill: "rgba(255,255,255,0.04)" } };
+const chartTooltip = { contentStyle: { background: "var(--admin-line)", border: "1px solid var(--admin-grid)", borderRadius: 8, color: "var(--admin-tooltip-text)" }, cursor: { fill: "rgba(255,255,255,0.04)" } };
 
 export default function StateOfWeb3() {
   const [tab, setTab] = useState("overview");
@@ -51,9 +51,9 @@ function Overview() {
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={categories} layout="vertical" margin={{ left: 20, right: 16 }}>
-                      <CartesianGrid stroke="#374151" horizontal={false} />
-                      <XAxis type="number" allowDecimals={false} stroke="#9ca3af" fontSize={12} />
-                      <YAxis type="category" dataKey="name" width={150} stroke="#9ca3af" fontSize={12} />
+                      <CartesianGrid stroke="var(--admin-grid)" horizontal={false} />
+                      <XAxis type="number" allowDecimals={false} stroke="var(--admin-axis2)" fontSize={12} />
+                      <YAxis type="category" dataKey="name" width={150} stroke="var(--admin-axis2)" fontSize={12} />
                       <Tooltip {...chartTooltip} />
                       <Bar dataKey="count" name="Startups" fill="#D4A017" radius={[0, 4, 4, 0]} />
                     </BarChart>

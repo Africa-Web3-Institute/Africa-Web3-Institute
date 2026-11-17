@@ -23,7 +23,7 @@ import {
 import { useAuth } from "../../lib/AuthContext";
 import { useCurrentUser } from "../ui";
 
-const NAV_SECTIONS = [
+export const NAV_SECTIONS = [
   {
     label: "Overview",
     items: [
@@ -92,7 +92,7 @@ function NavItem({ item, collapsed, badges = {} }) {
           <Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={2} />
           {!collapsed && <span className="truncate">{item.label}</span>}
           {badge > 0 && (
-            <span className={`rounded-full bg-yellow-500 text-gray-900 text-[10px] font-bold leading-none ${collapsed ? "absolute top-1 right-1 px-1 py-0.5" : "ml-auto px-1.5 py-1"}`}>
+            <span className={`rounded-full bg-yellow-500 text-black text-[10px] font-bold leading-none ${collapsed ? "absolute top-1 right-1 px-1 py-0.5" : "ml-auto px-1.5 py-1"}`}>
               {badge > 99 ? "99+" : badge}
             </span>
           )}
@@ -135,7 +135,7 @@ export default function SideBar({ collapsed: collapsedPref, setCollapsed, badges
     >
       {/* Logo / Brand */}
       <div className={`flex items-center gap-2.5 h-16 px-4 border-b border-gray-800 shrink-0 ${collapsed ? "justify-center px-0" : ""}`}>
-        <div className="w-8 h-8 rounded-lg bg-yellow-500 flex items-center justify-center text-gray-900 font-extrabold text-xs flex-shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-yellow-500 flex items-center justify-center text-black font-extrabold text-xs flex-shrink-0">
           AW
         </div>
         {!collapsed && (
@@ -175,7 +175,7 @@ export default function SideBar({ collapsed: collapsedPref, setCollapsed, badges
       <div className="border-t border-gray-800 p-3 space-y-1 shrink-0">
         {user && (
           <div className={`flex items-center gap-3 rounded-lg px-2 py-2 mb-1 ${collapsed ? "justify-center" : ""}`} title={collapsed ? `${displayName} · ${roleLabel}` : undefined}>
-            <span className="w-8 h-8 rounded-full bg-yellow-500 text-gray-900 flex items-center justify-center text-xs font-extrabold uppercase shrink-0">
+            <span className="w-8 h-8 rounded-full bg-yellow-500 text-black flex items-center justify-center text-xs font-extrabold uppercase shrink-0">
               {displayName.slice(0, 2)}
             </span>
             {!collapsed && (

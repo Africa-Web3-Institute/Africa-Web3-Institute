@@ -2,7 +2,6 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { dbAll, dbGet, dbRun, DB_STATUS, isWeakPassword } from '../db/init.js';
 import { JWT_SECRET, JWT_SECRET_CONFIGURED } from '../middleware/auth.js';
-import { WEAK_PASSWORDS } from '../db/init.js';
 import { PERMISSIONS, ROLE_DEFAULTS, effectivePermissions } from '../lib/permissions.js';
 import { logActivity, clientIp } from '../lib/activity.js';
 
@@ -91,6 +90,7 @@ export const changeOwnPassword = async (req, res) => {
       return res.status(400).json({ error: 'Your current password is incorrect' });
     }
     await dbRun('UPDATE users SET password = ?, passwordChangedAt = CURRENT_TIMESTAMP WHERE id = ?', [await bcrypt.hash(newPassword, 12), req.user.id]);
+    invalidateDefaultPasswordCache();
     // Other sessions for this account are now signed out; this one gets a fresh token
     const fresh = await dbGet('SELECT id, email, role FROM users WHERE id = ?', [req.user.id]);
     res.status(200).json({ success: true, message: 'Password changed', token: signToken(fresh) });
@@ -120,11 +120,23 @@ export const myActivity = async (req, res) => {
   }
 };
 
+// Accounts still on the old built-in default. Checking hashes is deliberately slow, so the
+// result is cached and recalculated only after a password changes (or every 10 minutes).
+let defaultPwCache = null;
+export const invalidateDefaultPasswordCache = () => { defaultPwCache = null; };
+const defaultPasswordAccountsCached = async () => {
+  if (defaultPwCache && Date.now() - defaultPwCache.at < 10 * 60 * 1000) return defaultPwCache.value;
+  const users = await dbAll('SELECT email, password FROM users WHERE COALESCE(active, 1) != 0');
+  const value = [];
+  for (const u of users) if (await bcrypt.compare('admin', u.password)) value.push(u.email);
+  defaultPwCache = { at: Date.now(), value };
+  return value;
+};
+
 // Superadmin health check: is the data safe across deploys, and is anything insecure?
 export const systemStatus = async (req, res) => {
   try {
-    const users = await dbAll('SELECT email, password FROM users WHERE COALESCE(active, 1) != 0');
-    const defaultPasswordAccounts = users.filter((u) => WEAK_PASSWORDS.some((w) => bcrypt.compareSync(w, u.password))).map((u) => u.email);
+    const defaultPasswordAccounts = await defaultPasswordAccountsCached();
     res.status(200).json({
       database: { persistent: DB_STATUS.persistent, onRailway: DB_STATUS.onRailway, volume: DB_STATUS.volume, path: DB_STATUS.path },
       jwtSecretConfigured: JWT_SECRET_CONFIGURED,

@@ -145,7 +145,7 @@ export function Tabs({ tabs, value, onChange }) {
 
 export function Button({ variant = "secondary", icon: Icon, loading, children, className = "", ...props }) {
   const variants = {
-    primary: "bg-yellow-500 text-gray-900 hover:bg-yellow-400",
+    primary: "bg-yellow-500 text-black hover:bg-yellow-400",
     secondary: "bg-gray-700 text-gray-200 hover:bg-gray-600 border border-gray-600",
     danger: "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30",
     ghost: "text-gray-300 hover:bg-gray-700",

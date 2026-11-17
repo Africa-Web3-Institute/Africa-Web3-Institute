@@ -2,6 +2,7 @@ import { dbGet, dbAll, dbRun } from '../db/init.js';
 import bcrypt from 'bcryptjs';
 import { ROLES, effectivePermissions, sanitizeOverrides } from '../lib/permissions.js';
 import { isWeakPassword } from '../db/init.js';
+import { invalidateDefaultPasswordCache } from './authController.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -105,6 +106,7 @@ export const updateUser = async (req, res) => {
     }
 
     if (sets.length) await dbRun(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, [...params, id]);
+    if (body.password || body.active !== undefined) invalidateDefaultPasswordCache();
     res.status(200).json({ success: true, message: 'User updated' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -123,6 +125,7 @@ export const deleteUser = async (req, res) => {
     }
 
     await dbRun('DELETE FROM users WHERE id = ?', [id]);
+    invalidateDefaultPasswordCache();
     res.status(200).json({ success: true, message: 'User deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });

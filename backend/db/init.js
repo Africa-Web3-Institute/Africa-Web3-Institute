@@ -460,7 +460,8 @@ const ensureAdminAccess = async () => {
   const recoveryPassword = process.env.SUPERADMIN_PASSWORD || '';
   try {
     const supers = dbInstance.all("SELECT id, email, password FROM users WHERE role = 'superadmin' AND COALESCE(active, 1) != 0");
-    const usable = supers.filter((u) => !WEAK_PASSWORDS.some((w) => bcrypt.compareSync(w, u.password)));
+    // Only the old built-in default needs a hash check (common passwords are refused when set)
+    const usable = supers.filter((u) => !bcrypt.compareSync('admin', u.password));
     const userCount = dbInstance.get('SELECT COUNT(*) AS n FROM users')?.n || 0;
 
     if (usable.length > 0) {

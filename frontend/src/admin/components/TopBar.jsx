@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, ExternalLink, KeyRound, LogOut, Menu } from "lucide-react";
+import { Bell, ChevronRight, ExternalLink, KeyRound, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../lib/AuthContext";
 import { authApi } from "../../api/api";
@@ -14,9 +14,15 @@ const STATUS = {
   checking: { dot: "bg-gray-500 animate-pulse", label: "Checking backend…" },
 };
 
-export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "checking", onMenu }) {
+export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStatus = "checking", onMenu, theme = "dark", onToggleTheme, onSearch }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
+  // "Change my password" from the Jump to… search
+  useEffect(() => {
+    const open = () => setPwOpen(true);
+    window.addEventListener("awi:change-password", open);
+    return () => window.removeEventListener("awi:change-password", open);
+  }, []);
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const status = STATUS[apiStatus] || STATUS.checking;
@@ -36,13 +42,33 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
           <button onClick={onMenu} aria-label="Open menu" className="lg:hidden -ml-1 p-2 rounded-lg text-gray-300 hover:bg-gray-700">
             <Menu className="w-5 h-5" />
           </button>
-          <h2 className="text-lg sm:text-xl font-semibold text-white truncate">{pageTitle}</h2>
+          <div className="min-w-0">
+            {section && (
+              <p className="hidden sm:flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-gray-500 leading-none mb-1">
+                {section} <ChevronRight className="w-3 h-3" />
+              </p>
+            )}
+            <h2 className="text-lg sm:text-xl font-semibold text-white truncate leading-tight">{pageTitle}</h2>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Jump to… */}
+        <button
+          onClick={onSearch}
+          className="hidden md:flex items-center gap-2 flex-1 max-w-sm mx-4 rounded-xl border border-gray-700 bg-gray-900/60 px-3 py-2 text-sm text-gray-500 hover:border-gray-500 hover:text-gray-300 transition-colors"
+        >
+          <Search className="w-4 h-4" />
+          <span>Jump to a page or action…</span>
+          <kbd className="ml-auto rounded border border-gray-600 px-1.5 py-0.5 text-[10px] font-sans">Ctrl K</kbd>
+        </button>
+
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <button onClick={onSearch} aria-label="Jump to a page" className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700">
+            <Search className="w-5 h-5" />
+          </button>
           {/* Backend status */}
           <span
-            className="hidden sm:inline-flex items-center gap-2 rounded-full border border-gray-700 px-3 py-1 text-xs text-gray-300"
+            className="hidden xl:inline-flex items-center gap-2 rounded-full border border-gray-700 px-3 py-1 text-xs text-gray-300"
             title={apiStatus === "offline" ? "The admin console can't reach the backend. Check the Railway service and the VITE_API_URL setting." : undefined}
           >
             <span className={`w-2 h-2 rounded-full ${status.dot}`} />
@@ -53,10 +79,20 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+            className="hidden lg:inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
           >
             View site <ExternalLink className="w-3.5 h-3.5" />
           </a>
+
+          {/* Light / dark */}
+          <button
+            onClick={onToggleTheme}
+            aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+          >
+            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+          </button>
 
           {/* Unread messages */}
           <Link
@@ -67,7 +103,7 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
           >
             <Bell className="w-5 h-5" />
             {unreadMessages > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-yellow-500 text-gray-900 text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-yellow-500 text-black text-[10px] font-bold flex items-center justify-center">
                 {unreadMessages > 99 ? "99+" : unreadMessages}
               </span>
             )}
@@ -79,7 +115,7 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-700 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-gray-900 font-semibold text-sm">
+              <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-black font-semibold text-sm">
                 {initials}
               </div>
               <span className="hidden md:block text-left">
