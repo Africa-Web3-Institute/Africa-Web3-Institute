@@ -6,8 +6,14 @@ import { PERMISSIONS, ROLE_DEFAULTS, effectivePermissions } from '../lib/permiss
 import { logActivity, clientIp } from '../lib/activity.js';
 
 const publicUser = (user) => {
-  const { password: _, permissions: overrides, ...rest } = user;
-  return { ...rest, permissions: effectivePermissions(user.role, overrides) };
+  const { password: _, passwordChangedAt: __, permissions: overrides, ...rest } = user;
+  return {
+    ...rest,
+    mustChangePassword: Number(user.mustChangePassword || 0) === 1,
+    // Name and job title are required before the console can be used
+    profileComplete: !!(String(user.name || '').trim() && String(user.jobTitle || '').trim()),
+    permissions: effectivePermissions(user.role, overrides),
+  };
 };
 
 // Brute-force protection: after 5 wrong passwords for the same email from the same address
@@ -70,7 +76,7 @@ export const login = async (req, res) => {
 // The signed-in account, with its current role and permissions
 export const me = async (req, res) => {
   try {
-    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt FROM users WHERE id = ?', [req.user.id]);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, phone, bio, mustChangePassword FROM users WHERE id = ?', [req.user.id]);
     res.status(200).json({ user: publicUser(user) });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -83,17 +89,38 @@ export const changeOwnPassword = async (req, res) => {
   if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Current and new password are required' });
   if (String(newPassword).length < 10) return res.status(400).json({ error: 'Use a new password of at least 10 characters' });
   if (isWeakPassword(newPassword)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
+  if (currentPassword === newPassword) return res.status(400).json({ error: 'Choose a new password that is different from the current one' });
 
   try {
     const user = await dbGet('SELECT id, password FROM users WHERE id = ?', [req.user.id]);
     if (!user || !(await bcrypt.compare(currentPassword, user.password))) {
       return res.status(400).json({ error: 'Your current password is incorrect' });
     }
-    await dbRun('UPDATE users SET password = ?, passwordChangedAt = CURRENT_TIMESTAMP WHERE id = ?', [await bcrypt.hash(newPassword, 12), req.user.id]);
+    await dbRun('UPDATE users SET password = ?, passwordChangedAt = CURRENT_TIMESTAMP, mustChangePassword = 0 WHERE id = ?', [await bcrypt.hash(newPassword, 12), req.user.id]);
     invalidateDefaultPasswordCache();
     // Other sessions for this account are now signed out; this one gets a fresh token
     const fresh = await dbGet('SELECT id, email, role FROM users WHERE id = ?', [req.user.id]);
     res.status(200).json({ success: true, message: 'Password changed', token: signToken(fresh) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Any signed-in account updates its own profile. Name and job title are required.
+const clean = (v, max) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
+export const updateProfile = async (req, res) => {
+  const body = req.body || {};
+  const name = clean(body.name, 80);
+  const jobTitle = clean(body.jobTitle, 80);
+  const phone = clean(body.phone, 30);
+  const bio = String(body.bio ?? '').trim().slice(0, 300);
+  if (name.length < 2) return res.status(400).json({ error: 'Enter your full name' });
+  if (jobTitle.length < 2) return res.status(400).json({ error: 'Enter your job title' });
+  if (phone && !/^[+()\d\s.-]{6,30}$/.test(phone)) return res.status(400).json({ error: 'Enter a valid phone number, or leave it empty' });
+  try {
+    await dbRun('UPDATE users SET name = ?, jobTitle = ?, phone = ?, bio = ? WHERE id = ?', [name, jobTitle, phone, bio, req.user.id]);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt, jobTitle, phone, bio, mustChangePassword FROM users WHERE id = ?', [req.user.id]);
+    res.status(200).json({ success: true, user: publicUser(user) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

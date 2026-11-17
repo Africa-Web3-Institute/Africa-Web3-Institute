@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, ChevronRight, ExternalLink, KeyRound, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
-import { toast } from "sonner";
+import { Bell, ChevronRight, ExternalLink, KeyRound, LogOut, Menu, Moon, Search, Sun, UserRound } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
-import { authApi } from "../../api/api";
-import { Button, Field, Modal, PasswordInput, useCurrentUser } from "../ui";
+import { useCurrentUser } from "../ui";
 
 const ROLE_LABEL = { superadmin: "Superadmin", admin: "Admin", editor: "Editor", viewer: "Viewer" };
 
@@ -16,13 +14,6 @@ const STATUS = {
 
 export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStatus = "checking", onMenu, theme = "dark", onToggleTheme, onSearch }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [pwOpen, setPwOpen] = useState(false);
-  // "Change my password" from the Jump to… search
-  useEffect(() => {
-    const open = () => setPwOpen(true);
-    window.addEventListener("awi:change-password", open);
-    return () => window.removeEventListener("awi:change-password", open);
-  }, []);
   const { logout, user } = useAuth();
   const { can } = useCurrentUser();
   const navigate = useNavigate();
@@ -135,13 +126,22 @@ export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStat
                     <p className="text-sm text-white truncate">{name}</p>
                     {user?.email && <p className="text-xs text-gray-500 truncate">{user.email}</p>}
                   </div>
-                  <button
-                    onClick={() => { setIsDropdownOpen(false); setPwOpen(true); }}
+                  <Link
+                    to="/admin/settings"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors flex items-center gap-2"
+                  >
+                    <UserRound className="w-4 h-4" />
+                    My profile
+                  </Link>
+                  <Link
+                    to="/admin/settings#security"
+                    onClick={() => setIsDropdownOpen(false)}
                     className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors flex items-center gap-2"
                   >
                     <KeyRound className="w-4 h-4" />
                     Change password
-                  </button>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 transition-colors flex items-center gap-2"
@@ -155,49 +155,6 @@ export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStat
           </div>
         </div>
       </div>
-      {pwOpen && <ChangePasswordModal onClose={() => setPwOpen(false)} />}
     </header>
-  );
-}
-
-function ChangePasswordModal({ onClose }) {
-  const { updateUser } = useAuth();
-  const [form, setForm] = useState({ current: "", next: "", confirm: "" });
-  const [busy, setBusy] = useState(false);
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-
-  const submit = async () => {
-    if (form.next.length < 10) return toast.error("Use a new password of at least 10 characters");
-    if (form.next !== form.confirm) return toast.error("The new passwords don't match");
-    setBusy(true);
-    try {
-      const res = await authApi.changePassword(form.current, form.next);
-      if (res?.token) updateUser({ token: res.token });
-      toast.success("Password changed. Any other signed-in devices have been signed out.");
-      onClose();
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Modal
-      open
-      title="Change your password"
-      onClose={onClose}
-      footer={<><Button onClick={onClose}>Cancel</Button><Button variant="primary" loading={busy} onClick={submit}>Change password</Button></>}
-    >
-      <Field label="Current password" required>
-        <PasswordInput autoComplete="current-password" value={form.current} onChange={set("current")} />
-      </Field>
-      <Field label="New password" required hint="At least 10 characters.">
-        <PasswordInput autoComplete="new-password" value={form.next} onChange={set("next")} />
-      </Field>
-      <Field label="Confirm new password" required>
-        <PasswordInput autoComplete="new-password" value={form.confirm} onChange={set("confirm")} />
-      </Field>
-    </Modal>
   );
 }

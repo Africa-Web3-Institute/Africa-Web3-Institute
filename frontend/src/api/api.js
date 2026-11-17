@@ -91,6 +91,7 @@ export const authApi = {
   permissions: () => request("/admin/permissions"),
   myActivity: (limit = 8) => request(`/admin/me/activity?limit=${limit}`),
   systemStatus: () => request("/admin/system"),
+  updateProfile: (data) => request("/admin/me/profile", { method: "PUT", body: JSON.stringify(data) }),
 };
 
 // ─── Publications ──────────────────────────────────────────────────────────

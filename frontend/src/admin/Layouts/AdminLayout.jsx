@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import { SideBar,TopBar } from "../components";
 import CommandPalette from "../components/CommandPalette";
@@ -67,7 +67,9 @@ export default function AdminLayout() {
   // Close the phone menu after choosing a page
   useEffect(() => setMobileNav(false), [location.pathname]);
   const { updateUser } = useAuth();
-  const { can } = useCurrentUser();
+  const { can, user } = useCurrentUser();
+  // Profile (name + job title) and a password of their own are required before anything else
+  const setupNeeded = !!user && (user.mustChangePassword === true || user.profileComplete === false);
   const canReadMessages = can("messages.view");
 
   useEffect(() => {
@@ -89,7 +91,14 @@ export default function AdminLayout() {
     // Pick up role / permission changes a superadmin made since sign-in
     try {
       const res = await authApi.me();
-      if (res?.user) updateUser({ role: res.user.role, permissions: res.user.permissions, name: res.user.name, email: res.user.email });
+      if (res?.user) {
+        const u = res.user;
+        updateUser({
+          role: u.role, permissions: u.permissions, name: u.name, email: u.email, jobTitle: u.jobTitle, phone: u.phone, bio: u.bio,
+          createdAt: u.createdAt, lastLoginAt: u.lastLoginAt, profileComplete: u.profileComplete, mustChangePassword: u.mustChangePassword,
+        });
+        if (u.mustChangePassword || !u.profileComplete) return; // nothing else loads until setup is done
+      }
     } catch {
       /* a 401 here signs the user out (handled in api.js) */
     }
@@ -133,7 +142,9 @@ export default function AdminLayout() {
           onSearch={() => setPaletteOpen(true)}
         />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-900">
-          {blocked ? (
+          {setupNeeded && location.pathname !== "/admin/settings" ? (
+            <Navigate to="/admin/settings" replace />
+          ) : blocked ? (
             <div className="max-w-lg mx-auto mt-16 text-center rounded-2xl border border-gray-700 bg-gray-800 p-8">
               <p className="text-lg font-semibold text-white">This page isn't available to your account</p>
               <p className="text-sm text-gray-400 mt-2">Your role doesn't include access to {pageTitle}. If you need it, ask your administrator.</p>
