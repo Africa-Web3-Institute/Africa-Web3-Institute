@@ -47,9 +47,9 @@ async function request(path, options = {}) {
     let reason = "";
     try { reason = (await res.json())?.error || ""; } catch { /* not JSON */ }
     const message = /disabled/i.test(reason)
-      ? "Your account has been disabled. Contact a superadmin."
+      ? "Your account has been disabled. Contact your administrator."
       : /no longer exists/i.test(reason)
-        ? "Your account has been removed. Contact a superadmin."
+        ? "Your account has been removed. Contact your administrator."
         : /password was changed/i.test(reason)
           ? "Your password was changed, so you were signed out. Sign in with the new password."
           : "Your session has expired. Please sign in again.";

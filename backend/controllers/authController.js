@@ -45,13 +45,13 @@ export const login = async (req, res) => {
     }
     if (Number(user.active ?? 1) === 0) {
       await logActivity({ user, action: 'login_failed', entityType: 'Sign-in', summary: 'Account is disabled', ip: clientIp(req) });
-      return res.status(403).json({ error: 'This account has been disabled. Contact a superadmin.' });
+      return res.status(403).json({ error: 'This account has been disabled. Contact your administrator.' });
     }
 
     // The old built-in default (and other common passwords) can't be used to sign in
     if (isWeakPassword(password)) {
       await logActivity({ user, action: 'login_failed', entityType: 'Sign-in', summary: 'Blocked: default or common password', ip: clientIp(req) });
-      return res.status(403).json({ error: 'This account still uses a default password, which is no longer allowed. Ask a superadmin to set a new password for you.' });
+      return res.status(403).json({ error: 'This account still uses a default password, which is no longer allowed. Ask your administrator to set a new password for you.' });
     }
 
     failures.delete(key);
@@ -150,5 +150,7 @@ export const systemStatus = async (req, res) => {
 
 // The permission list and each role's defaults, for the User Management screen
 export const permissionCatalog = (req, res) => {
-  res.status(200).json({ permissions: PERMISSIONS, roleDefaults: ROLE_DEFAULTS });
+  const roleDefaults = { ...ROLE_DEFAULTS };
+  if (req.user?.role !== 'superadmin') delete roleDefaults.superadmin;
+  res.status(200).json({ permissions: PERMISSIONS, roleDefaults });
 };

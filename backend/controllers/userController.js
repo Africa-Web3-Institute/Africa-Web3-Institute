@@ -18,15 +18,19 @@ const shape = (u) => ({
   createdAt: u.createdAt,
 });
 
-// Admins can manage admins, editors and viewers, but never superadmin accounts
-const ADMIN_FORBIDDEN = "Only a superadmin can create, change or remove superadmin accounts";
+// Admins can manage admins, editors and viewers. Superadmin accounts are invisible to them:
+// left out of the list, and treated as "not found" if addressed directly.
 const actorIsSuper = (req) => req.user?.role === 'superadmin';
+const rolesFor = (req) => (actorIsSuper(req) ? ROLES : ROLES.filter((r) => r !== 'superadmin'));
+const roleError = (req) => ({ error: `Role must be one of: ${rolesFor(req).join(', ')}` });
 
 const activeSuperadmins = () => dbAll("SELECT id FROM users WHERE role = 'superadmin' AND COALESCE(active, 1) != 0");
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await dbAll('SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt FROM users ORDER BY createdAt DESC');
+    const users = await dbAll(
+      `SELECT id, email, name, role, permissions, active, lastLoginAt, createdAt FROM users ${actorIsSuper(req) ? '' : "WHERE role != 'superadmin'"} ORDER BY createdAt DESC`
+    );
     res.status(200).json({ data: users.map(shape) });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -39,8 +43,7 @@ export const createUser = async (req, res) => {
 
   if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Enter a valid email address' });
-  if (!ROLES.includes(role)) return res.status(400).json({ error: `Role must be one of: ${ROLES.join(', ')}` });
-  if (role === 'superadmin' && !actorIsSuper(req)) return res.status(403).json({ error: ADMIN_FORBIDDEN });
+  if (!rolesFor(req).includes(role)) return res.status(400).json(roleError(req));
   if (String(password).length < 10) return res.status(400).json({ error: 'Use a password of at least 10 characters' });
   if (isWeakPassword(password)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
 
@@ -66,18 +69,15 @@ export const updateUser = async (req, res) => {
 
   try {
     const user = await dbGet('SELECT * FROM users WHERE id = ?', [id]);
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user || (user.role === 'superadmin' && !actorIsSuper(req))) return res.status(404).json({ error: 'User not found' });
 
     const sets = [];
     const params = [];
     const nextRole = body.role ?? user.role;
     const nextActive = typeof body.active === 'undefined' ? Number(user.active ?? 1) !== 0 : !!body.active;
 
-    if (body.role !== undefined && !ROLES.includes(body.role)) {
-      return res.status(400).json({ error: `Role must be one of: ${ROLES.join(', ')}` });
-    }
-    if (!actorIsSuper(req) && (user.role === 'superadmin' || body.role === 'superadmin')) {
-      return res.status(403).json({ error: ADMIN_FORBIDDEN });
+    if (body.role !== undefined && !rolesFor(req).includes(body.role)) {
+      return res.status(400).json(roleError(req));
     }
 
     // Never leave the site without an active superadmin
@@ -127,8 +127,7 @@ export const deleteUser = async (req, res) => {
     if (id === req.user.id) return res.status(400).json({ error: "You can't remove your own account" });
 
     const user = await dbGet('SELECT role, active FROM users WHERE id = ?', [id]);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    if (user.role === 'superadmin' && !actorIsSuper(req)) return res.status(403).json({ error: ADMIN_FORBIDDEN });
+    if (!user || (user.role === 'superadmin' && !actorIsSuper(req))) return res.status(404).json({ error: 'User not found' });
     if (user.role === 'superadmin' && Number(user.active ?? 1) !== 0 && (await activeSuperadmins()).length <= 1) {
       return res.status(400).json({ error: 'Cannot delete the last superadmin' });
     }

@@ -75,7 +75,7 @@ export const requireSuperadmin = (req, res, next) => {
   if (req.user && req.user.role === 'superadmin') {
     next();
   } else {
-    return res.status(403).json({ error: 'Forbidden: Superadmin role required' });
+    return res.status(403).json({ error: "Forbidden: your account doesn't have access to this" });
   }
 };
 
