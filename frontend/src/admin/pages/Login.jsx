@@ -2,12 +2,18 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 import { authApi } from "../../api/api";
+import { PasswordInput } from "../ui";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // Shown once after being signed out (expired session, disabled account)
+  const [error, setError] = useState(() => {
+    const notice = sessionStorage.getItem("awi_login_notice") || "";
+    sessionStorage.removeItem("awi_login_notice");
+    return notice;
+  });
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
 
@@ -27,7 +33,7 @@ export default function Login() {
       // (localhost:3001 / VITE_API_URL). authApi.login already knows the
       // right base URL and handles JSON/error parsing consistently with
       // every other authenticated call in the app.
-      const data = await authApi.login(email, password);
+      const data = await authApi.login(email.trim(), password);
 
       const token = data?.token;
       const user = data?.user || data?.data?.user || { id: 1, name: "Admin", email, role: "admin" };
@@ -102,8 +108,8 @@ export default function Login() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Password
               </label>
-              <input
-                type="password"
+              <PasswordInput
+                autoComplete="current-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
