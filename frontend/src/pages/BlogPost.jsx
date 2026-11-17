@@ -64,7 +64,8 @@ export default function BlogPost() {
       .then((res) => {
         if (!mounted) return;
         const item = res?.data || res;
-        if (item && item.title) {
+        // The by-slug endpoint also returns unpublished drafts; never show those publicly
+        if (item && item.title && Number(item.isPublished ?? 1) !== 0) {
           setPost(item);
         } else if (FALLBACK_BLOGS[slug]) {
           setPost(FALLBACK_BLOGS[slug]);
@@ -286,6 +287,7 @@ export default function BlogPost() {
             <ArrowLeft className="w-4 h-4" />
             {isFr ? "Retour aux analyses de l'Institut" : "Back to All Research & Essays"}
           </Link>
+          {/* News page temporarily disabled
           <Link
             to="/news"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
@@ -293,6 +295,7 @@ export default function BlogPost() {
             {isFr ? "Voir les actualités" : "Browse News & Press"}
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
+          */}
         </div>
       </main>
     </div>

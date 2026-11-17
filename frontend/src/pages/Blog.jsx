@@ -526,6 +526,7 @@ export default function Blog() {
                 ? "Consulter les archives de newsletters"
                 : "View Newsletter Archive"}
             </Link>
+            {/* News page temporarily disabled
             <span>•</span>
             <Link
               to="/news"
@@ -533,6 +534,7 @@ export default function Blog() {
             >
               {isFr ? "Actualités & Communiqués" : "Latest News & Press"}
             </Link>
+            */}
           </div>
         </div>
       </section>
