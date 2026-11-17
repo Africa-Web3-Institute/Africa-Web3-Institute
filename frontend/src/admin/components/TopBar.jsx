@@ -4,9 +4,9 @@ import { Bell, ChevronRight, ExternalLink, KeyRound, LogOut, Menu, Moon, Search,
 import { toast } from "sonner";
 import { useAuth } from "../../lib/AuthContext";
 import { authApi } from "../../api/api";
-import { Button, Field, Modal, PasswordInput } from "../ui";
+import { Button, Field, Modal, PasswordInput, useCurrentUser } from "../ui";
 
-const ROLE_LABEL = { superadmin: "Superadmin", admin: "Admin", editor: "Editor" };
+const ROLE_LABEL = { superadmin: "Superadmin", admin: "Admin", editor: "Editor", viewer: "Viewer" };
 
 const STATUS = {
   online: { dot: "bg-emerald-400", label: "Backend online" },
@@ -24,6 +24,7 @@ export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStat
     return () => window.removeEventListener("awi:change-password", open);
   }, []);
   const { logout, user } = useAuth();
+  const { can } = useCurrentUser();
   const navigate = useNavigate();
   const status = STATUS[apiStatus] || STATUS.checking;
 
@@ -95,6 +96,7 @@ export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStat
           </button>
 
           {/* Unread messages */}
+          {can("messages.view") && (
           <Link
             to="/admin/messages"
             aria-label={`${unreadMessages} unread messages`}
@@ -108,6 +110,7 @@ export default function TopBar({ pageTitle, section, unreadMessages = 0, apiStat
               </span>
             )}
           </Link>
+          )}
 
           {/* User menu */}
           <div className="relative">

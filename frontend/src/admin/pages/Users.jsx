@@ -9,26 +9,33 @@ import {
 } from "../ui";
 
 export const ROLE_INFO = {
-  superadmin: { label: "Superadmin", tone: "purple", description: "Everything, including accounts, permissions and the activity log" },
-  admin: { label: "Admin", tone: "blue", description: "All content, including deleting, plus AWPII, inbox and newsletters" },
-  editor: { label: "Editor", tone: "gray", description: "Create and edit content; read messages and newsletter stats" },
+  superadmin: { label: "Superadmin", tone: "purple", description: "Everything, including superadmin accounts, settings and the activity log" },
+  admin: { label: "Admin", tone: "blue", description: "All content, AWPII, inbox and newsletters; adds admins, editors and viewers" },
+  editor: { label: "Editor", tone: "gray", description: "Create, edit and delete content; read messages and newsletter stats" },
+  viewer: { label: "Viewer", tone: "green", description: "Dashboard and site analytics only; can't change anything" },
 };
-const ROLE_OPTIONS = Object.entries(ROLE_INFO).map(([value, r]) => ({ value, label: `${r.label} — ${r.description}` }));
+const roleOptions = (isSuperadmin) =>
+  Object.entries(ROLE_INFO)
+    .filter(([value]) => isSuperadmin || value !== "superadmin")
+    .map(([value, r]) => ({ value, label: `${r.label} — ${r.description}` }));
 
 export default function Users() {
-  const { user: me, isSuperadmin } = useCurrentUser();
-  const { data, loading, error, reload } = useApiData(() => (isSuperadmin ? usersApi.getAll() : Promise.resolve([])), [isSuperadmin]);
-  const catalog = useApiData(() => (isSuperadmin ? authApi.permissions() : Promise.resolve(null)), [isSuperadmin]);
+  const { user: me, isSuperadmin, can } = useCurrentUser();
+  const canManage = can("users.manage");
+  const { data, loading, error, reload } = useApiData(() => (canManage ? usersApi.getAll() : Promise.resolve([])), [canManage]);
+  const catalog = useApiData(() => (canManage ? authApi.permissions() : Promise.resolve(null)), [canManage]);
+  // Admins can see superadmin accounts but not change them
+  const canTouch = (u) => isSuperadmin || u.role !== "superadmin";
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState(null); // {} for new, user row for edit
   const [toDelete, setToDelete] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  if (!isSuperadmin) {
+  if (!canManage) {
     return (
       <div>
         <PageHeader title="User Management" />
-        <Card><EmptyState title="Superadmin access required" description="Only superadmins can manage admin accounts. You can change your own password from the menu under your name (top right)." /></Card>
+        <Card><EmptyState title="Admin access required" description="Only admins and superadmins can manage accounts. You can change your own password from the menu under your name (top right)." /></Card>
       </div>
     );
   }
@@ -69,8 +76,12 @@ export default function Users() {
       />
       <Notice>
         <ShieldCheck className="w-4 h-4 inline -mt-0.5 mr-1" />
-        Changes take effect immediately, even for people who are already signed in. Everything each account does is recorded in the{" "}
-        <Link to="/admin/activity" className="underline text-sky-300">Activity Log</Link>.
+        Changes take effect immediately, even for people who are already signed in.
+        {isSuperadmin ? (
+          <> Everything each account does is recorded in the <Link to="/admin/activity" className="underline text-sky-300">Activity Log</Link>.</>
+        ) : (
+          <> Superadmin accounts can only be changed by a superadmin.</>
+        )}
       </Notice>
 
       <Card padded={false}>
@@ -122,16 +133,20 @@ export default function Users() {
                 key: "actions",
                 label: "",
                 className: "text-right w-48",
-                render: (u) => (
+                render: (u) => !canTouch(u) ? (
+                  <span className="text-[11px] text-gray-500">Superadmin only</span>
+                ) : (
                   <div className="flex justify-end items-center gap-1">
                     {Number(u.id) !== Number(me?.id) && (
                       <button onClick={() => toggleActive(u)} className="text-[11px] text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-gray-700">
                         {u.active ? "Disable" : "Enable"}
                       </button>
                     )}
-                    <Link to={`/admin/activity?userId=${u.id}`} title="View activity" aria-label="View activity" className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700">
-                      <History className="w-4 h-4" />
-                    </Link>
+                    {isSuperadmin && (
+                      <Link to={`/admin/activity?userId=${u.id}`} title="View activity" aria-label="View activity" className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700">
+                        <History className="w-4 h-4" />
+                      </Link>
+                    )}
                     <IconButton icon={KeyRound} label="Set password" onClick={() => setEditing({ ...u, passwordOnly: true })} />
                     <IconButton icon={Pencil} label="Edit role & permissions" onClick={() => setEditing(u)} />
                     {Number(u.id) !== Number(me?.id) && <IconButton icon={Trash2} tone="danger" label="Remove" onClick={() => setToDelete(u)} />}
@@ -143,7 +158,7 @@ export default function Users() {
         </DataState>
       </Card>
 
-      {editing && <UserForm user={editing} catalog={catalog.data} onClose={() => setEditing(null)} onSaved={reload} />}
+      {editing && <UserForm user={editing} catalog={catalog.data} isSuperadmin={isSuperadmin} onClose={() => setEditing(null)} onSaved={reload} />}
       <ConfirmDialog
         open={!!toDelete}
         title="Remove user?"
@@ -157,7 +172,7 @@ export default function Users() {
   );
 }
 
-function UserForm({ user, catalog, onClose, onSaved }) {
+function UserForm({ user, catalog, isSuperadmin, onClose, onSaved }) {
   const isNew = !user.id;
   const passwordOnly = !!user.passwordOnly;
   const [form, setForm] = useState({ name: user.name || "", email: user.email || "", role: user.role || "editor", password: "", confirm: "" });
@@ -225,7 +240,7 @@ function UserForm({ user, catalog, onClose, onSaved }) {
             <Field label="Name"><Input value={form.name} onChange={set("name")} /></Field>
             <Field label="Email" required><Input type="email" value={form.email} onChange={set("email")} /></Field>
           </div>
-          <Field label="Role"><Select value={form.role} onChange={set("role")} options={ROLE_OPTIONS} /></Field>
+          <Field label="Role"><Select value={form.role} onChange={set("role")} options={roleOptions(isSuperadmin)} /></Field>
 
           <div className="mb-5">
             <div className="flex items-center justify-between mb-2">
@@ -265,7 +280,7 @@ function UserForm({ user, catalog, onClose, onSaved }) {
                     })}
                   </div>
                 ))}
-                <p className="px-3 py-2 text-[11px] text-gray-500">Managing accounts and viewing the activity log are for superadmins only.</p>
+                <p className="px-3 py-2 text-[11px] text-gray-500">Managing accounts comes with the Admin role. The activity log is for superadmins only.</p>
               </div>
             )}
           </div>
