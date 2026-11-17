@@ -22,6 +22,7 @@ export default function ActivityLog() {
   const [params, setParams] = useSearchParams();
   const filters = {
     userId: params.get("userId") || "",
+    userRole: params.get("userRole") || "",
     action: params.get("action") || "",
     entityType: params.get("entityType") || "",
     q: params.get("q") || "",
@@ -114,6 +115,13 @@ export default function ActivityLog() {
           </div>
           <div className="w-40">
             <Select
+              value={filters.userRole}
+              onChange={(e) => setFilter("userRole", e.target.value)}
+              options={[{ value: "", label: "All roles" }, { value: "superadmin", label: "By superadmins" }, { value: "admin", label: "By admins" }, { value: "editor", label: "By editors" }, { value: "viewer", label: "By viewers" }, { value: "system", label: "By the system" }]}
+            />
+          </div>
+          <div className="w-40">
+            <Select
               value={filters.action}
               onChange={(e) => setFilter("action", e.target.value)}
               options={[{ value: "", label: "All actions" }, ...Object.entries(ACTIONS).map(([value, a]) => ({ value, label: a.label }))]}
@@ -156,8 +164,13 @@ export default function ActivityLog() {
                 label: "Who",
                 render: (a) => (
                   <button onClick={() => a.userId && setFilter("userId", String(a.userId))} className="text-left">
-                    <span className="block text-gray-200 text-sm">{a.userName || a.userEmail || "Unknown"}</span>
-                    {a.userName && <span className="block text-[11px] text-gray-500">{a.userEmail}</span>}
+                    <span className="flex items-center gap-1.5 text-gray-200 text-sm">
+                      {a.userName || a.userEmail || "Unknown"}
+                      {a.userRole && (
+                        <Badge tone={a.userRole === "system" ? "yellow" : ROLE_INFO[a.userRole]?.tone || "gray"}>{a.userRole === "system" ? "System" : ROLE_INFO[a.userRole]?.label || a.userRole}</Badge>
+                      )}
+                    </span>
+                    {a.userName && a.userEmail !== "system" && <span className="block text-[11px] text-gray-500">{a.userEmail}</span>}
                   </button>
                 ),
               },

@@ -154,6 +154,31 @@ export const initDB = async () => {
       if (!hasContent) await seedDatabaseData(dbInstance);
       dbInstance.run("INSERT INTO settings (key, value) VALUES ('sampleDataSeeded', '1')");
     }
+    // One-time cleanup: before site settings became superadmin-granted only, admins could tick
+    // "Manage settings" for accounts (including their own). Clear those grants once; from now on
+    // only a superadmin can grant it again.
+    if (!dbInstance.get("SELECT value FROM settings WHERE key = 'siteSettingsGrantsReset'")) {
+      let cleared = 0;
+      for (const u of dbInstance.all("SELECT id, permissions FROM users WHERE role != 'superadmin' AND permissions LIKE '%settings.manage%'")) {
+        try {
+          const o = JSON.parse(u.permissions || '{}');
+          if (o['settings.manage'] === true) {
+            delete o['settings.manage'];
+            dbInstance.run('UPDATE users SET permissions = ? WHERE id = ?', [JSON.stringify(o), u.id]);
+            cleared++;
+            const who = dbInstance.get('SELECT email FROM users WHERE id = ?', [u.id]);
+            dbInstance.run(
+              "INSERT INTO activity_log (userEmail, userName, userRole, action, entityType, entityId, summary) VALUES ('system', 'System', 'system', 'update', 'User account', ?, ?)",
+              [String(u.id), `${who?.email || 'account'} — removed: Manage settings (one-time cleanup; only a superadmin can grant it now)`]
+            );
+          }
+        } catch { /* unreadable overrides: leave as they are */ }
+      }
+      dbInstance.run("INSERT INTO settings (key, value) VALUES ('siteSettingsGrantsReset', '1')");
+      if (cleared) console.log(`🔒 Removed site-settings access from ${cleared} non-superadmin account(s); a superadmin can grant it again.`);
+    }
+    // Older log entries were written before the actor's role was recorded: fill in their current role
+    dbInstance.run("UPDATE activity_log SET userRole = (SELECT role FROM users WHERE users.id = activity_log.userId) WHERE userRole IS NULL AND userId IS NOT NULL");
     return dbInstance;
   } catch (err) {
     console.error("Failed to initialize WebAssembly SQLite driver:", err);
@@ -438,7 +463,9 @@ const initializeTables = async () => {
     `ALTER TABLE users ADD COLUMN jobTitle TEXT;`,
     `ALTER TABLE users ADD COLUMN phone TEXT;`,
     `ALTER TABLE users ADD COLUMN bio TEXT;`,
-    `ALTER TABLE users ADD COLUMN mustChangePassword INTEGER DEFAULT 0;`
+    `ALTER TABLE users ADD COLUMN mustChangePassword INTEGER DEFAULT 0;`,
+    // The role of whoever made each logged change (superadmin, admin, editor, viewer, system)
+    `ALTER TABLE activity_log ADD COLUMN userRole TEXT;`
   ];
   
   for (const alterQuery of addColumns) {
@@ -497,7 +524,7 @@ const ensureAdminAccess = async () => {
       );
     }
     dbInstance.run(
-      "INSERT INTO activity_log (action, entityType, summary) VALUES ('update', 'User account', ?)",
+      "INSERT INTO activity_log (userEmail, userName, userRole, action, entityType, summary) VALUES ('system', 'System', 'system', 'update', 'User account', ?)",
       [`${recoveryEmail} — made superadmin from the server's SUPERADMIN_EMAIL setting`]
     );
     console.log(`🔑 ${recoveryEmail} is now the superadmin. Remove SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD from the hosting variables.`);
