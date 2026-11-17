@@ -1,6 +1,6 @@
 import { dbGet, dbAll, dbRun } from '../db/init.js';
 import bcrypt from 'bcryptjs';
-import { ROLES, SUPERADMIN_GRANTED, effectivePermissions, sanitizeOverrides } from '../lib/permissions.js';
+import { PERMISSIONS, ROLES, SUPERADMIN_GRANTED, effectivePermissions, sanitizeOverrides } from '../lib/permissions.js';
 import { isWeakPassword } from '../db/init.js';
 import { invalidateDefaultPasswordCache } from './authController.js';
 
@@ -24,6 +24,16 @@ const shape = (u) => ({
 const actorIsSuper = (req) => req.user?.role === 'superadmin';
 const rolesFor = (req) => (actorIsSuper(req) ? ROLES : ROLES.filter((r) => r !== 'superadmin'));
 const roleError = (req) => ({ error: `Role must be one of: ${rolesFor(req).join(', ')}` });
+
+// ── Activity log wording for account changes ──
+const PERM_LABEL = { ...Object.fromEntries(PERMISSIONS.map((p) => [p.key, p.label])), 'users.manage': 'Manage accounts', 'activity.view': 'View activity log' };
+const ROLE_NAME = { superadmin: 'Superadmin', admin: 'Admin', editor: 'Editor', viewer: 'Viewer' };
+const labels = (keys) => keys.map((k) => PERM_LABEL[k] || k).join(', ');
+const diffPermissions = (beforeList, afterList) => ({
+  granted: afterList.filter((k) => !beforeList.includes(k)),
+  removed: beforeList.filter((k) => !afterList.includes(k)),
+});
+const describe = (target, parts) => [target, parts.filter(Boolean).join(' · ')].filter(Boolean).join(' — ');
 
 // Overrides an admin sends can't touch superadmin-granted permissions (e.g. site settings):
 // whatever a superadmin decided for that account is kept.
@@ -66,10 +76,18 @@ export const createUser = async (req, res) => {
     if (existing) return res.status(400).json({ error: 'An account with this email already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const overrides = role === 'superadmin' ? {} : overridesFrom(req, permissions, null);
     await dbRun(
       'INSERT INTO users (email, password, name, role, permissions, active) VALUES (?, ?, ?, ?, ?, ?)',
-      [email, hashedPassword, name || '', role, JSON.stringify(role === 'superadmin' ? {} : overridesFrom(req, permissions, null)), active ? 1 : 0]
+      [email, hashedPassword, name || '', role, JSON.stringify(overrides), active ? 1 : 0]
     );
+    const { granted, removed } = diffPermissions(effectivePermissions(role, {}), effectivePermissions(role, overrides));
+    res.locals.activitySummary = describe(email, [
+      `new account · role: ${ROLE_NAME[role] || role}`,
+      granted.length && `granted: ${labels(granted)}`,
+      removed.length && `removed: ${labels(removed)}`,
+      !active && 'disabled',
+    ]);
     res.status(201).json({ success: true, message: 'User created' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -116,9 +134,11 @@ export const updateUser = async (req, res) => {
     if (body.name !== undefined) { sets.push('name = ?'); params.push(body.name || ''); }
     if (body.role !== undefined) { sets.push('role = ?'); params.push(body.role); }
     if (body.active !== undefined) { sets.push('active = ?'); params.push(nextActive ? 1 : 0); }
+    let nextOverrides = sanitizeOverrides(user.permissions);
     if (body.permissions !== undefined || (body.role === 'superadmin')) {
+      nextOverrides = nextRole === 'superadmin' ? {} : overridesFrom(req, body.permissions, user.permissions);
       sets.push('permissions = ?');
-      params.push(JSON.stringify(nextRole === 'superadmin' ? {} : overridesFrom(req, body.permissions, user.permissions)));
+      params.push(JSON.stringify(nextOverrides));
     }
     if (body.password) {
       if (String(body.password).length < 10) return res.status(400).json({ error: 'Use a password of at least 10 characters' });
@@ -129,6 +149,20 @@ export const updateUser = async (req, res) => {
 
     if (sets.length) await dbRun(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, [...params, id]);
     if (body.password || body.active !== undefined) invalidateDefaultPasswordCache();
+
+    // Exactly what changed, for the activity log
+    const wasActive = Number(user.active ?? 1) !== 0;
+    const nextEmail = body.email !== undefined ? String(body.email).trim().toLowerCase() : user.email;
+    const { granted, removed } = diffPermissions(effectivePermissions(user.role, user.permissions), effectivePermissions(nextRole, nextOverrides));
+    res.locals.activitySummary = describe(user.email, [
+      nextEmail !== user.email && `email: ${user.email} → ${nextEmail}`,
+      body.name !== undefined && (body.name || '') !== (user.name || '') && `name: ${user.name || '—'} → ${body.name || '—'}`,
+      nextRole !== user.role && `role: ${ROLE_NAME[user.role] || user.role} → ${ROLE_NAME[nextRole] || nextRole}`,
+      granted.length && `granted: ${labels(granted)}`,
+      removed.length && `removed: ${labels(removed)}`,
+      nextActive !== wasActive && (nextActive ? 'enabled' : 'disabled'),
+      body.password && (id === req.user.id ? 'changed own password' : 'password reset'),
+    ]) || `${user.email} — no changes`;
     res.status(200).json({ success: true, message: 'User updated' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -140,7 +174,7 @@ export const deleteUser = async (req, res) => {
   try {
     if (id === req.user.id) return res.status(400).json({ error: "You can't remove your own account" });
 
-    const user = await dbGet('SELECT role, active FROM users WHERE id = ?', [id]);
+    const user = await dbGet('SELECT email, role, active FROM users WHERE id = ?', [id]);
     if (!user || (user.role === 'superadmin' && !actorIsSuper(req))) return res.status(404).json({ error: 'User not found' });
     if (user.role === 'superadmin' && Number(user.active ?? 1) !== 0 && (await activeSuperadmins()).length <= 1) {
       return res.status(400).json({ error: 'Cannot delete the last superadmin' });
@@ -148,6 +182,7 @@ export const deleteUser = async (req, res) => {
 
     await dbRun('DELETE FROM users WHERE id = ?', [id]);
     invalidateDefaultPasswordCache();
+    res.locals.activitySummary = describe(user.email, [`account removed (was ${ROLE_NAME[user.role] || user.role})`]);
     res.status(200).json({ success: true, message: 'User deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });

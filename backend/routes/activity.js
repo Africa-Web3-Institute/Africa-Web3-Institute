@@ -9,13 +9,14 @@ router.use(requireAuth, requireSuperadmin);
 
 // GET /api/admin/activity?userId=&action=&entityType=&q=&from=&to=&limit=&offset=
 router.get('/', async (req, res) => {
-  const { userId, action, entityType, q, from, to } = req.query;
+  const { userId, action, entityType, q, from, to, userRole } = req.query;
   const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 200);
   const offset = Math.max(Number(req.query.offset) || 0, 0);
 
   const where = [];
   const params = [];
   if (userId) { where.push('userId = ?'); params.push(Number(userId)); }
+  if (userRole) { where.push('userRole = ?'); params.push(userRole); }
   if (action) { where.push('action = ?'); params.push(action); }
   if (entityType) { where.push('entityType = ?'); params.push(entityType); }
   if (from) { where.push('createdAt >= ?'); params.push(from); }

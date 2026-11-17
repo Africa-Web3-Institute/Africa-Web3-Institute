@@ -36,8 +36,8 @@ const nameOf = (body = {}) =>
 export const logActivity = async ({ user, action, entityType = null, entityId = null, summary = null, ip = null }) => {
   try {
     await dbRun(
-      'INSERT INTO activity_log (userId, userEmail, userName, action, entityType, entityId, summary, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [user?.id ?? null, user?.email ?? null, user?.name ?? null, action, entityType, entityId == null ? null : String(entityId), summary, ip]
+      'INSERT INTO activity_log (userId, userEmail, userName, userRole, action, entityType, entityId, summary, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [user?.id ?? null, user?.email ?? null, user?.name ?? null, user?.role ?? null, action, entityType, entityId == null ? null : String(entityId), summary, ip]
     );
   } catch (err) {
     console.error('Could not write activity log:', err.message);
@@ -78,6 +78,9 @@ export const trackActivity = async (req, res, next) => {
       summary = [id, body.score != null ? `score ${body.score}` : body.status].filter(Boolean).join(' — ');
     } else if (area === 'contact-messages' && method !== 'DELETE') {
       summary = body.status ? `Marked ${body.status}` : summary;
+    } else if (area === 'users' && res.locals.activitySummary) {
+      // Account changes: the controller describes exactly what changed (role, grants, removals…)
+      summary = res.locals.activitySummary;
     } else if (area === 'users') {
       const notes = [];
       if (body.role) notes.push(`role: ${body.role}`);
@@ -98,7 +101,7 @@ export const trackActivity = async (req, res, next) => {
       action,
       entityType: info.label,
       entityId: area === 'awpii' || area === 'tracker' ? null : id,
-      summary: summary ? String(summary).slice(0, 300) : null,
+      summary: summary ? String(summary).slice(0, 600) : null,
       ip: clientIp(req),
     });
   });
