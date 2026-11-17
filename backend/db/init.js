@@ -1,5 +1,5 @@
 import initSqlJs from 'sql.js';
-import { dirname, join } from 'path';
+import { dirname, join, resolve, sep } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import bcrypt from 'bcryptjs';
@@ -11,10 +11,35 @@ const __dirname = dirname(__filename);
 // The database file that ships with the repo
 const BUNDLED_DB_PATH = join(__dirname, 'awi.db');
 
-// Where the live database is kept. On Railway, set DB_PATH to a file on a mounted
-// volume (e.g. /data/awi.db) so data survives redeploys; the container's own disk is
-// wiped on every deploy. Defaults to the bundled file for local development.
-const DB_PATH = process.env.DB_PATH || BUNDLED_DB_PATH;
+// Where the live database is kept. A container's own disk is wiped on every deploy, so
+// on Railway the file must live on the attached volume. Railway tells us where that is
+// (RAILWAY_VOLUME_MOUNT_PATH); a DB_PATH pointing anywhere else would silently lose all
+// accounts, content and activity on the next deploy, so it is overridden.
+const VOLUME_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || '';
+const ON_RAILWAY = !!(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_PROJECT_ID);
+const isInside = (file, dir) => resolve(file).startsWith(resolve(dir) + sep);
+
+const resolveDbPath = () => {
+  const explicit = process.env.DB_PATH;
+  if (VOLUME_DIR) {
+    if (explicit && isInside(explicit, VOLUME_DIR)) return explicit;
+    if (explicit) console.warn(`⚠️  DB_PATH (${explicit}) is not on the attached volume (${VOLUME_DIR}). Using the volume instead so data survives deploys.`);
+    return join(VOLUME_DIR, 'awi.db');
+  }
+  return explicit || BUNDLED_DB_PATH;
+};
+const DB_PATH = resolveDbPath();
+
+// Shown to superadmins on the dashboard
+export const DB_STATUS = {
+  path: DB_PATH,
+  volume: VOLUME_DIR || null,
+  onRailway: ON_RAILWAY,
+  persistent: ON_RAILWAY ? !!VOLUME_DIR && isInside(DB_PATH, VOLUME_DIR) : true,
+};
+if (ON_RAILWAY && !DB_STATUS.persistent) {
+  console.error('🚨 NO PERSISTENT VOLUME: accounts, content and the activity log will be WIPED on every deploy. Attach a volume to this service in Railway.');
+}
 
 // First start on an empty volume: copy the bundled database so the site starts
 // with its existing content instead of an empty one.
@@ -121,7 +146,14 @@ export const initDB = async () => {
     const SQL = await initSqlJs();
     dbInstance = new SqlJsDatabase(SQL, DB_PATH);
     await initializeTables();
-    await seedDatabaseData(dbInstance);
+    // Sample content is added to a brand-new database only, once. (Running the seeder on every
+    // start re-added sample items people had deleted.)
+    const seeded = dbInstance.get("SELECT value FROM settings WHERE key = 'sampleDataSeeded'");
+    if (!seeded) {
+      const hasContent = (dbInstance.get('SELECT COUNT(*) AS n FROM publications')?.n || 0) > 0;
+      if (!hasContent) await seedDatabaseData(dbInstance);
+      dbInstance.run("INSERT INTO settings (key, value) VALUES ('sampleDataSeeded', '1')");
+    }
     return dbInstance;
   } catch (err) {
     console.error("Failed to initialize WebAssembly SQLite driver:", err);
@@ -399,7 +431,9 @@ const initializeTables = async () => {
     // Per-account permission overrides, enabled/disabled flag and last sign-in
     `ALTER TABLE users ADD COLUMN permissions TEXT;`,
     `ALTER TABLE users ADD COLUMN active INTEGER DEFAULT 1;`,
-    `ALTER TABLE users ADD COLUMN lastLoginAt DATETIME;`
+    `ALTER TABLE users ADD COLUMN lastLoginAt DATETIME;`,
+    // Sessions issued before this time are rejected (set whenever a password changes)
+    `ALTER TABLE users ADD COLUMN passwordChangedAt DATETIME;`
   ];
   
   for (const alterQuery of addColumns) {
@@ -410,59 +444,59 @@ const initializeTables = async () => {
     }
   }
 
-  // Seed a default superadmin, but only into an empty database. (Seeding whenever this
-  // email was missing would bring back admin/admin after the account was removed.)
-  const defaultEmail = 'admin@africaweb3institute.org';
-  const defaultPassword = 'admin'; // Change it straight after the first sign-in
+  await ensureAdminAccess();
+};
 
-  try {
-    const userCount = dbInstance.get('SELECT COUNT(*) AS n FROM users')?.n || 0;
-    if (userCount === 0) {
-      const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-      dbInstance.run(
-        'INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)',
-        [defaultEmail, hashedPassword, 'Superadmin', 'superadmin']
-      );
-      console.log(`✅ Seeded default superadmin: ${defaultEmail} / ${defaultPassword}`);
-    } else {
-      console.log(`✅ ${userCount} admin account(s) found.`);
-    }
-  } catch (err) {
-    console.error('Error seeding default user:', err.message);
-  }
+// Passwords that must never be accepted (the old built-in default and friends)
+export const WEAK_PASSWORDS = ['admin', 'password', 'admin123', 'changeme', '12345678', '1234567890'];
+export const isWeakPassword = (pw) => WEAK_PASSWORDS.includes(String(pw || '').trim().toLowerCase());
 
-  // Recovery: if nobody can manage accounts any more, set SUPERADMIN_EMAIL (and, for a new
-  // account or a forgotten password, SUPERADMIN_PASSWORD) in the hosting environment and
-  // restart. That account is then made an active superadmin. Remove both variables afterwards.
+// There is no built-in admin/admin any more. The first superadmin (or a replacement, if
+// nobody can manage accounts) comes from SUPERADMIN_EMAIL + SUPERADMIN_PASSWORD set in the
+// hosting environment. They only act when there is no usable superadmin, so leaving them
+// set by mistake can't reset anyone's password; remove them once you can sign in.
+const ensureAdminAccess = async () => {
   const recoveryEmail = (process.env.SUPERADMIN_EMAIL || '').trim().toLowerCase();
   const recoveryPassword = process.env.SUPERADMIN_PASSWORD || '';
-  if (recoveryEmail) {
-    try {
-      const existing = dbInstance.get('SELECT id FROM users WHERE LOWER(email) = ?', [recoveryEmail]);
-      if (existing) {
-        dbInstance.run("UPDATE users SET role = 'superadmin', active = 1, permissions = '{}' WHERE id = ?", [existing.id]);
-        if (recoveryPassword) {
-          dbInstance.run('UPDATE users SET password = ? WHERE id = ?', [await bcrypt.hash(recoveryPassword, 10), existing.id]);
-        }
-        console.log(`🔑 Recovery: ${recoveryEmail} is now an active superadmin${recoveryPassword ? ' (password reset)' : ''}. Remove SUPERADMIN_EMAIL/SUPERADMIN_PASSWORD now.`);
-      } else if (recoveryPassword.length >= 10) {
-        dbInstance.run(
-          "INSERT INTO users (email, password, name, role, permissions, active) VALUES (?, ?, ?, 'superadmin', '{}', 1)",
-          [recoveryEmail, await bcrypt.hash(recoveryPassword, 10), 'Superadmin']
-        );
-        console.log(`🔑 Recovery: created superadmin ${recoveryEmail}. Remove SUPERADMIN_EMAIL/SUPERADMIN_PASSWORD now.`);
-      } else {
-        console.error(`🔑 Recovery: no account ${recoveryEmail} exists; set SUPERADMIN_PASSWORD (10+ characters) to create it.`);
+  try {
+    const supers = dbInstance.all("SELECT id, email, password FROM users WHERE role = 'superadmin' AND COALESCE(active, 1) != 0");
+    const usable = supers.filter((u) => !WEAK_PASSWORDS.some((w) => bcrypt.compareSync(w, u.password)));
+    const userCount = dbInstance.get('SELECT COUNT(*) AS n FROM users')?.n || 0;
+
+    if (usable.length > 0) {
+      console.log(`✅ ${userCount} admin account(s); ${usable.length} active superadmin(s).`);
+      if (recoveryEmail || recoveryPassword) {
+        console.warn('⚠️  SUPERADMIN_EMAIL / SUPERADMIN_PASSWORD are set but were ignored (a superadmin already exists). Remove them from the hosting variables.');
       }
-      if (dbInstance.get("SELECT id FROM users WHERE LOWER(email) = ? AND role = 'superadmin'", [recoveryEmail])) {
-        dbInstance.run(
-          "INSERT INTO activity_log (action, entityType, summary) VALUES ('update', 'User account', ?)",
-          [`${recoveryEmail} — made superadmin via server recovery setting`]
-        );
-      }
-    } catch (err) {
-      console.error('Superadmin recovery failed:', err.message);
+      return;
     }
+
+    if (!recoveryEmail) {
+      console.error('🚨 No usable superadmin account. Set SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD (12+ characters) in the hosting variables and restart.');
+      return;
+    }
+    if (recoveryPassword.length < 12 || isWeakPassword(recoveryPassword)) {
+      console.error('🚨 SUPERADMIN_PASSWORD must be at least 12 characters and not a common password. No changes made.');
+      return;
+    }
+
+    const hash = await bcrypt.hash(recoveryPassword, 12);
+    const existing = dbInstance.get('SELECT id FROM users WHERE LOWER(email) = ?', [recoveryEmail]);
+    if (existing) {
+      dbInstance.run("UPDATE users SET role = 'superadmin', active = 1, permissions = '{}', password = ?, passwordChangedAt = CURRENT_TIMESTAMP WHERE id = ?", [hash, existing.id]);
+    } else {
+      dbInstance.run(
+        "INSERT INTO users (email, password, name, role, permissions, active, passwordChangedAt) VALUES (?, ?, '', 'superadmin', '{}', 1, CURRENT_TIMESTAMP)",
+        [recoveryEmail, hash]
+      );
+    }
+    dbInstance.run(
+      "INSERT INTO activity_log (action, entityType, summary) VALUES ('update', 'User account', ?)",
+      [`${recoveryEmail} — made superadmin from the server's SUPERADMIN_EMAIL setting`]
+    );
+    console.log(`🔑 ${recoveryEmail} is now the superadmin. Remove SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD from the hosting variables.`);
+  } catch (err) {
+    console.error('Admin access check failed:', err.message);
   }
 };
 

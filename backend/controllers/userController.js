@@ -1,6 +1,7 @@
 import { dbGet, dbAll, dbRun } from '../db/init.js';
 import bcrypt from 'bcryptjs';
 import { ROLES, effectivePermissions, sanitizeOverrides } from '../lib/permissions.js';
+import { isWeakPassword } from '../db/init.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,12 +36,13 @@ export const createUser = async (req, res) => {
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Enter a valid email address' });
   if (!ROLES.includes(role)) return res.status(400).json({ error: `Role must be one of: ${ROLES.join(', ')}` });
   if (String(password).length < 10) return res.status(400).json({ error: 'Use a password of at least 10 characters' });
+  if (isWeakPassword(password)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
 
   try {
     const existing = await dbGet('SELECT id FROM users WHERE LOWER(email) = ?', [email]);
     if (existing) return res.status(400).json({ error: 'An account with this email already exists' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
     await dbRun(
       'INSERT INTO users (email, password, name, role, permissions, active) VALUES (?, ?, ?, ?, ?, ?)',
       [email, hashedPassword, name || '', role, JSON.stringify(role === 'superadmin' ? {} : sanitizeOverrides(permissions)), active ? 1 : 0]
@@ -97,7 +99,9 @@ export const updateUser = async (req, res) => {
     }
     if (body.password) {
       if (String(body.password).length < 10) return res.status(400).json({ error: 'Use a password of at least 10 characters' });
-      sets.push('password = ?'); params.push(await bcrypt.hash(body.password, 10));
+      if (isWeakPassword(body.password)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
+      // Setting a new password signs that person out everywhere
+      sets.push('password = ?', 'passwordChangedAt = CURRENT_TIMESTAMP'); params.push(await bcrypt.hash(body.password, 12));
     }
 
     if (sets.length) await dbRun(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, [...params, id]);

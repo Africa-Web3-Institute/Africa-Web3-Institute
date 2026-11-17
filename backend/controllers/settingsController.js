@@ -4,7 +4,7 @@ export const getSettings = async (req, res) => {
   try {
     const rows = await dbAll('SELECT key, value FROM settings');
     const settings = {};
-    rows.forEach(r => settings[r.key] = r.value);
+    rows.filter(r => r.key !== 'sampleDataSeeded').forEach(r => settings[r.key] = r.value);
     res.status(200).json({ data: settings });
   } catch (err) {
     res.status(500).json({ error: err.message });

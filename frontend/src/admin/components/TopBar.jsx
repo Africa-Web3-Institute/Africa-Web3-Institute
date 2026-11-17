@@ -122,6 +122,7 @@ export default function TopBar({ pageTitle, unreadMessages = 0, apiStatus = "che
 }
 
 function ChangePasswordModal({ onClose }) {
+  const { updateUser } = useAuth();
   const [form, setForm] = useState({ current: "", next: "", confirm: "" });
   const [busy, setBusy] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
@@ -131,8 +132,9 @@ function ChangePasswordModal({ onClose }) {
     if (form.next !== form.confirm) return toast.error("The new passwords don't match");
     setBusy(true);
     try {
-      await authApi.changePassword(form.current, form.next);
-      toast.success("Password changed");
+      const res = await authApi.changePassword(form.current, form.next);
+      if (res?.token) updateUser({ token: res.token });
+      toast.success("Password changed. Any other signed-in devices have been signed out.");
       onClose();
     } catch (err) {
       toast.error(err.message);
