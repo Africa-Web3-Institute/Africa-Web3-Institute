@@ -189,7 +189,7 @@ export default function AdminDashboard() {
     const skip = Promise.resolve(null);
     (async () => {
       const staffList = { includeDrafts: 1, limit: 500 };
-      const [publications, articles, blogs, enforcement, awpii, tracker, startups, subscribers, unread, team, summary, mine] = await Promise.all([
+      const [publications, articles, blogs, enforcement, awpii, tracker, startups, subscribers, unread, team, summary, mine, system] = await Promise.all([
         safe(publicationsApi.getAll()),
         safe(articlesApi.getAll(staffList)),
         safe(blogsApi.getAll(staffList)),
@@ -202,9 +202,10 @@ export default function AdminDashboard() {
         isSuperadmin ? safe(activityApi.list({ limit: 8 }), (r) => r) : skip,
         isSuperadmin ? safe(activityApi.summary()) : skip,
         !isSuperadmin ? safe(authApi.myActivity(8), (r) => r) : skip,
+        isSuperadmin ? safe(authApi.systemStatus(), (r) => r) : skip,
       ]);
       if (cancelled) return;
-      setD({ publications, articles, blogs, enforcement, awpii, tracker, startups, subscribers, unread, team, summary, mine });
+      setD({ publications, articles, blogs, enforcement, awpii, tracker, startups, subscribers, unread, team, summary, mine, system });
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -235,7 +236,12 @@ export default function AdminDashboard() {
   const failedLogins = (d.summary || []).reduce((s, u) => s + (Number(u.failedLogins) || 0), 0);
   const allFailed = !loading && [d.publications, d.articles, d.blogs, d.enforcement, d.awpii, d.tracker].every((v) => v === null);
 
+  const sys = d.system;
   const attention = [
+    isSuperadmin && sys && !sys.database?.persistent && { to: "/admin", icon: AlertTriangle, tone: "red", title: "Data is not on a persistent volume", text: "Accounts, content and activity are wiped on every deploy. Attach a volume in Railway." },
+    isSuperadmin && sys && !sys.jwtSecretConfigured && { to: "/admin", icon: ShieldAlert, tone: "red", title: "JWT_SECRET is not set", text: "Add a long random JWT_SECRET in Railway Variables, then redeploy" },
+    isSuperadmin && sys?.recoveryVariablesSet && { to: "/admin", icon: ShieldAlert, tone: "yellow", title: "Remove the recovery variables", text: "Delete SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD from Railway Variables" },
+    isSuperadmin && sys?.defaultPasswordAccounts?.length > 0 && { to: "/admin/users", icon: ShieldAlert, tone: "yellow", title: `${sys.defaultPasswordAccounts.length} account${sys.defaultPasswordAccounts.length === 1 ? "" : "s"} can't sign in (default password)`, text: `Set a new password for ${sys.defaultPasswordAccounts.join(", ")}` },
     canMessages && d.unread > 0 && { to: "/admin/messages", icon: Inbox, tone: "yellow", title: `${d.unread} unread message${d.unread === 1 ? "" : "s"}`, text: "From the website contact form" },
     can("content.edit") && drafts.length > 0 && { to: "/admin/articles", icon: FileEdit, tone: "sky", title: `${drafts.length} draft${drafts.length === 1 ? "" : "s"} not yet published`, text: drafts.slice(0, 2).map((x) => x.title).join(" · ") },
     isSuperadmin && failedLogins > 0 && { to: "/admin/activity?action=login_failed", icon: ShieldAlert, tone: "red", title: `${failedLogins} failed sign-in${failedLogins === 1 ? "" : "s"}`, text: "Check they were your team, not someone guessing passwords" },

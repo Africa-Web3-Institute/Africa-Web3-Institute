@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { dbAll, dbGet, dbRun } from '../db/init.js';
-import { JWT_SECRET } from '../middleware/auth.js';
+import { dbAll, dbGet, dbRun, DB_STATUS, isWeakPassword } from '../db/init.js';
+import { JWT_SECRET, JWT_SECRET_CONFIGURED } from '../middleware/auth.js';
+import { WEAK_PASSWORDS } from '../db/init.js';
 import { PERMISSIONS, ROLE_DEFAULTS, effectivePermissions } from '../lib/permissions.js';
 import { logActivity, clientIp } from '../lib/activity.js';
 
@@ -9,6 +10,14 @@ const publicUser = (user) => {
   const { password: _, permissions: overrides, ...rest } = user;
   return { ...rest, permissions: effectivePermissions(user.role, overrides) };
 };
+
+// Brute-force protection: after 5 wrong passwords for the same email from the same address
+// within 15 minutes, further attempts are refused for 15 minutes.
+const FAIL_LIMIT = 5;
+const WINDOW_MS = 15 * 60 * 1000;
+const failures = new Map(); // "email|ip" -> [timestamps]
+const recentFailures = (key) => (failures.get(key) || []).filter((t) => Date.now() - t < WINDOW_MS);
+const signToken = (user) => jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
 export const login = async (req, res) => {
   const email = String(req.body?.email || '').trim();
@@ -18,12 +27,20 @@ export const login = async (req, res) => {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
+  const key = `${email.toLowerCase()}|${clientIp(req)}`;
+  const recent = recentFailures(key);
+  if (recent.length >= FAIL_LIMIT) {
+    const mins = Math.ceil((WINDOW_MS - (Date.now() - recent[0])) / 60000);
+    return res.status(429).json({ error: `Too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.` });
+  }
+
   try {
     // Emails are matched case-insensitively ("Yves@..." and "yves@..." are the same account)
     const user = await dbGet('SELECT * FROM users WHERE LOWER(email) = LOWER(?)', [email]);
     const isMatch = user ? await bcrypt.compare(password, user.password) : false;
 
     if (!isMatch) {
+      failures.set(key, [...recent, Date.now()]);
       await logActivity({ user: user ? { id: user.id, email: user.email, name: user.name } : { email }, action: 'login_failed', entityType: 'Sign-in', summary: 'Wrong email or password', ip: clientIp(req) });
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -32,11 +49,17 @@ export const login = async (req, res) => {
       return res.status(403).json({ error: 'This account has been disabled. Contact a superadmin.' });
     }
 
+    // The old built-in default (and other common passwords) can't be used to sign in
+    if (isWeakPassword(password)) {
+      await logActivity({ user, action: 'login_failed', entityType: 'Sign-in', summary: 'Blocked: default or common password', ip: clientIp(req) });
+      return res.status(403).json({ error: 'This account still uses a default password, which is no longer allowed. Ask a superadmin to set a new password for you.' });
+    }
+
+    failures.delete(key);
     await dbRun('UPDATE users SET lastLoginAt = CURRENT_TIMESTAMP WHERE id = ?', [user.id]);
     await logActivity({ user, action: 'login', entityType: 'Sign-in', ip: clientIp(req) });
 
-    // Generate JWT token (expires in 7 days)
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const token = signToken(user);
 
     res.status(200).json({ token, user: publicUser(user) });
   } catch (error) {
@@ -60,14 +83,17 @@ export const changeOwnPassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body || {};
   if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Current and new password are required' });
   if (String(newPassword).length < 10) return res.status(400).json({ error: 'Use a new password of at least 10 characters' });
+  if (isWeakPassword(newPassword)) return res.status(400).json({ error: 'That password is too common. Choose another.' });
 
   try {
     const user = await dbGet('SELECT id, password FROM users WHERE id = ?', [req.user.id]);
     if (!user || !(await bcrypt.compare(currentPassword, user.password))) {
       return res.status(400).json({ error: 'Your current password is incorrect' });
     }
-    await dbRun('UPDATE users SET password = ? WHERE id = ?', [await bcrypt.hash(newPassword, 10), req.user.id]);
-    res.status(200).json({ success: true, message: 'Password changed' });
+    await dbRun('UPDATE users SET password = ?, passwordChangedAt = CURRENT_TIMESTAMP WHERE id = ?', [await bcrypt.hash(newPassword, 12), req.user.id]);
+    // Other sessions for this account are now signed out; this one gets a fresh token
+    const fresh = await dbGet('SELECT id, email, role FROM users WHERE id = ?', [req.user.id]);
+    res.status(200).json({ success: true, message: 'Password changed', token: signToken(fresh) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -89,6 +115,22 @@ export const myActivity = async (req, res) => {
       [req.user.id]
     );
     res.status(200).json({ data: rows, last30Days: { created: totals?.created || 0, updated: totals?.updated || 0, deleted: totals?.deleted || 0 } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Superadmin health check: is the data safe across deploys, and is anything insecure?
+export const systemStatus = async (req, res) => {
+  try {
+    const users = await dbAll('SELECT email, password FROM users WHERE COALESCE(active, 1) != 0');
+    const defaultPasswordAccounts = users.filter((u) => WEAK_PASSWORDS.some((w) => bcrypt.compareSync(w, u.password))).map((u) => u.email);
+    res.status(200).json({
+      database: { persistent: DB_STATUS.persistent, onRailway: DB_STATUS.onRailway, volume: DB_STATUS.volume, path: DB_STATUS.path },
+      jwtSecretConfigured: JWT_SECRET_CONFIGURED,
+      recoveryVariablesSet: !!(process.env.SUPERADMIN_EMAIL || process.env.SUPERADMIN_PASSWORD),
+      defaultPasswordAccounts,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

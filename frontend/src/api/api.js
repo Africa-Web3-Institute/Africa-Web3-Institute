@@ -50,7 +50,9 @@ async function request(path, options = {}) {
       ? "Your account has been disabled. Contact a superadmin."
       : /no longer exists/i.test(reason)
         ? "Your account has been removed. Contact a superadmin."
-        : "Your session has expired. Please sign in again.";
+        : /password was changed/i.test(reason)
+          ? "Your password was changed, so you were signed out. Sign in with the new password."
+          : "Your session has expired. Please sign in again.";
     localStorage.removeItem("awi_admin_user");
     sessionStorage.setItem("awi_login_notice", message);
     window.location.href = "/admin/login";
@@ -88,6 +90,7 @@ export const authApi = {
     request("/admin/me/password", { method: "PUT", body: JSON.stringify({ currentPassword, newPassword }) }),
   permissions: () => request("/admin/permissions"),
   myActivity: (limit = 8) => request(`/admin/me/activity?limit=${limit}`),
+  systemStatus: () => request("/admin/system"),
 };
 
 // ─── Publications ──────────────────────────────────────────────────────────

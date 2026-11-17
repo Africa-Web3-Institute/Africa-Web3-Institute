@@ -1,9 +1,22 @@
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { dbGet } from '../db/init.js';
 import { effectivePermissions } from '../lib/permissions.js';
 import { trackActivity } from '../lib/activity.js';
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkey_for_awi_change_me_later';
+// Sessions are signed with JWT_SECRET. The old fallback was a fixed string in the public
+// code, which would let anyone forge a session; in production a missing secret now gets a
+// random one instead (sessions then end on each restart, but can't be forged).
+const IS_PROD = process.env.NODE_ENV === 'production' || !!(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_ENVIRONMENT_NAME || process.env.RAILWAY_PROJECT_ID);
+export const JWT_SECRET_CONFIGURED = !!process.env.JWT_SECRET && process.env.JWT_SECRET.length >= 32;
+export const JWT_SECRET = process.env.JWT_SECRET || (IS_PROD ? crypto.randomBytes(48).toString('hex') : 'local-development-only-secret');
+if (IS_PROD && !JWT_SECRET_CONFIGURED) {
+  console.error('🚨 JWT_SECRET is missing or shorter than 32 characters. Set a long random value in the hosting variables.');
+}
+
+// A session issued before the account's password last changed is no longer valid
+const sqliteTime = (v) => (v ? Math.floor(Date.parse(String(v).replace(' ', 'T') + (String(v).includes('Z') ? '' : 'Z')) / 1000) : 0);
+const sessionOutdated = (decoded, user) => !!user.passwordChangedAt && Number(decoded.iat || 0) < sqliteTime(user.passwordChangedAt);
 
 // Checks the token, then loads the account fresh from the database so role or
 // permission changes, disabled accounts and removed accounts take effect at once
@@ -23,9 +36,10 @@ export const requireAuth = async (req, res, next) => {
   }
 
   try {
-    const user = await dbGet('SELECT id, email, name, role, permissions, active FROM users WHERE id = ?', [decoded.id]);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, passwordChangedAt FROM users WHERE id = ?', [decoded.id]);
     if (!user) return res.status(401).json({ error: 'Unauthorized: This account no longer exists' });
     if (Number(user.active ?? 1) === 0) return res.status(401).json({ error: 'This account has been disabled' });
+    if (sessionOutdated(decoded, user)) return res.status(401).json({ error: 'Your password was changed. Please sign in again.' });
 
     req.user = {
       id: user.id,
@@ -49,8 +63,8 @@ export const optionalAuth = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return next();
   try {
     const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
-    const user = await dbGet('SELECT id, email, name, role, permissions, active FROM users WHERE id = ?', [decoded.id]);
-    if (user && Number(user.active ?? 1) !== 0) {
+    const user = await dbGet('SELECT id, email, name, role, permissions, active, passwordChangedAt FROM users WHERE id = ?', [decoded.id]);
+    if (user && Number(user.active ?? 1) !== 0 && !sessionOutdated(decoded, user)) {
       req.user = { id: user.id, email: user.email, name: user.name, role: user.role, permissions: effectivePermissions(user.role, user.permissions) };
     }
   } catch { /* invalid token: treat as a public visitor */ }
