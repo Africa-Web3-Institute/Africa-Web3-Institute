@@ -32,6 +32,9 @@ export default function AdminLayout() {
   const [apiStatus, setApiStatus] = useState("checking"); // checking | online | offline
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileNav, setMobileNav] = useState(false);
+  // Close the phone menu after choosing a page
+  useEffect(() => setMobileNav(false), [location.pathname]);
   const { updateUser } = useAuth();
   const { can } = useCurrentUser();
   const canReadMessages = can("messages.view");
@@ -81,10 +84,11 @@ export default function AdminLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-900">
-      <SideBar collapsed={collapsed} setCollapsed={setCollapsed} badges={{ unreadMessages }} />
+      {mobileNav && <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setMobileNav(false)} aria-hidden="true" />}
+      <SideBar collapsed={collapsed} setCollapsed={setCollapsed} badges={{ unreadMessages }} mobileOpen={mobileNav} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <TopBar pageTitle={pageTitle} unreadMessages={unreadMessages} apiStatus={apiStatus} />
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-900">
+        <TopBar pageTitle={pageTitle} unreadMessages={unreadMessages} apiStatus={apiStatus} onMenu={() => setMobileNav(true)} />
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-900">
           <Outlet />
         </main>
       </div>

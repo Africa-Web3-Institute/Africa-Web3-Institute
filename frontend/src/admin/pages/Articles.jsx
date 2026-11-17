@@ -232,7 +232,9 @@ export default function Articles() {
 
   useEffect(() => {
     (async () => {
-      const [a, b] = await Promise.allSettled([articlesApi.getAll(), blogsApi.getAll()]);
+      // includeDrafts: the backend only lists unpublished items for signed-in staff who ask
+      const staff = { includeDrafts: 1, limit: 500 };
+      const [a, b] = await Promise.allSettled([articlesApi.getAll(staff), blogsApi.getAll(staff)]);
       if (a.status === "fulfilled") setArticles(listOf(a.value));
       if (b.status === "fulfilled") setBlogs(listOf(b.value));
       if (a.status === "rejected" && b.status === "rejected") setLoadError(a.reason?.message || "Could not load content.");

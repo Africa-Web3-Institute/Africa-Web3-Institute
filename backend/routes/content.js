@@ -24,7 +24,7 @@ import {
   getTrackerStatus,
   updateTrackerStatus
 } from "../controllers/contentController.js";
-import { requireAuth, requirePermission } from "../middleware/auth.js";
+import { requireAuth, requirePermission, optionalAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -37,11 +37,12 @@ router.get("/publications", getPublications);
 router.get("/publications/:id", getPublicationById);
 
 // Articles / News
-router.get("/articles", getArticles);
+// Staff can add ?includeDrafts=1 to also see unpublished items
+router.get("/articles", optionalAuth, getArticles);
 router.get("/articles/:slugOrId", getArticleBySlugOrId);
 
 // Blogs & Thought Leadership
-router.get("/blogs", getBlogs);
+router.get("/blogs", optionalAuth, getBlogs);
 router.get("/blogs/:slugOrId", getBlogBySlugOrId);
 
 // Enforcement Watch

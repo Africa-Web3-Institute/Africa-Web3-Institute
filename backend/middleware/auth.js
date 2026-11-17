@@ -42,6 +42,21 @@ export const requireAuth = async (req, res, next) => {
   return trackActivity(req, res, next);
 };
 
+// For public endpoints that show extra data to signed-in staff (e.g. drafts):
+// sets req.user when a valid token for an active account is sent, otherwise carries on.
+export const optionalAuth = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return next();
+  try {
+    const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+    const user = await dbGet('SELECT id, email, name, role, permissions, active FROM users WHERE id = ?', [decoded.id]);
+    if (user && Number(user.active ?? 1) !== 0) {
+      req.user = { id: user.id, email: user.email, name: user.name, role: user.role, permissions: effectivePermissions(user.role, user.permissions) };
+    }
+  } catch { /* invalid token: treat as a public visitor */ }
+  next();
+};
+
 export const requireSuperadmin = (req, res, next) => {
   if (req.user && req.user.role === 'superadmin') {
     next();

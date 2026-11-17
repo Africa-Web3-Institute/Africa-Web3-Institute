@@ -88,7 +88,9 @@ export const deletePublication = async (req, res) => {
 export const getArticles = async (req, res) => {
   try {
     const { category, search, type, featured, limit = 50, offset = 0 } = req.query;
-    let query = "SELECT * FROM articles WHERE status != \x27draft\x27";
+    // Drafts are only listed for signed-in staff who ask for them (the admin console)
+    const withDrafts = req.query.includeDrafts === "1" && !!req.user;
+    let query = withDrafts ? "SELECT * FROM articles WHERE 1 = 1" : "SELECT * FROM articles WHERE status != \x27draft\x27";
     const params = [];
 
     if (category && category !== "all" && category !== "All") {
@@ -181,7 +183,8 @@ export const deleteArticle = async (req, res) => {
 export const getBlogs = async (req, res) => {
   try {
     const { category, search, featured, limit = 50, offset = 0 } = req.query;
-    let query = "SELECT * FROM blogs WHERE isPublished = 1";
+    const withDrafts = req.query.includeDrafts === "1" && !!req.user;
+    let query = withDrafts ? "SELECT * FROM blogs WHERE 1 = 1" : "SELECT * FROM blogs WHERE isPublished = 1";
     const params = [];
 
     if (category && category !== "all" && category !== "All") {
@@ -197,7 +200,7 @@ export const getBlogs = async (req, res) => {
       params.push(s, s, s, s);
     }
 
-    query += " ORDER BY publishedAt DESC LIMIT ? OFFSET ?";
+    query += " ORDER BY COALESCE(publishedAt, createdAt) DESC LIMIT ? OFFSET ?";
     params.push(parseInt(limit, 10), parseInt(offset, 10));
 
     const blogs = await dbAll(query, params);
