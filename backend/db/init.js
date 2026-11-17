@@ -430,6 +430,40 @@ const initializeTables = async () => {
   } catch (err) {
     console.error('Error seeding default user:', err.message);
   }
+
+  // Recovery: if nobody can manage accounts any more, set SUPERADMIN_EMAIL (and, for a new
+  // account or a forgotten password, SUPERADMIN_PASSWORD) in the hosting environment and
+  // restart. That account is then made an active superadmin. Remove both variables afterwards.
+  const recoveryEmail = (process.env.SUPERADMIN_EMAIL || '').trim().toLowerCase();
+  const recoveryPassword = process.env.SUPERADMIN_PASSWORD || '';
+  if (recoveryEmail) {
+    try {
+      const existing = dbInstance.get('SELECT id FROM users WHERE LOWER(email) = ?', [recoveryEmail]);
+      if (existing) {
+        dbInstance.run("UPDATE users SET role = 'superadmin', active = 1, permissions = '{}' WHERE id = ?", [existing.id]);
+        if (recoveryPassword) {
+          dbInstance.run('UPDATE users SET password = ? WHERE id = ?', [await bcrypt.hash(recoveryPassword, 10), existing.id]);
+        }
+        console.log(`🔑 Recovery: ${recoveryEmail} is now an active superadmin${recoveryPassword ? ' (password reset)' : ''}. Remove SUPERADMIN_EMAIL/SUPERADMIN_PASSWORD now.`);
+      } else if (recoveryPassword.length >= 10) {
+        dbInstance.run(
+          "INSERT INTO users (email, password, name, role, permissions, active) VALUES (?, ?, ?, 'superadmin', '{}', 1)",
+          [recoveryEmail, await bcrypt.hash(recoveryPassword, 10), 'Superadmin']
+        );
+        console.log(`🔑 Recovery: created superadmin ${recoveryEmail}. Remove SUPERADMIN_EMAIL/SUPERADMIN_PASSWORD now.`);
+      } else {
+        console.error(`🔑 Recovery: no account ${recoveryEmail} exists; set SUPERADMIN_PASSWORD (10+ characters) to create it.`);
+      }
+      if (dbInstance.get("SELECT id FROM users WHERE LOWER(email) = ? AND role = 'superadmin'", [recoveryEmail])) {
+        dbInstance.run(
+          "INSERT INTO activity_log (action, entityType, summary) VALUES ('update', 'User account', ?)",
+          [`${recoveryEmail} — made superadmin via server recovery setting`]
+        );
+      }
+    } catch (err) {
+      console.error('Superadmin recovery failed:', err.message);
+    }
+  }
 };
 
 // Promisified DB helpers (so they match the async/await signature of our previous controllers)
