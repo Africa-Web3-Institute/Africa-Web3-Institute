@@ -33,11 +33,11 @@ import Intelligence from './pages/Intelligence';
 import Contact from './pages/Contact';
 import EventsPage from './pages/EventsPage';
 import Careers from './pages/Careers'
-// News & Blog pages temporarily disabled
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+// News pages temporarily disabled
 // import News from './pages/News'
 // import NewsArticle from "./pages/NewsArticle";
-// import Blog from "./pages/Blog";
-// import BlogPost from "./pages/BlogPost";
 import RegulatoryTrackerMethodology from "./pages/RegulatoryTrackerMethodology";
 
 
@@ -131,11 +131,11 @@ return (
       <Route path="/contact" element={<Contact />} />
       <Route path="/events" element={<EventsPage />} />
       <Route path="/careers" element={<Careers/>}/>
-      {/* News & Blog pages temporarily disabled
-      <Route path="/news" element={<News/>}/>
-      <Route path="/news/:slug" element={<NewsArticle />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
+      {/* News pages temporarily disabled
+      <Route path="/news" element={<News/>}/>
+      <Route path="/news/:slug" element={<NewsArticle />} />
       */}
     
 <Route path="/newsletter" element={<NewsletterLanding />} />

@@ -128,16 +128,15 @@ const getIntelligenceItems = (language) => [
         ),
         href: "/publications",
       },
-      // Blog page temporarily disabled
-      // {
-      //   label: getLabel(language, "Blog & Thought Leadership", "Blog & Pensée Stratégique"),
-      //   desc: getLabel(
-      //     language,
-      //     "Perspectives on African Web3 policy, stablecoins, and monetary sovereignty",
-      //     "Analyses de fond et perspectives sur les politiques Web3 africaines"
-      //   ),
-      //   href: "/blog",
-      // },
+      {
+        label: getLabel(language, "Blog & Thought Leadership", "Blog & Pensée Stratégique"),
+        desc: getLabel(
+          language,
+          "Perspectives on African Web3 policy, stablecoins, and monetary sovereignty",
+          "Analyses de fond et perspectives sur les politiques Web3 africaines"
+        ),
+        href: "/blog",
+      },
       {
         label: getLabel(language, "Newsletter Archive", "Archives des Bulletins"),
         desc: getLabel(
@@ -612,7 +611,7 @@ export default function Navbar() {
                 <VerticalDropdownMenu sections={programsItems} navigateTo={navigateTo} isActive={isActive} />
               )}
             </div>
-            {/* News & Blog links temporarily disabled
+            {/* News link temporarily disabled
             <Link
               to="/news"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -621,7 +620,7 @@ export default function Navbar() {
             >
               {getLabel(language, "News", "Actualités")}
             </Link>
-
+            */}
             <Link
               to="/blog"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -630,8 +629,6 @@ export default function Navbar() {
             >
               {getLabel(language, "Blog", "Blog")}
             </Link>
-            */}
-
             <button
               onClick={() => navigateTo("/contact")}
               className="text-[0.9375rem] md:text-[0.5] font-semibold transition-colors"
@@ -756,7 +753,7 @@ export default function Navbar() {
           />
 
           
-          {/* News & Blog links temporarily disabled
+          {/* News link temporarily disabled
           <Link
             to="/news"
             onClick={() => {
@@ -768,6 +765,7 @@ export default function Navbar() {
           >
          {getLabel(language, "News", "Actualités")}
           </Link>
+          */}
           <Link
             to="/blog"
             onClick={() => {
@@ -779,7 +777,6 @@ export default function Navbar() {
           >
          {getLabel(language, "Blog & Insights", "Blog & Analyses")}
           </Link>
-          */}
           <Link
             to="/contact"
             onClick={() => {

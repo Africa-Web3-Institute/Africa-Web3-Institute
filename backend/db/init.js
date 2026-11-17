@@ -8,7 +8,28 @@ import { seedDatabaseData } from './seedData.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DB_PATH = join(__dirname, 'awi.db');
+// The database file that ships with the repo
+const BUNDLED_DB_PATH = join(__dirname, 'awi.db');
+
+// Where the live database is kept. On Railway, set DB_PATH to a file on a mounted
+// volume (e.g. /data/awi.db) so data survives redeploys; the container's own disk is
+// wiped on every deploy. Defaults to the bundled file for local development.
+const DB_PATH = process.env.DB_PATH || BUNDLED_DB_PATH;
+
+// First start on an empty volume: copy the bundled database so the site starts
+// with its existing content instead of an empty one.
+if (DB_PATH !== BUNDLED_DB_PATH && !fs.existsSync(DB_PATH)) {
+  try {
+    fs.mkdirSync(dirname(DB_PATH), { recursive: true });
+    if (fs.existsSync(BUNDLED_DB_PATH)) {
+      fs.copyFileSync(BUNDLED_DB_PATH, DB_PATH);
+      console.log(`📦 Copied bundled database to ${DB_PATH}`);
+    }
+  } catch (err) {
+    console.error(`Could not prepare database at ${DB_PATH}:`, err.message);
+  }
+}
+console.log(`💾 Database file: ${DB_PATH}`);
 
 class SqlJsDatabase {
   constructor(SQL, dbPath) {
